@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.hzq</groupId>
+        <artifactId>sepsis</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <name>sepsis-system</name>
+    <artifactId>sepsis-system</artifactId>
+    <description>sepsis-common 通用工程模块，具体微服务可能用到的各种基础功能模块的封装</description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>sepsis-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+</project>
