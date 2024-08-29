@@ -3,9 +3,15 @@ package com.hzq.common.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author hua
@@ -28,6 +34,22 @@ public class GlobalExceptionHandler {
         return Result.error(ResultEnum.BAD_REQUEST);
     }
 
+    /**
+     * @author gc
+     * @return com.hzq.common.exception.Result<?>
+     * @date 2024/8/29 17:51
+     * @apiNote 参数校验异常处理器
+     **/
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<?> methodArgumentNotValidHandler(MethodArgumentNotValidException e, HttpServletRequest request) {
+        log.error("请求地址'{}',发生参数异常", request.getRequestURI());
+        List<ObjectError> errors = e.getAllErrors();
+        errors.forEach(error -> {
+            String field = ((FieldError) error).getField();
+            String defaultMessage = error.getDefaultMessage();
+        });
+        return Result.error(ResultEnum.BAD_REQUEST);
+    }
 
     /**
      * @author hua

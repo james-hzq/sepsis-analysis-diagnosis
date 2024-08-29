@@ -2,7 +2,6 @@ package com.hzq.api.controller.system;
 
 import com.hzq.common.exception.Result;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author hua

@@ -1,5 +1,6 @@
 package com.hzq.api.entity;
 
+import com.hzq.common.exception.SystemException;
 import jakarta.persistence.MappedSuperclass;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -62,6 +63,20 @@ public class BaseEntity implements Serializable {
                 .append("updateBy", updateBy)
                 .append("updateTime", sdf.format(updateTime))
                 .toString();
+    }
+
+    public void setCreateData(String createBy) {
+        if (createBy == null || createBy.isEmpty())
+            throw new SystemException("updateBy must not be null");
+    }
+
+    public void setUpdateData(String updateBy) {
+        // TODO 获取发送该请求的登录用户
+        if (updateBy == null || updateBy.isEmpty())
+            throw new SystemException("updateBy must not be null");
+        //
+        Date now = new Date();
+
     }
 
     public String getCreateBy() {

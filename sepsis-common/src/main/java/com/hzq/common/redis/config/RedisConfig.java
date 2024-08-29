@@ -1,6 +1,6 @@
 package com.hzq.common.redis.config;
 
-import com.hzq.common.jackson.JacksonUtil;
+import com.hzq.common.util.jackson.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

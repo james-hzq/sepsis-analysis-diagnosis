@@ -1,7 +1,7 @@
 package com.hzq.system.controller;
 
 import com.hzq.api.controller.system.SysUserApi;
-import com.hzq.api.entity.system.SysUserEntity;
+import com.hzq.api.domain.system.SysUserDTO;
 import com.hzq.common.exception.Result;
 import com.hzq.system.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +28,12 @@ public class SysUserController implements SysUserApi {
     }
 
     @Override
-    public Result<?> insert(SysUserEntity sysUser) {
+    public Result<?> insert(SysUserDTO sysUser) {
         return null;
     }
 
     @Override
-    public Result<?> update(SysUserEntity sysUser) {
+    public Result<?> update(SysUserDTO sysUser) {
         return null;
     }
 
