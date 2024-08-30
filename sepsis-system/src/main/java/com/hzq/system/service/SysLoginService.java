@@ -1,24 +1,20 @@
 package com.hzq.system.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hzq.api.controller.system.SysLoginApi;
+import com.hzq.common.exception.Result;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author gc
- * @class com.hzq.system.service SysLoginService
- * @date 2024/8/29 9:47
+ * @author hua
+ * @className com.hua.system.service SysLoginService
+ * @date 2024/8/24 10:30
  * @description TODO
  */
 @Service
-public class SysLoginService {
-    private final SysUserService sysUserService;
-
-    @Autowired
-    public SysLoginService(SysUserService sysUserService) {
-        this.sysUserService = sysUserService;
-    }
-
-    public String login() {
-        return "";
+public class SysLoginService implements SysLoginApi {
+    @Override
+    public Result<?> login() {
+        return Result.success();
     }
 }

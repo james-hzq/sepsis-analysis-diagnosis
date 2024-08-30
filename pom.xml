@@ -33,11 +33,12 @@
         <spring-cloud-alibaba.version>2023.0.1.0</spring-cloud-alibaba.version>
         <spring-boot.version>3.2.4</spring-boot.version>
         <!-- 持久层 -->
-        <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
+        <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
         <druid.version>1.2.23</druid.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
         <!-- 第三方工具 -->
         <commons.lang3.version>3.16.0</commons.lang3.version>
+        <hutool-core.version>5.8.31</hutool-core.version>
     </properties>
 
     <!--面向对象单一职责: dependencyManagement保证了父工程的干净，也就是说父工程只负责依赖管理，不会导入额外的jar依赖。单一职责-->
@@ -91,11 +92,17 @@
                 <version>${dynamic-ds.version}</version>
             </dependency>
 
-            <!-- 常用工具类 -->
+            <!-- commons-lang3 工具类 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

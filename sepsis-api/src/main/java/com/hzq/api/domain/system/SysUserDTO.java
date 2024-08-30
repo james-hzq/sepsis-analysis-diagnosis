@@ -1,6 +1,9 @@
 package com.hzq.api.domain.system;
 
+import com.hzq.common.util.validation.ValidationInterface;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -8,6 +11,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author gc
@@ -19,23 +23,56 @@ public class SysUserDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String userId;
+    @NotNull(message = "userId不得为空", groups = {
+            ValidationInterface.delete.class,
+            ValidationInterface.update.class,
+    })
+    private Long userId;
 
-    @NotNull(message = "用户昵称不得为空")
-    @Length(min = 1, max = 20, message = "用户昵称长度必须在 1 ~ 20 个字符之间")
+    @NotBlank(message = "用户昵称不得为空", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class
+    })
+    @Length(min = 1, max = 20, message = "用户昵称长度必须在 1 ~ 20 个字符之间", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class,
+    })
     private String username;
 
-    @NotNull(message = "用户密码不得为空")
-    @Length(min = 5, max = 16, message = "用户密码长度必须在 5 ~ 16 个字符之间")
+    @NotBlank(message = "用户密码不得为空", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class
+    })
+    @Length(min = 5, max = 16, message = "用户密码长度必须在 5 ~ 16 个字符之间", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class,
+    })
     private String password;
 
-    @NotNull(message = "邮箱不得为空")
-    @Email(message = "邮箱格式无效")
+    @NotBlank(message = "邮箱不得为空", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class
+    })
+    @Email(message = "邮箱格式无效", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class,
+    })
     private String email;
 
-    @NotNull(message = "用户状态不得为空")
-    @Length(min = 1, max = 1, message = "用户状态必须是 1 个字符")
-    private char status;
+    @NotNull(message = "用户状态不得为空", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class
+    })
+    private Character status;
+
+    @NotBlank(message = "所属角色不得为空", groups = {
+            ValidationInterface.add.class,
+            ValidationInterface.update.class
+    })
+    private String roleKey;
+
+    private Date startTime;
+    private Date endTime;
 
     @Override
     public String toString() {
@@ -48,45 +85,67 @@ public class SysUserDTO implements Serializable {
                 .toString();
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public @NotNull(message = "用户昵称不得为空") @Length(min = 1, max = 20, message = "用户昵称长度必须在 1 ~ 20 个字符之间") String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(@NotNull(message = "用户昵称不得为空") @Length(min = 1, max = 20, message = "用户昵称长度必须在 1 ~ 20 个字符之间") String username) {
-        this.username = username;
-    }
-
-    public @NotNull(message = "用户密码不得为空") @Length(min = 5, max = 16, message = "用户密码长度必须在 5 ~ 16 个字符之间") String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotNull(message = "用户密码不得为空") @Length(min = 5, max = 16, message = "用户密码长度必须在 5 ~ 16 个字符之间") String password) {
-        this.password = password;
-    }
-
-    public @NotNull(message = "邮箱不得为空") @Email(message = "邮箱格式无效") String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotNull(message = "邮箱不得为空") @Email(message = "邮箱格式无效") String email) {
-        this.email = email;
+    public String getRoleKey() {
+        return roleKey;
     }
 
-    @NotNull(message = "用户状态不得为空")
-    @Length(min = 1, max = 1, message = "用户状态必须是 1 个字符")
-    public char getStatus() {
+    public Character getStatus() {
         return status;
     }
 
-    public void setStatus(@NotNull(message = "用户状态不得为空") @Length(min = 1, max = 1, message = "用户状态必须是 1 个字符") char status) {
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setRoleKey(String roleKey) {
+        this.roleKey = roleKey;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setStatus(Character status) {
         this.status = status;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }

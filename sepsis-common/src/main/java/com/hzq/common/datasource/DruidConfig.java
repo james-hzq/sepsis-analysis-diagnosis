@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -67,8 +66,7 @@ public class DruidConfig {
     @Value("${spring.datasource.druid.testOnReturn}")
     private boolean testOnReturn;
 
-    @Bean(name = "dataSource")
-    @Primary
+    @Bean
     public DruidDataSource dataSource() {
         DruidDataSource datasource = new DruidDataSource();
         // 配置主库数据源的url, username, password
@@ -112,9 +110,7 @@ public class DruidConfig {
     }
 
     @Bean
-    @Primary
     public PlatformTransactionManager transactionManager() {
-        log.info("Custom transaction manager is being initialized.");
         return new DataSourceTransactionManager(dataSource());
     }
 }

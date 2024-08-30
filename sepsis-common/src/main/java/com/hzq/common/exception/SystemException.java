@@ -29,7 +29,6 @@ public class SystemException extends RuntimeException {
         this.msg = msg;
     }
 
-
     public int getCode() {
         return code;
     }

@@ -1,9 +1,8 @@
 package com.hzq.api.controller.system;
-
 import com.hzq.api.domain.system.SysUserDTO;
-import com.hzq.api.entity.system.SysUserEntity;
 import com.hzq.common.exception.Result;
-import jakarta.validation.Valid;
+import com.hzq.common.util.validation.ValidationInterface;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/system/user")
 public interface SysUserApi {
     @GetMapping("/list")
-    Result<?> list();
+    Result<?> list(@Validated(value = ValidationInterface.select.class) @RequestBody SysUserDTO sysUserDTO);
 
     @PostMapping("/insert")
-    Result<?> insert(@Valid @RequestBody SysUserDTO sysUser);
+    Result<?> insert(@Validated(value = ValidationInterface.add.class) @RequestBody SysUserDTO sysUserDTO);
 
     @PutMapping("/update")
-    Result<?> update(@Valid @RequestBody SysUserDTO sysUser);
+    Result<?> update(@Validated(value = ValidationInterface.update.class) @RequestBody SysUserDTO sysUserDTO);
 
     @DeleteMapping("/delete")
     Result<?> delete(String[] userIds);
