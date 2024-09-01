@@ -9,7 +9,7 @@
 
     <name>sepsis-system</name>
     <artifactId>sepsis-system</artifactId>
-    <description>sepsis-common 通用工程模块，具体微服务可能用到的各种基础功能模块的封装</description>
+    <description>sepsis-system web 系统模块</description>
     <packaging>jar</packaging>
 
     <dependencies>

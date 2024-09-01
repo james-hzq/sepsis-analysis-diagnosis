@@ -1,10 +1,11 @@
 package com.hzq.system.service;
 
-import com.hzq.api.domain.system.SysUserDTO;
 import com.hzq.api.entity.system.SysUser;
-import com.hzq.common.exception.SystemException;
+import com.hzq.api.pojo.system.SysUserDTO;
+import com.hzq.web.exception.SystemException;
 import com.hzq.system.dao.SysUserDao;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

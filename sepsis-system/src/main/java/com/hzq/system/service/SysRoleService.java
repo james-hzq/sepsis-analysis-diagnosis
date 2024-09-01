@@ -1,6 +1,6 @@
 package com.hzq.system.service;
 
-import com.hzq.api.domain.system.SysRoleDTO;
+import com.hzq.api.pojo.system.SysRoleDTO;
 import com.hzq.api.entity.system.SysRole;
 import com.hzq.system.dao.SysRoleDao;
 import jakarta.persistence.criteria.Order;

@@ -1,9 +1,9 @@
 package com.hzq.system.controller;
 
 import com.hzq.api.controller.system.SysRoleApi;
-import com.hzq.api.domain.system.SysRoleDTO;
+import com.hzq.api.pojo.system.SysRoleDTO;
 import com.hzq.api.entity.system.SysRole;
-import com.hzq.common.exception.Result;
+import com.hzq.core.result.Result;
 import com.hzq.system.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,9 +1,7 @@
 package com.hzq.system.service;
 
-import com.hzq.api.controller.system.SysLoginApi;
-import com.hzq.common.exception.Result;
+import com.hzq.core.result.Result;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author hua
@@ -12,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description TODO
  */
 @Service
-public class SysLoginService implements SysLoginApi {
-    @Override
+public class SysLoginService {
     public Result<?> login() {
         return Result.success();
     }

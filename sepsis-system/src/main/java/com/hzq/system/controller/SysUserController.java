@@ -1,15 +1,12 @@
 package com.hzq.system.controller;
 
 import com.hzq.api.controller.system.SysUserApi;
-import com.hzq.api.domain.system.SysUserDTO;
-import com.hzq.api.entity.system.SysUser;
-import com.hzq.common.exception.Result;
+import com.hzq.api.pojo.system.SysUserDTO;
+import com.hzq.core.result.Result;
 import com.hzq.system.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author gc
