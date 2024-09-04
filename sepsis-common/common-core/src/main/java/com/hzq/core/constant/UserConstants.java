@@ -10,27 +10,32 @@ public class UserConstants {
     /**
      * 用户ID字段
      */
-    public static final String DETAILS_USER_ID = "user_id";
+    public static final String USER_ID = "userId";
 
     /**
      * 用户名字段
      */
-    public static final String DETAILS_USERNAME = "username";
+    public static final String USERNAME = "username";
 
     /**
      * 用户权限字段
      */
-    public static final String DETAILS_ROLE_KEY = "role_key";
+    public static final String ROLE_KEY = "roleKey";
 
     /**
      * 用户名信息字段
      */
-    public static final String DETAILS_USER_INFO= "login_user_info";
+    public static final String DETAILS_USER_INFO = "login_user_info";
 
     /**
      * 授权信息字段
      */
     public static final String AUTHORIZATION_HEADER = "authorization";
+
+    /**
+     * 权限(角色Code)集合
+     */
+    public static final String AUTHORITIES = "authorities";
 
     /**
      * 请求来源
@@ -56,19 +61,22 @@ public class UserConstants {
      * 角色权限
      */
     public static final String ROLE_PERMISSION = "role_permission";
-    /** 正常状态 */
-    public static final String OK = "0";
-
-    /** 用户封禁状态 */
-    public static final String USER_DISABLE = "1";
-
-    /** 删除状态 */
-    public static final String DELETE = "2";
 
     /**
-     * 角色封禁状态
+     * 正常状态
      */
-    public static final String ROLE_DISABLE = "1";
+    public static final Character STATUS_OK = '0';
+
+    /**
+     * 封禁状态
+     */
+    public static final Character STATUS_DISABLE = '1';
+
+    /**
+     * 删除状态
+     */
+    public static final Character STATUS_DELETE = '2';
+
 
     /**
      * 是否为系统默认（是）

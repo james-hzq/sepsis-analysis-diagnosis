@@ -15,22 +15,16 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- SpringCloud 注册中心 -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <groupId>com.hzq</groupId>
+            <artifactId>sepsis-api</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
-        <!-- Nacos 配置中心 -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <!-- SpringCloud 负载均衡 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-core</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -39,16 +33,22 @@
             <version>1.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-redis</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- OAuth2 Resource Server -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- OAuth2 Client -->
@@ -57,10 +57,10 @@
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
-        <!-- JSON Web Token (JWT) support -->
+        <!-- OAuth2 授权服务器 -->
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-jose</artifactId>
+            <artifactId>spring-security-oauth2-authorization-server</artifactId>
         </dependency>
     </dependencies>
 </project>

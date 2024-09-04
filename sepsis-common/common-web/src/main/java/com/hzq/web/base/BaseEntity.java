@@ -9,7 +9,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * @author hua
@@ -42,27 +41,7 @@ public class BaseEntity implements Serializable {
     private Date updateTime;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseEntity that)) return false;
-        return Objects.equals(createBy, that.createBy) &&
-                Objects.equals(createTime, that.createTime) &&
-                Objects.equals(updateBy, that.updateBy) &&
-                Objects.equals(updateTime, that.updateTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(createBy, createTime, updateBy, updateTime);
-    }
-
-    @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("createBy", createBy)
-                .append("createTime", sdf.format(createTime))
-                .append("updateBy", updateBy)
-                .append("updateTime", sdf.format(updateTime))
-                .toString();
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

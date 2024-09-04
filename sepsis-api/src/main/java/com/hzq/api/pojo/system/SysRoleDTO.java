@@ -3,6 +3,9 @@ package com.hzq.api.pojo.system;
 import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
@@ -15,6 +18,7 @@ import java.util.Date;
  * @date 2024/8/30 15:43
  * @description TODO
  */
+@Data
 public class SysRoleDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -54,51 +58,8 @@ public class SysRoleDTO implements Serializable {
     private Date startTime;
     private Date endTime;
 
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getRoleKey() {
-        return roleKey;
-    }
-
-    public void setRoleKey(String roleKey) {
-        this.roleKey = roleKey;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public Character getStatus() {
-        return status;
-    }
-
-    public void setStatus(Character status) {
-        this.status = status;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

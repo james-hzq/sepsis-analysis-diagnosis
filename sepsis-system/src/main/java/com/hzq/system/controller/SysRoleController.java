@@ -30,4 +30,10 @@ public class SysRoleController implements SysRoleApi {
         List<SysRole> list = sysRoleService.list(sysRoleDTO);
         return Result.success(list);
     }
+
+    @Override
+    public Result<List<String>> findRoleKeyByRoleIds(List<Long> list) {
+        List<String> resList = sysRoleService.findRoleKeyByRoleIds(list);
+        return Result.success(resList);
+    }
 }

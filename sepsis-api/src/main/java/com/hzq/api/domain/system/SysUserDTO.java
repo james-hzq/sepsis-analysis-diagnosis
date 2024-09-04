@@ -1,9 +1,8 @@
 package com.hzq.api.domain.system;
 
-import com.hzq.common.util.validation.ValidationInterface;
+import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

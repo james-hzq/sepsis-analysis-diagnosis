@@ -10,7 +10,7 @@
         <!-- 控制台彩色日志格式 -->
         <property name="CONSOLE_LOG_PATTERN" value="%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{green} %highlight{%-5level} %style{[%t]}{magenta} %style{%-40.40logger{39}}{cyan}: %style{%msg}{yellow}%n"/>
         <!-- 定义日志存储的路径 -->
-        <property name="FILE_PATH" value="F:\DevPro\sepsis\logs"/>
+        <property name="FILE_PATH" value="E:/DevPro/0_practice_pro/sepsis/logs"/>
         <!-- 项目名称 -->
         <property name="FILE_NAME" value="sepsis-system"/>
     </Properties>

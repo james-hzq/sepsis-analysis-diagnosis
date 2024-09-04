@@ -51,4 +51,8 @@ public class SysRoleService implements BaseService {
         };
         return sysRoleDao.findAll(specification);
     }
+
+    public List<String> findRoleKeyByRoleIds(List<Long> roleIds) {
+        return sysRoleDao.findRoleKeyByRoleIds(roleIds);
+    }
 }

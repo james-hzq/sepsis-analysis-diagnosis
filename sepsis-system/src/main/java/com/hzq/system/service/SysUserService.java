@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author hua
@@ -26,6 +27,10 @@ public class SysUserService implements BaseService {
     @Autowired
     public void setSysUserDao(SysUserDao sysUserDao) {
         this.sysUserDao = sysUserDao;
+    }
+
+    public SysUser selectByUsername(String username) {
+        return sysUserDao.findByUsername(username);
     }
 
     public List<SysUser> list(SysUserDTO sysUserDTO) {
@@ -54,9 +59,9 @@ public class SysUserService implements BaseService {
     }
 
     public int insert(SysUserDTO sysUserDTO) {
+        SysUser sysUser = Optional.ofNullable(sysUserDao.findByUsername(sysUserDTO.getUsername()))
+                .orElseThrow(() -> new SystemException("用户名称已经存在, 请重新创建用户"));
         // 判断系统中是否已经存在该username，如何存在，提示用户，请更换昵称
-         if (sysUserDao.findByUsername(sysUserDTO.getUsername()).isPresent())
-             throw new SystemException("用户名称已经存在, 请重新创建用户");
         // 将 SysUserDTO 转换为 SysUser 实体对象
         // 使用私钥 A 进行解密
         // 使用公钥 B 进行加密

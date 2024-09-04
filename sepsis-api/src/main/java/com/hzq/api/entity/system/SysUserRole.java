@@ -1,12 +1,9 @@
 package com.hzq.api.entity.system;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 /**
  * @author gc
@@ -14,45 +11,31 @@ import java.util.Objects;
  * @date 2024/8/30 15:40
  * @description 系统用户角色映射实体类
  */
+@Data
 @Entity
 @Table(name = "sys_user_role")
 public class SysUserRole {
-    @Id
-    private Long user_id;
-    private Long role_id;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        SysUserRole that = (SysUserRole) o;
-        return Objects.equals(user_id, that.user_id) && Objects.equals(role_id, that.role_id);
+    @Embeddable
+    @Data
+    public static class SysUserRoleId implements Serializable {
+        private Long userId;
+        private Long roleId;
+
+        public SysUserRoleId() {}
+
+        public SysUserRoleId(Long userId, Long roleId) {
+            this.userId = userId;
+            this.roleId = roleId;
+        }
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), user_id, role_id);
-    }
+    @EmbeddedId
+    private SysUserRoleId id;
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+    public SysUserRole() {}
 
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public Long getRole_id() {
-        return role_id;
-    }
-
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public SysUserRole(Long userId, Long roleId) {
+        this.id = new SysUserRoleId(userId, roleId);
     }
 }

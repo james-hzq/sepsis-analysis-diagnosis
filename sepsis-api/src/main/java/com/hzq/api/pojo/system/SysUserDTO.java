@@ -4,6 +4,7 @@ import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Length;
@@ -18,6 +19,7 @@ import java.util.Date;
  * @date 2024/8/29 15:17
  * @description 用户表单传输对象
  */
+@Data
 public class SysUserDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -75,76 +77,6 @@ public class SysUserDTO implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("userId", userId)
-                .append("username", username)
-                .append("password", password)
-                .append("email", email)
-                .append("status", status)
-                .toString();
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getRoleKey() {
-        return roleKey;
-    }
-
-    public Character getStatus() {
-        return status;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setRoleKey(String roleKey) {
-        this.roleKey = roleKey;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setStatus(Character status) {
-        this.status = status;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

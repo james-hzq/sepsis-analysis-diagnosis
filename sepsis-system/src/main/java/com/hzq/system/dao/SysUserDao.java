@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
-
 /**
  * @author hua
  * @interfaceName com.hzq.system.dao SysUserDao
@@ -16,5 +14,5 @@ import java.util.Optional;
 public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysUser> {
 
     @Query(value = "select u from SysUser u where u.username =?1")
-    Optional<SysUser> findByUsername(String username);
+    SysUser findByUsername(String username);
 }

@@ -14,9 +14,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @date 2024/8/24 17:04
  * @description TODO
  */
-@ComponentScan(basePackages = "com.hzq")
 @EnableJpaRepositories(basePackages = {"com.hzq.system.dao"})
 @EntityScan(basePackages = {"com.hzq.api.entity"})
+@ComponentScan(basePackages = "com.hzq")
 @SpringBootApplication
 public class HzqSystemApplication {
     private static final Logger log = LoggerFactory.getLogger(HzqSystemApplication.class);

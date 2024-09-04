@@ -1,8 +1,6 @@
 spring:
   application:
     name: sepsis-system
-  profiles:
-    active: dev
   cloud:
     inetutils:
       default-hostname: localhost

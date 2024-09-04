@@ -32,43 +32,43 @@ public class Result<T> {
         this.data = data;
     }
 
-    public static Result<?> success() {
+    public static <T> Result<T> success() {
         return new Result<>(ResultEnum.SUCCESS);
     }
 
-    public static <T> Result<?> success(T data) {
+    public static <T> Result<T> success(T data) {
         return new Result<>(ResultEnum.SUCCESS, data);
     }
 
-    public static <T> Result<?> success(String msg) {
+    public static <T> Result<T> success(String msg) {
         return new Result<>(ResultEnum.SUCCESS.getCode(), msg);
     }
 
-    public static <T> Result<?> success(String msg, T data) {
+    public static <T> Result<T> success(String msg, T data) {
         return new Result<>(ResultEnum.SUCCESS.getCode(), msg, data);
     }
 
-    public static Result<?> error(ResultEnum resultEnum) {
+    public static <T> Result<T> error(ResultEnum resultEnum) {
         return new Result<>(resultEnum);
     }
 
-    public static <T> Result<?> error(ResultEnum resultEnum, T data) {
+    public static <T> Result<T> error(ResultEnum resultEnum, T data) {
         return new Result<>(resultEnum, data);
     }
 
-    public static Result<?> error(int code, String msg) {
+    public static <T> Result<T> error(int code, String msg) {
         return new Result<>(code, msg);
     }
 
-    public static <T> Result<?> error(int code, String msg, T data) {
+    public static <T> Result<T> error(int code, String msg, T data) {
         return new Result<>(code, msg, data);
     }
 
-    public static Result<?> error(String msg) {
+    public static <T> Result<T> error(String msg) {
         return new Result<>(ResultEnum.CUSTOM_ERROR.getCode(), msg);
     }
 
-    public static <T> Result<?> error(String msg, T data) {
+    public static <T> Result<T> error(String msg, T data) {
         return new Result<>(ResultEnum.CUSTOM_ERROR.getCode(), msg, data);
     }
 }

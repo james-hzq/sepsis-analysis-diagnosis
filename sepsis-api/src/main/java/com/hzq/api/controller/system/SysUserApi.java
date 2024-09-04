@@ -1,4 +1,5 @@
 package com.hzq.api.controller.system;
+import com.hzq.api.entity.system.SysUser;
 import com.hzq.api.pojo.system.SysUserDTO;
 import com.hzq.core.result.Result;
 import com.hzq.web.validation.ValidationInterface;
@@ -13,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @RequestMapping("/system/user")
 public interface SysUserApi {
+
+    @GetMapping("/selectByUsername")
+    Result<SysUser> selectByUsername(String username);
+
     @GetMapping("/list")
     Result<?> list(@Validated(value = ValidationInterface.select.class) @RequestBody SysUserDTO sysUserDTO);
 

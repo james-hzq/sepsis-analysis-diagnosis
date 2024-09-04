@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 /**
  * @author gc
  * @interface com.hzq.api.controller.system SysRoleApi
@@ -14,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @RequestMapping("/system/role")
 public interface SysRoleApi {
+
     @GetMapping("/list")
     Result<?> list(@RequestBody SysRoleDTO sysRoleDTO);
+
+    @GetMapping("/findRoleKeyByRoleIds")
+    Result<List<String>> findRoleKeyByRoleIds(List<Long> list);
 }

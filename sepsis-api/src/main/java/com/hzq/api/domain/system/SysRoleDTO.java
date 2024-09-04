@@ -1,6 +1,6 @@
 package com.hzq.api.domain.system;
 
-import com.hzq.common.util.validation.ValidationInterface;
+import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;

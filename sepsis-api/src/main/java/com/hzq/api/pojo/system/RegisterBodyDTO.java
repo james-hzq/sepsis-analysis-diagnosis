@@ -1,5 +1,8 @@
 package com.hzq.api.pojo.system;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -9,30 +12,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @date 2024/9/1 15:29
  * @description TODO
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterBodyDTO {
     private String username;
 
     private String password;
-
-    public String getUsername()
-    {
-        return username;
-    }
-
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
 
     @Override
     public String toString() {
