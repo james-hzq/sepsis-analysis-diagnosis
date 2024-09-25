@@ -12,13 +12,46 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- 全局日志 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-log</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- 全局 jackson 工具 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-jackson</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- 核心工具 -->
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
 
-        <!-- Springboot web -->
+        <!-- SpringCloud Alibaba Nacos discovery 服务注册-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- SpringCloud Alibaba Nacos config 服务配置-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- SpringCloud Loadbalancer -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- Springboot mvc web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

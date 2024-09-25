@@ -12,7 +12,6 @@
 
     <modules>
         <module>sepsis-common</module>
-        <module>sepsis-api</module>
         <module>sepsis-system</module>
         <module>sepsis-gateway</module>
         <module>sepsis-auth</module>
@@ -38,10 +37,9 @@
         <druid.version>1.2.23</druid.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
         <!-- 第三方工具 -->
-        <commons.lang3.version>3.16.0</commons.lang3.version>
-        <hutool-all.version>5.8.31</hutool-all.version>
-        <jackson.version>2.17.2</jackson.version>
         <lombok.version>1.18.34</lombok.version>
+        <guava.version>33.3.1-jre</guava.version>
+        <jackson.version>2.17.2</jackson.version>
     </properties>
 
     <dependencies>
@@ -114,38 +112,30 @@
                 <version>${dynamic-ds.version}</version>
             </dependency>
 
-            <!-- commons-lang3 工具 -->
+            <!-- lombok 工具 -->
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons.lang3.version}</version>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
 
-            <!-- hutool 工具 -->
+            <!-- Google guava 工具 -->
             <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool-all.version}</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
 
-            <!-- jackson -->
+            <!-- jackson 工具 -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-
-
-            <!-- lombok 工具 -->
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

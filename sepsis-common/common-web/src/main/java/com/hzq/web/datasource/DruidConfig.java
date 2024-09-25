@@ -13,8 +13,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @date 2023/11/27
  * @apiNote druid 配置多数据源
  */
-@Configuration
 @Slf4j
+@Configuration
 public class DruidConfig {
 
     @Value("${spring.datasource.druid.master.url}")

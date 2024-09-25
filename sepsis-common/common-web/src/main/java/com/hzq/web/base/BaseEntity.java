@@ -1,9 +1,10 @@
 package com.hzq.web.base;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +19,8 @@ import java.util.Date;
  */
 @MappedSuperclass
 @Data
+@ToString
+@EqualsAndHashCode
 public class BaseEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,9 +42,4 @@ public class BaseEntity implements Serializable {
      * 更新时间
      */
     private Date updateTime;
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
 }

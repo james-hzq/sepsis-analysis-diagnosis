@@ -14,6 +14,20 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- 全局日志 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-log</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- 全局 jackson -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-jackson</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -31,16 +45,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <!-- jackson 工具 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
         </dependency>
     </dependencies>
 </project>

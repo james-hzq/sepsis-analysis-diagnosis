@@ -17,12 +17,6 @@
     <dependencies>
         <dependency>
             <groupId>com.hzq</groupId>
-            <artifactId>sepsis-api</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hzq</groupId>
             <artifactId>common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
