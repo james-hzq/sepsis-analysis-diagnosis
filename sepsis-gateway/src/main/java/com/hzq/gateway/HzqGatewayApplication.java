@@ -1,24 +1,22 @@
 package com.hzq.gateway;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * @author gc
- * @class com.hzq.gateway HzqGatewayApplication
- * @date 2024/9/3 11:25
- * @description TODO
+ * @author hua
+ * @className com.hzq.gateway HzqGatewayApplication
+ * @date 2024/9/26 16:45
+ * @description 网关服务启动类，网关的目的只有两个，拦截请求进行认证和路由转发
  */
-@ComponentScan(basePackages = "com.hzq")
+@Slf4j
 @SpringBootApplication
+@ComponentScan(basePackages = "com.hzq")
 public class HzqGatewayApplication {
-    private static final Logger log = LoggerFactory.getLogger(HzqGatewayApplication.class);
-
     public static void main(String[] args) {
         SpringApplication.run(HzqGatewayApplication.class, args);
-        log.info("HzqGatewayApplication start successfully (~_~)");
+        log.info("(●′ω`●) sepsis-gateway application running successfully (●′ω`●)");
     }
 }

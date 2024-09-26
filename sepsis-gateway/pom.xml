@@ -8,49 +8,73 @@
     </parent>
 
     <artifactId>sepsis-gateway</artifactId>
+    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- SpringCloud gateway 网关路由、认证过滤 -->
+        <!-- 系统核心工具 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+
+        <!-- 全局日志 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-log</artifactId>
+        </dependency>
+
+        <!-- 全局jackson -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-jackson</artifactId>
+        </dependency>
+
+        <!-- SpringCloud bootstrap 加载器 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- SpringCloud gateway 网关路由转发 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!--客户端负载均衡loadbalancer-->
+        <!-- SpringCloud loadbalancer 负载均衡 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
-        <!-- SpringCloud Alibaba Nacos -->
+        <!-- nacos 服务注册 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!-- SpringCloud Alibaba Nacos Config -->
+        <!-- nacos 服务配置 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- OAuth2 Client -->
+        <!-- SpringBoot 配置读取 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
-        <!-- log4j2日志实现 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <!-- Exclude default logging framework to avoid conflicts -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>

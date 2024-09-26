@@ -4,18 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hzq</groupId>
-    <artifactId>sepsis</artifactId>
-    <version>1.0.0</version>
     <name>sepsis</name>
     <description>脓毒症智能分析与诊询平台</description>
 
+    <groupId>com.hzq</groupId>
+    <artifactId>sepsis</artifactId>
+    <version>${hzq.version}</version>
+
     <modules>
         <module>sepsis-common</module>
-        <module>sepsis-api</module>
         <module>sepsis-system</module>
         <module>sepsis-gateway</module>
-        <module>sepsis-auth</module>
     </modules>
 
     <!--聚合工程分为顶级工程和子工程，父子继承关系，子工程在maven中就是模块-->
@@ -38,24 +37,12 @@
         <druid.version>1.2.23</druid.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
         <!-- 第三方工具 -->
-        <commons.lang3.version>3.16.0</commons.lang3.version>
-        <hutool-all.version>5.8.31</hutool-all.version>
+        <guava.version>33.3.1-jre</guava.version>
         <jackson.version>2.17.2</jackson.version>
         <lombok.version>1.18.34</lombok.version>
     </properties>
 
     <dependencies>
-        <!-- SpringCloud bootstrap加载器 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- lombok 工具 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -80,6 +67,12 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -89,6 +82,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -114,38 +113,67 @@
                 <version>${dynamic-ds.version}</version>
             </dependency>
 
-            <!-- commons-lang3 工具 -->
+            <!-- google guava 工具 -->
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons.lang3.version}</version>
-            </dependency>
-
-            <!-- hutool 工具 -->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool-all.version}</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
 
             <!-- jackson -->
+            <!-- 其内置 jackson-databind 版本低于 jackson.version，不能重新引入 jackson-databind -->
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-
 
             <!-- lombok 工具 -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 系统核心工具 -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-core</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 log -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-log</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 jackson -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-jackson</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 redis -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-redis</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 web -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-web</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>sepsis-system-api</artifactId>
+                <version>${hzq.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

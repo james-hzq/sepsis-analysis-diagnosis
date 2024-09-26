@@ -3,47 +3,39 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.hzq</groupId>
         <artifactId>sepsis-common</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>common-redis</artifactId>
+    <artifactId>common-jackson</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 全局 log -->
+        <!-- 日志 -->
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-log</artifactId>
         </dependency>
 
-        <!-- 全局 jackson -->
+        <!-- Spring Web -->
         <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-jackson</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
         </dependency>
 
-        <!-- redis -->
+        <!-- jackson 工具 -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
-        <!-- spring boot 自动配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
     </dependencies>
 </project>

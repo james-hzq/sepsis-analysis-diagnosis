@@ -1,11 +1,9 @@
 server:
-  port: 9100
+  port: 9201
 
 spring:
-  main:
-    web-application-type: reactive
   application:
-    name: sepsis-gateway
+    name: sepsis-system
   profiles:
     active: dev
   cloud:
@@ -26,18 +24,11 @@ spring:
         refresh-enabled: true
         shared-configs:
           - group: common-group
+            data-id: druid-config.yaml
+            refresh: true
+          - group: common-group
             data-id: redis-config.yaml
             refresh: true
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-        - id: sepsis_router
-          uri: http://localhost:9201
-          predicates:
-            - Method=GET,POST
-            - Path=/system/**
 
 logging:
   config: classpath:log4j2-spring.xml

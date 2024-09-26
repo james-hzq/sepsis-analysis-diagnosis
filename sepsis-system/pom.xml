@@ -7,16 +7,25 @@
         <version>1.0.0</version>
     </parent>
 
-    <name>sepsis-system</name>
+    <modules>
+        <module>sepsis-system-server</module>
+        <module>sepsis-system-api</module>
+    </modules>
+
     <artifactId>sepsis-system</artifactId>
-    <description>sepsis-system web 系统模块</description>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <dependencies>
+        <!-- SpringCloud bootstrap 加载器 -->
         <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>sepsis-api</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

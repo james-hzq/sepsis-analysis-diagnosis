@@ -8,26 +8,22 @@
     </parent>
 
     <artifactId>sepsis-common</artifactId>
+    <version>${project.parent.version}</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>common-core</module>
+        <module>common-jackson</module>
         <module>common-log</module>
         <module>common-redis</module>
         <module>common-web</module>
     </modules>
 
     <dependencies>
-        <!-- commons-lang3 工具类 -->
+        <!-- google guava 工具 -->
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <!-- hutool工具类 -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>

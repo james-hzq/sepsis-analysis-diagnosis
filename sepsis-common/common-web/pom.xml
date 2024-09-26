@@ -9,13 +9,26 @@
     </parent>
 
     <artifactId>common-web</artifactId>
+    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- 系统核心工具 -->
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-core</artifactId>
-            <version>1.0.0</version>
+        </dependency>
+
+        <!-- 全局日志 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-log</artifactId>
+        </dependency>
+
+        <!-- 全局jackson -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-jackson</artifactId>
         </dependency>
 
         <!-- Springboot web -->

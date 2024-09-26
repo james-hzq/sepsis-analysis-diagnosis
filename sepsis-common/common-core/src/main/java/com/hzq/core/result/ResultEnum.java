@@ -8,9 +8,10 @@ package com.hzq.core.result;
  */
 public enum ResultEnum {
     SUCCESS(200, "操作成功"),
-    BAD_REQUEST(400, "请求异常"),
-    UNAUTHORIZED(401, "用户未认证"),
-    FORBIDDEN(403, "用户未授权"),
+    BAD_REQUEST(400, "请求方法异常"),
+    ACCESS_UNAUTHORIZED(401, "用户访问未被授权"),
+    TOKEN_INVALID_OR_EXPIRED(401, "Token无效或已过期"),
+    ACCESS_FORBIDDEN(403, "用户无权限访问"),
     ERROR(500, "服务器内部错误"),
     CUSTOM_ERROR(1000, "自定义异常");
 
