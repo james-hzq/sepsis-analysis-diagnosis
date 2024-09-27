@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>sepsis</name>
+    <description>脓毒症智能分析与诊询平台</description>
+
+    <groupId>com.hzq</groupId>
+    <artifactId>sepsis</artifactId>
+    <version>${hzq.version}</version>
+
+    <modules>
+        <module>sepsis-common</module>
+        <module>sepsis-system</module>
+        <module>sepsis-gateway</module>
+    </modules>
+
+    <!--聚合工程分为顶级工程和子工程，父子继承关系，子工程在maven中就是模块-->
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- 项目基础构建 -->
+        <hzq.version>1.0.0</hzq.version>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- maven 构建 -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <!-- 应用层 -->
+        <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <spring-cloud-alibaba.version>2023.0.1.0</spring-cloud-alibaba.version>
+        <spring-boot.version>3.2.4</spring-boot.version>
+        <!-- 持久层 -->
+        <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
+        <druid.version>1.2.23</druid.version>
+        <dynamic-ds.version>4.3.1</dynamic-ds.version>
+        <!-- 第三方工具 -->
+        <guava.version>33.3.1-jre</guava.version>
+        <jackson.version>2.17.2</jackson.version>
+        <lombok.version>1.18.34</lombok.version>
+    </properties>
+
+    <dependencies>
+        <!-- lombok 工具 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!--面向对象单一职责: dependencyManagement保证了父工程的干净，也就是说父工程只负责依赖管理，不会导入额外的jar依赖。单一职责-->
+    <dependencyManagement>
+        <dependencies>
+            <!-- SpringCloud 微服务 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- SpringCloud Alibaba 微服务 -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- SpringBoot 依赖配置 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- mysql连接驱动 -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
+            </dependency>
+
+            <!-- 阿里数据库连接池 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- Dynamic DataSource -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${dynamic-ds.version}</version>
+            </dependency>
+
+            <!-- google guava 工具 -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <!-- jackson -->
+            <!-- 其内置 jackson-databind 版本低于 jackson.version，不能重新引入 jackson-databind -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- lombok 工具 -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 系统核心工具 -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-core</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 log -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-log</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 jackson -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-jackson</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 redis -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-redis</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <!-- 内部模块: 全局 web -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-web</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>sepsis-system-api</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <!-- 取消查找本项目下的Main方法：为了解决Unable to find main class的问题 -->
+                    <mainClass>none</mainClass>
+                    <!-- 为了解决依赖模块找不到此模块中的类或属性 -->
+                    <classifier>execute</classifier>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <!-- 是否开启发布版构件下载 -->
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <!-- 是否开启快照版构件下载 -->
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>
