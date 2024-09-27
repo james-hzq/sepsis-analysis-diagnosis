@@ -2,6 +2,8 @@ package com.hzq.gateway.filter;
 
 import com.google.common.base.Strings;
 import com.hzq.core.constant.LoginConstants;
+import com.hzq.core.result.ResultEnum;
+import com.hzq.gateway.util.WebFluxUtils;
 import com.nimbusds.jose.JWSObject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 
 /**
  * @author hua
@@ -45,8 +48,14 @@ public class GatewayFilter implements GlobalFilter {
             return chain.filter(exchange);
         }
 
-        // 如果 authorization 不是空字符串，获取 JWT 主体，并加入请求头，转发到其他微服务
-        String payload = JWSObject.parse(authorization).getPayload().toString();
+        String payload;
+        try {
+            // 如果 authorization 不是空字符串，获取 JWT 主体，并加入请求头，转发到其他微服务
+             payload = JWSObject.parse(authorization).getPayload().toString();
+        } catch (ParseException e) {
+            log.error("在请求路径 {} 上发生错误 {}", request.getURI(), ResultEnum.JWT_PARSE_ERROR.getMsg());
+            return WebFluxUtils.writeResponse(response, ResultEnum.JWT_PARSE_ERROR);
+        }
 
         request = exchange.getRequest()
                 .mutate()

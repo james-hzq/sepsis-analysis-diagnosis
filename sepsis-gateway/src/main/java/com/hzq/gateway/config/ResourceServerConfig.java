@@ -47,7 +47,7 @@ public class ResourceServerConfig {
     // 存放在 resource 下的公钥文件
     private static final String PUBLIC_KEY_FILE_NAME = "public.key";
     // 请求白名单，该集合中的路径，跳过认证，可直接进入系统
-    private static final String[] whitesUrIs = new String[]{"/system/**"};
+    private static final String[] whitesUrIs = new String[] {"/system/**"};
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -61,23 +61,17 @@ public class ResourceServerConfig {
         serverHttpSecurity
                 // 配置访问限制：通过 URL 模式限制请求的访问
                 .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-                        // 网关白名单请求路径，直接放行，不需要认证
                         .pathMatchers(whitesUrIs).permitAll()
-                        // 网关白名单以外的请求，均需要授权
                         .anyExchange().authenticated())
                 // 配置认证和授权失败的处理器
                 .exceptionHandling(exception -> exception
-                        // 配置认证失败处理器
                         .authenticationEntryPoint(customAuthenticationEntryPoint())
-                        // 配置授权失败处理器
                         .accessDeniedHandler(customAccessDeniedHandler()))
                 // 配置 OAuth 2.0 资源服务器保护支持
                 .oauth2ResourceServer(oauth2 -> oauth2
                         // 配置自定义 JWT 身份验证转换器
                         .jwt(jwtSpec -> jwtSpec
-                                // 使用自定义的 JWT 身份验证转换器，将 JWT 解析为认证对象
                                 .jwtAuthenticationConverter(customJwtConverter())
-                                // 本地加载公钥
                                 .publicKey(getRsaPublicKey())
                         ))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable);
