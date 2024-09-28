@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/oauth")
 public class AuthController {
-    @Resource
-    private AuthenticationManager authenticationManager;
     private final LoginUserService loginUserService;
     /**
      * @author hua
