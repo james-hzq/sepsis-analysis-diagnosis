@@ -11,7 +11,6 @@
     </parent>
 
     <artifactId>common-redis</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -31,12 +30,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- spring boot 自动配置 -->

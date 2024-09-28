@@ -31,6 +31,6 @@ spring:
             refresh: true
 
 logging:
-  config: classpath:log4j2-spring.xml
+  config: classpath:logback-spring.xml
   file:
-    path: ${user.dir}/logs/${spring.application.name}/
+    path: ${user.dir}/logs/${spring.application.name}

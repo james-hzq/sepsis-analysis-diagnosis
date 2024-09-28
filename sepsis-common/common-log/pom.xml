@@ -8,14 +8,8 @@
     </parent>
 
     <artifactId>common-log</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- log4j2 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
     </dependencies>
 </project>

@@ -8,7 +8,6 @@
     </parent>
 
     <artifactId>sepsis-system</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -21,12 +20,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <!-- 全局 web -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-web</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -8,7 +8,6 @@
     </parent>
 
     <artifactId>sepsis-gateway</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -34,12 +33,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- SpringCloud gateway 网关路由转发 -->
@@ -75,12 +68,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <!-- 内部模块：自定义SpringBoot缓存策略 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-cache</artifactId>
         </dependency>
     </dependencies>
 </project>

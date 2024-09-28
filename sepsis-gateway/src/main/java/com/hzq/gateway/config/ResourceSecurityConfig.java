@@ -31,13 +31,13 @@ import java.security.interfaces.RSAPublicKey;
  * @author hua
  * @className com.hzq.gateway.config ResourceServerConfig
  * @date 2024/9/26 20:32
- * @description 资源访问配置类，经过网关过滤器链的请求，会在此处考虑是否拦截
+ * @description 资源访问安全配置类，所有请求先进入网关，通过全局过滤器后，在此处被拦截，根据规则进行请求放行和认证处理
  */
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
-public class ResourceServerConfig {
+public class ResourceSecurityConfig {
     public static final String PUBLIC_KEY_CONTEXT = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIYSxMgMlbUgAY5D2zMCB79R" +
             "/hJnAEnh2EyjkNL2ZRAAONQvgGydur/VHHECjoMSA82Vwsr5ijuXdN0wceoct4ECAwEAAQ==";
 
@@ -53,7 +53,7 @@ public class ResourceServerConfig {
     private static final String PUBLIC_KEY_FILE_NAME = "public.key";
 
     // 请求白名单，该集合中的路径，跳过认证，可直接进入系统
-    private static final String[] whitesUrIs = new String[]{"/system/**"};
+    private static final String[] whitesUrIs = new String[]{"/oauth/**"};
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -82,10 +82,15 @@ public class ResourceServerConfig {
                         .publicKey(getRsaPublicKey())
                 )
         );
-        // 配置 CORS 跨域
-        serverHttpSecurity.cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()));
-        // 禁用 CSRF 保护
-        serverHttpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable);
+        // 其他配置
+        serverHttpSecurity
+                // 禁用默认登录页面
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                // 禁用默认登出页面
+                .logout(ServerHttpSecurity.LogoutSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // 配置 CORS 跨域
+                .cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()));
 
         log.info("sepsis gateway resource server config init successfully");
         return serverHttpSecurity.build();

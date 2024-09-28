@@ -20,9 +20,7 @@ import java.util.Date;
 @Data
 @ToString
 @EqualsAndHashCode
-public class BaseEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class BaseEntity {
     /**
      * 创建者
      */

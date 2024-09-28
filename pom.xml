@@ -9,7 +9,7 @@
 
     <groupId>com.hzq</groupId>
     <artifactId>sepsis</artifactId>
-    <version>${hzq.version}</version>
+    <version>1.0.0</version>
 
     <modules>
         <module>sepsis-auth</module>
@@ -38,6 +38,7 @@
         <druid.version>1.2.23</druid.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
         <!-- 第三方工具 -->
+        <caffeine.version>3.1.8</caffeine.version>
         <guava.version>33.3.1-jre</guava.version>
         <jackson.version>2.17.2</jackson.version>
         <lombok.version>1.18.34</lombok.version>
@@ -114,6 +115,13 @@
                 <version>${dynamic-ds.version}</version>
             </dependency>
 
+            <!-- caffeine 库-->
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
+            </dependency>
+
             <!-- google guava 工具 -->
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -134,6 +142,13 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- 内部模块：自定义SpringBoot缓存策略 -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-cache</artifactId>
+                <version>${hzq.version}</version>
             </dependency>
 
             <!-- 内部模块: 系统核心工具 -->

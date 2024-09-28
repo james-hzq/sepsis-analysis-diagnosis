@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>sepsis-auth</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -24,12 +23,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- nacos 服务注册 -->
@@ -50,10 +43,34 @@
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
+        <!-- SpringCloud openfeign 服务调用 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
         <!-- SpringBoot 配置读取 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+        <!-- OAuth2 授权服务器 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-authorization-server</artifactId>
+        </dependency>
+
+        <!-- 内部模块：自定义SpringBoot缓存策略 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-cache</artifactId>
+        </dependency>
+
+        <!-- 系统服务 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>sepsis-system-api</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -14,6 +14,8 @@ public class Result<T> {
     private String msg;
     private T data;
 
+    public Result() {}
+
     public Result(ResultEnum resultEnum) {
         this(resultEnum.getCode(), resultEnum.getMsg(), null);
     }
