@@ -8,10 +8,10 @@
     </parent>
 
     <artifactId>sepsis-common</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>pom</packaging>
 
     <modules>
+        <module>common-cache</module>
         <module>common-core</module>
         <module>common-jackson</module>
         <module>common-log</module>

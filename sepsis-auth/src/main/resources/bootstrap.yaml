@@ -11,6 +11,8 @@ spring:
       default-hostname: localhost
       timeout-seconds: 6
       ignored-interfaces: 'VMware Virtual Ethernet Adapter for VMnet1,VMware Virtual Ethernet Adapter for VMnet8'
+    loadbalancer:
+      enabled: true
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -31,6 +33,6 @@ spring:
             refresh: true
 
 logging:
-  config: classpath:log4j2-spring.xml
+  config: classpath:logback-spring.xml
   file:
-    path: ${user.dir}/logs/${spring.application.name}/
+    path: ${user.dir}/logs/${spring.application.name}

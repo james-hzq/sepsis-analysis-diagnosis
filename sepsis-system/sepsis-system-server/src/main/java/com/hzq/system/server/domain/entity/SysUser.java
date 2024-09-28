@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.Set;
-
 /**
  * @author hua
  * @className com.hzq.system.server.domain.entity SysUser
@@ -29,8 +27,4 @@ public class SysUser extends BaseEntity {
     private String avatar;
     private Character status;
     private Character delFlag;
-    @Transient
-    private Set<String> roles;
-    @Transient
-    private Set<String> perms;
 }

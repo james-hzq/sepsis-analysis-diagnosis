@@ -20,9 +20,7 @@ import java.io.Serializable;
 @ToString
 @Entity
 @Table(name = "sys_role_menu")
-public class SysRoleMenu implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class SysRoleMenu {
     @EmbeddedId
     private SysRoleMenu.SysRoleMenuId id;
     public SysRoleMenu() {}

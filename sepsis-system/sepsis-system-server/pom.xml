@@ -8,14 +8,12 @@
     </parent>
 
     <artifactId>sepsis-system-server</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 全局 web -->
         <dependency>
             <groupId>com.hzq</groupId>
-            <artifactId>common-web</artifactId>
+            <artifactId>sepsis-system-api</artifactId>
         </dependency>
 
         <!-- nacos 服务注册 -->
@@ -28,12 +26,6 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <!-- SpringCloud loadbalancer 负载均衡 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- SpringBoot 配置读取 -->

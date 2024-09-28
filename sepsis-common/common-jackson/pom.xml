@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>common-jackson</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -24,6 +23,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-cache</artifactId>
         </dependency>
 
         <!-- jackson 工具 -->

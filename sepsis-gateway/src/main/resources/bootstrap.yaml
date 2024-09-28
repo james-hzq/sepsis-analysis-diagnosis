@@ -13,6 +13,8 @@ spring:
       default-hostname: localhost
       timeout-seconds: 6
       ignored-interfaces: 'VMware Virtual Ethernet Adapter for VMnet1,VMware Virtual Ethernet Adapter for VMnet8'
+    loadbalancer:
+      enabled: true
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -33,13 +35,16 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: sepsis_router
+        - id: sepsis-auth
+          uri: http://localhost:9200
+          predicates:
+            - Path=/oauth/**
+        - id: sepsis-system
           uri: http://localhost:9201
           predicates:
-            - Method=GET,POST
             - Path=/system/**
 
 logging:
-  config: classpath:log4j2-spring.xml
+  config: classpath:logback-spring.xml
   file:
-    path: ${user.dir}/logs/${spring.application.name}/
+    path: ${user.dir}/logs/${spring.application.name}
