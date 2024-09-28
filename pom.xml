@@ -12,6 +12,7 @@
     <version>${hzq.version}</version>
 
     <modules>
+        <module>sepsis-auth</module>
         <module>sepsis-common</module>
         <module>sepsis-system</module>
         <module>sepsis-gateway</module>

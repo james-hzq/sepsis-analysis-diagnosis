@@ -1,6 +1,7 @@
 package com.hzq.web.exception;
 
 import com.hzq.core.result.ResultEnum;
+import lombok.Getter;
 
 import java.io.Serial;
 
@@ -10,6 +11,7 @@ import java.io.Serial;
  * @date 2024/8/24 12:14
  * @description TODO
  */
+@Getter
 public class SystemException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -28,22 +30,6 @@ public class SystemException extends RuntimeException {
 
     public SystemException(int code, String msg) {
         this.code = code;
-        this.msg = msg;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
         this.msg = msg;
     }
 }

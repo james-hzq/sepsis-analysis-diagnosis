@@ -20,6 +20,9 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
@@ -37,6 +40,7 @@ import java.security.interfaces.RSAPublicKey;
 public class ResourceServerConfig {
     public static final String PUBLIC_KEY_CONTEXT = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIYSxMgMlbUgAY5D2zMCB79R" +
             "/hJnAEnh2EyjkNL2ZRAAONQvgGydur/VHHECjoMSA82Vwsr5ijuXdN0wceoct4ECAwEAAQ==";
+
     public static final String PRIVATE_KEY_CONTEXT = "MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAhhLEyAyV" +
             "tSABjkPbMwIHv1H+EmcASeHYTKOQ0vZlEAA41C+AbJ26v9UccQKOgxIDzZXCyvmKO5d03TBx6" +
             "hy3gQIDAQABAkA2etDwc0CwIWnQa91Z7ETGpuQliSoyW22/sqVKPCoT5lNjEbpbtrcIEb/EK5" +
@@ -44,8 +48,10 @@ public class ResourceServerConfig {
             "CIQCi8sBTHtQre63+SLRfkWmMAToHCVc9j4xoeicHzHqW9wIgY9BkH+J0Q9U+jwcE9AlkIC/x" +
             "U8q9Lkg3IcpjpWUN2+ECIHWlmJAqwPsIF+5w5bHeVfscY53y84bh3nkMQKPT0WqvAiBiD1wab" +
             "4cuREWQEElR2sPVPR6f1bwz0p28Ut3ILOZ0WQ==";
+
     // 存放在 resource 下的公钥文件
     private static final String PUBLIC_KEY_FILE_NAME = "public.key";
+
     // 请求白名单，该集合中的路径，跳过认证，可直接进入系统
     private static final String[] whitesUrIs = new String[]{"/system/**"};
 
@@ -58,29 +64,29 @@ public class ResourceServerConfig {
      **/
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
-        serverHttpSecurity
-                // 配置访问限制：通过 URL 模式限制请求的访问
-                .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-                        // 网关白名单请求路径，直接放行，不需要认证
-                        .pathMatchers(whitesUrIs).permitAll()
-                        // 网关白名单以外的请求，均需要授权
-                        .anyExchange().authenticated())
-                // 配置认证和授权失败的处理器
-                .exceptionHandling(exception -> exception
-                        // 配置认证失败处理器
-                        .authenticationEntryPoint(customAuthenticationEntryPoint())
-                        // 配置授权失败处理器
-                        .accessDeniedHandler(customAccessDeniedHandler()))
-                // 配置 OAuth 2.0 资源服务器保护支持
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        // 配置自定义 JWT 身份验证转换器
-                        .jwt(jwtSpec -> jwtSpec
-                                // 使用自定义的 JWT 身份验证转换器，将 JWT 解析为认证对象
-                                .jwtAuthenticationConverter(customJwtConverter())
-                                // 本地加载公钥
-                                .publicKey(getRsaPublicKey())
-                        ))
-                .csrf(ServerHttpSecurity.CsrfSpec::disable);
+        // 配置访问限制, 通过 URL 模式限制请求的访问
+        serverHttpSecurity.authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
+                .pathMatchers(whitesUrIs).permitAll()
+                .anyExchange().authenticated()
+        );
+        // 配置认证和授权失败的处理器
+        serverHttpSecurity.exceptionHandling(exception -> exception
+                .authenticationEntryPoint(customAuthenticationEntryPoint())
+                .accessDeniedHandler(customAccessDeniedHandler())
+        );
+        // 配置 OAuth 2.0 资源服务器保护支持
+        serverHttpSecurity.oauth2ResourceServer(oauth2 -> oauth2
+                // 配置自定义 JWT 身份验证转换器
+                .jwt(jwtSpec -> jwtSpec
+                        .jwtAuthenticationConverter(customJwtConverter())
+                        .publicKey(getRsaPublicKey())
+                )
+        );
+        // 配置 CORS 跨域
+        serverHttpSecurity.cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()));
+        // 禁用 CSRF 保护
+        serverHttpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable);
+
         log.info("sepsis gateway resource server config init successfully");
         return serverHttpSecurity.build();
     }
@@ -152,5 +158,30 @@ public class ResourceServerConfig {
     public ServerAccessDeniedHandler customAccessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(() -> Mono.just(exchange.getResponse()))
                 .flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.ACCESS_UNAUTHORIZED));
+    }
+
+    /**
+     * @return org.springframework.web.cors.reactive.CorsConfigurationSource
+     * @author hua
+     * @date 2024/9/28 8:21
+     * @apiNote 自定义 CORS 跨域
+     **/
+    @Bean
+    public CorsConfigurationSource customCorsConfiguration() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        // 放行所有域名，生产环境请对此进行修改
+        corsConfiguration.addAllowedOriginPattern("*");
+        // 放行的请求头
+        corsConfiguration.addAllowedHeader("*");
+        // 放行的请求方式，主要有：GET, POST, PUT, DELETE, OPTIONS
+        corsConfiguration.addAllowedMethod("*");
+        // 暴露头部信息
+        corsConfiguration.addExposedHeader("*");
+        // 是否允许发送cookie
+        corsConfiguration.setAllowCredentials(true);
+        // 使用 UrlBasedCorsConfigurationSource 来注册 CorsConfiguration, 注册路径为所有请求
+        UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
+        configSource.registerCorsConfiguration("/**", corsConfiguration);
+        return configSource;
     }
 }
