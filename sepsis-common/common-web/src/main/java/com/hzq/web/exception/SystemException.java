@@ -2,7 +2,6 @@ package com.hzq.web.exception;
 
 import com.hzq.core.result.ResultEnum;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serial;
 
@@ -12,7 +11,6 @@ import java.io.Serial;
  * @date 2024/8/24 12:14
  * @description TODO
  */
-@Setter
 @Getter
 public class SystemException extends RuntimeException {
     @Serial
