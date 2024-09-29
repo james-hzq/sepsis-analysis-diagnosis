@@ -6,9 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
  * @author hua
  * @className com.hzq.auth.domian.dto LoginDTO

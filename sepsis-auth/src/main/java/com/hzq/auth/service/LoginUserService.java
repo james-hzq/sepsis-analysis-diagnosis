@@ -2,8 +2,10 @@ package com.hzq.auth.service;
 
 import com.hzq.auth.domian.LoginUser;
 import com.hzq.core.result.Result;
+import com.hzq.core.result.ResultEnum;
 import com.hzq.system.api.SysUserFeignClient;
 import com.hzq.system.dto.SysUserDTO;
+import com.hzq.web.exception.SystemException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +28,8 @@ public class LoginUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 通过用户名查找用户表信息
-        SysUserDTO sysUserDTO = sysUserFeignClient.selectByUsername(username).getData();
+        SysUserDTO sysUserDTO = Optional.ofNullable(sysUserFeignClient.selectByUsername(username).getData())
+                .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
         // 通过用户ID查找角色信息
         return new LoginUser(sysUserDTO);
     }
