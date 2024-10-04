@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
 
     @Bean
-    @DependsOn("deferringLoadBalancerInterceptor")
     public CaffeineCacheManager cacheManager() {
         Caffeine<Object, Object> caffeine = Caffeine.newBuilder()
                 // 初始容量
