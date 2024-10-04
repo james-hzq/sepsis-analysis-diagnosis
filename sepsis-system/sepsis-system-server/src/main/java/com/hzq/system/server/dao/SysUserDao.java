@@ -1,10 +1,14 @@
 package com.hzq.system.server.dao;
 
 import com.hzq.system.server.domain.entity.SysUser;
+import com.hzq.system.server.domain.vo.SysUserVO;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 /**
  * @author hua

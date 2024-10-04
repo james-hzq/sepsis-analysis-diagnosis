@@ -42,7 +42,6 @@ public class GatewayFilter implements GlobalFilter {
 
         // 从请求头中获取 token
         String authorization = getAuthorization(request);
-
         // 如果 authorization 是空字符串，说明没有得到授权服务器授权，需要将请求转发到授权服务器进行授权
         if (authorization.isEmpty()) {
             return chain.filter(exchange);
@@ -51,7 +50,7 @@ public class GatewayFilter implements GlobalFilter {
         String payload;
         try {
             // 如果 authorization 不是空字符串，获取 JWT 主体，并加入请求头，转发到其他微服务
-             payload = JWSObject.parse(authorization).getPayload().toString();
+            payload = JWSObject.parse(authorization).getPayload().toString();
         } catch (ParseException e) {
             log.error("在请求路径 {} 上发生错误 {}", request.getURI(), ResultEnum.JWT_PARSE_ERROR.getMsg());
             return WebFluxUtils.writeResponse(response, ResultEnum.JWT_PARSE_ERROR);

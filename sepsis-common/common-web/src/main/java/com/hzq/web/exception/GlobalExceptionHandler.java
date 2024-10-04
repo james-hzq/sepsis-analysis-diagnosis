@@ -5,8 +5,7 @@ import com.hzq.core.result.ResultEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,9 +26,9 @@ import java.util.stream.Collectors;
  * @date 2023/11/28
  * @apiNote 全局异常处理
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * @author hua
@@ -40,7 +39,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public Result<?> httpRequestMethodNotSupportHandler(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         log.error("请求地址'{}',不支持'{}'请求", request.getRequestURI(), e.getMethod());
-        return Result.error(ResultEnum.BAD_REQUEST);
+        return Result.error(ResultEnum.BAD_REQUEST_METHOD);
     }
 
     /**
@@ -55,13 +54,13 @@ public class GlobalExceptionHandler {
     public Result<?> httpMessageConversionExceptionHandler(HttpMessageConversionException e, HttpServletRequest request) {
         if (e instanceof HttpMessageNotReadableException) {
             log.error("请求地址'{}', 发生请求消息反序列化异常: {}", request.getRequestURI(), e.getMessage());
-            return Result.error("请求消息内容格式不正确");
+            return Result.error(ResultEnum.BAD_REQUEST_FORMAT);
         }
         if (e instanceof HttpMessageNotWritableException) {
             log.error("请求地址'{}', 发生响应消息序列化异常: {}", request.getRequestURI(), e.getMessage());
-            return Result.error("响应消息内容格式不正确");
+            return Result.error(ResultEnum.BAD_RESPONSE_FORMAT);
         }
-        return Result.error("未知错误");
+        return Result.error(ResultEnum.SERVER_ERROR);
     }
 
     /**
@@ -102,7 +101,7 @@ public class GlobalExceptionHandler {
      * @author hua
      * @date 2024/8/24 12:24
      * @return com.hua.common.exception.Result<?>
-     * @apiNote 全局自定义异常处理器
+     * @apiNote 全局自定义业务异常处理器
      **/
     @ExceptionHandler(value = SystemException.class)
     public Result<?> SystemExceptionHandler(SystemException e, HttpServletRequest request) {

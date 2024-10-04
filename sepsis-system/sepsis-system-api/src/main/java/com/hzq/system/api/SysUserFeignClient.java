@@ -6,6 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 /**
  * @author gc
  * @interface com.hzq.api.feign SysUserFeignClient
@@ -17,4 +19,7 @@ public interface SysUserFeignClient {
 
     @GetMapping("/system/user/username/{username}")
     Result<SysUserDTO> selectByUsername(@PathVariable("username") String username);
+
+    @GetMapping("/system/user-role/roleIds/{userId}")
+    Result<List<Long>> selectRolesByUserId(@PathVariable("userId") Long userId);
 }
