@@ -1,12 +1,15 @@
 package com.hzq.auth.controller;
 
-import com.hzq.auth.domian.LoginBody;
-import com.hzq.auth.service.LoginUserService;
+import com.hzq.auth.domain.LoginBody;
+import com.hzq.auth.domain.LoginUser;
+import com.hzq.auth.service.TokenGeneratorService;
 import com.hzq.core.result.Result;
-import jakarta.annotation.Resource;
+import com.hzq.core.result.ResultEnum;
+import com.hzq.web.exception.SystemException;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/oauth")
 public class AuthController {
-    private final LoginUserService loginUserService;
+    private final AuthenticationManager authenticationManager;
+    private final TokenGeneratorService tokenGeneratorService;
+
     /**
      * @author hua
      * @date 2024/9/28 9:47
@@ -35,8 +40,25 @@ public class AuthController {
         String code = loginBody.getCode();
         String username = loginBody.getUsername();
         String password = loginBody.getPassword();
-        //
-        UserDetails userDetails = loginUserService.loadUserByUsername(username);
-        return Result.success();
+        // TODO 验证码服务校验验证码
+        // 使用配置的认证器进行用户名密码认证
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+        try {
+            authentication = authenticationManager.authenticate(authentication);
+        } catch (BadCredentialsException | UsernameNotFoundException e) {
+            throw new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR);
+        } catch (InsufficientAuthenticationException e) {
+            throw new SystemException(ResultEnum.ACCESS_UNAUTHORIZED);
+        } catch (DisabledException e) {
+            throw new SystemException(ResultEnum.USER_DISABLED);
+        } catch (InternalAuthenticationServiceException e) {
+            throw new SystemException("系统内部错误，引发认证异常");
+        } catch (AuthenticationServiceException e) {
+            throw new SystemException("系统外部错误，引发认证异常");
+        }
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        // token生成服务生成 access_token
+        String accessToken = tokenGeneratorService.generateAccessToken(loginUser);
+        return Result.success(accessToken);
     }
 }

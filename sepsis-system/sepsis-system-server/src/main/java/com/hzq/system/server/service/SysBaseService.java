@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2024/8/30 17:00
  * @description 提取 Service 中的公共方法
  */
-public class SystemBaseService {
+public class SysBaseService {
     /**
      * @param status 状态
      * @param startTime 创建初始时间

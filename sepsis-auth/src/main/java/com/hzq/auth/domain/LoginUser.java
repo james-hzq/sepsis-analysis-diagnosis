@@ -1,4 +1,4 @@
-package com.hzq.auth.domian;
+package com.hzq.auth.domain;
 
 import com.hzq.core.constant.UserConstants;
 import com.hzq.system.dto.SysUserDTO;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author hua
- * @className com.hzq.auth.domian LoginUser
+ * @className com.hzq.auth.domain LoginUser
  * @date 2024/9/28 10:10
  * @description 系统用户信息（包含用户名、密码和权限），用户名和密码用于认证，认证成功之后授予权限
  */

@@ -8,5 +8,5 @@ package com.hzq.core.constant;
  */
 public class LoginConstants {
     public static final String AUTHENTICATION = "Authorization";
-    public static final String TOKEN_PREFIX = "Hzq ";
+    public static final String TOKEN_PREFIX = "Bearer ";
 }

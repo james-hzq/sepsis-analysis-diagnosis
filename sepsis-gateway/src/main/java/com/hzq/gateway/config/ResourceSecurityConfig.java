@@ -13,7 +13,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
@@ -31,29 +31,19 @@ import java.security.interfaces.RSAPublicKey;
  * @author hua
  * @className com.hzq.gateway.config ResourceServerConfig
  * @date 2024/9/26 20:32
- * @description 资源访问安全配置类，所有请求先进入网关，通过全局过滤器后，在此处被拦截，根据规则进行请求放行和认证处理
+ * @description 资源访问安全配置类，所有请求先进入这里，根据规则进行请求放行和认证处理，通过后进入网关全局过滤器
  */
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
 public class ResourceSecurityConfig {
-    public static final String PUBLIC_KEY_CONTEXT = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIYSxMgMlbUgAY5D2zMCB79R" +
-            "/hJnAEnh2EyjkNL2ZRAAONQvgGydur/VHHECjoMSA82Vwsr5ijuXdN0wceoct4ECAwEAAQ==";
-
-    public static final String PRIVATE_KEY_CONTEXT = "MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAhhLEyAyV" +
-            "tSABjkPbMwIHv1H+EmcASeHYTKOQ0vZlEAA41C+AbJ26v9UccQKOgxIDzZXCyvmKO5d03TBx6" +
-            "hy3gQIDAQABAkA2etDwc0CwIWnQa91Z7ETGpuQliSoyW22/sqVKPCoT5lNjEbpbtrcIEb/EK5" +
-            "4DbUc0e/2HzPtxj4Z5C1h9CwA7AiEA0qLRk6PXsXizJJRo8b39cO6aV86Mib0LSw7yzyPmr0c" +
-            "CIQCi8sBTHtQre63+SLRfkWmMAToHCVc9j4xoeicHzHqW9wIgY9BkH+J0Q9U+jwcE9AlkIC/x" +
-            "U8q9Lkg3IcpjpWUN2+ECIHWlmJAqwPsIF+5w5bHeVfscY53y84bh3nkMQKPT0WqvAiBiD1wab" +
-            "4cuREWQEElR2sPVPR6f1bwz0p28Ut3ILOZ0WQ==";
 
     // 存放在 resource 下的公钥文件
     private static final String PUBLIC_KEY_FILE_NAME = "public.key";
 
     // 请求白名单，该集合中的路径，跳过认证，可直接进入系统
-    private static final String[] whitesUrIs = new String[]{"/oauth/**"};
+    private static final String[] whitesUrIs = new String[] {"/oauth/**"};
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -76,10 +66,10 @@ public class ResourceSecurityConfig {
         );
         // 配置 OAuth 2.0 资源服务器保护支持
         serverHttpSecurity.oauth2ResourceServer(oauth2 -> oauth2
-                // 配置自定义 JWT 身份验证转换器
+                // 配置自定义 JWT 身份验证转换器, 以及jwt解码器
                 .jwt(jwtSpec -> jwtSpec
                         .jwtAuthenticationConverter(customJwtConverter())
-                        .publicKey(getRsaPublicKey())
+                        .jwtDecoder(reactiveJwtDecoder())
                 )
         );
         // 其他配置
@@ -119,16 +109,17 @@ public class ResourceSecurityConfig {
     }
 
     /**
-     * @return java.security.interfaces.RSAPublicKey
+     * @return ReactiveJwtDecoder
      * @author hua
-     * @date 2024/9/26 20:55
-     * @apiNote 从本地 Resources 资源下读取公钥文件的内容，并转换为 RSAPublicKey
+     * @date 2024/10/04
+     * @apiNote 配置 Reactive JWT 解码器
      **/
     @SneakyThrows
     @Bean
-    public RSAPublicKey getRsaPublicKey() {
-        // 生成 RSA 公钥: 最好是从文件里面读取，然后生成，但是我这里报错，后续处理
-        return (RSAPublicKey) RSAUtils.getPublicKey(PUBLIC_KEY_CONTEXT);
+    public ReactiveJwtDecoder reactiveJwtDecoder() {
+        return NimbusReactiveJwtDecoder
+                .withPublicKey((RSAPublicKey) RSAUtils.getPublicKey(RSAUtils.PUBLIC_KEY_CONTEXT))
+                .build();
     }
 
     /**

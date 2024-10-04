@@ -1,4 +1,4 @@
-package com.hzq.auth.domian;
+package com.hzq.auth.domain;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -6,12 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
  * @author hua
- * @className com.hzq.auth.domian.dto LoginDTO
+ * @className com.hzq.auth.domain.dto LoginDTO
  * @date 2024/9/28 9:49
  * @description 账户名和密码登录传输对象
  */
