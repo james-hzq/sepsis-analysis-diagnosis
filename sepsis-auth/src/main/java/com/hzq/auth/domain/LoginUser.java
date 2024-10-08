@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,23 +34,27 @@ public class LoginUser implements UserDetails {
     /** 账户是否启用 */
     private Boolean enabled;
 
-    /** 用户的权限集合，表示用户在系统中拥有的权限 */
-    private Collection<GrantedAuthority> authorities;
+    /** 用户的所属角色集合 */
+    private Set<String> roles;
 
     /** 用户的权限标识集合, 通常用于更细粒度的权限控制 */
     private Set<String> perms;
+
+    /** 用户的角色集合，表示用户在系统中所属角色信息 */
+    private Collection<GrantedAuthority> authorities;
 
     public LoginUser(SysUserDTO sysUserDTO) {
         this.userId = sysUserDTO.getUserId();
         this.username = sysUserDTO.getUsername();
         this.password = sysUserDTO.getPassword();
+        this.roles = sysUserDTO.getRoles();
+        this.perms = sysUserDTO.getPerms();
         this.enabled = UserConstants.STATUS_OK.equals(sysUserDTO.getStatus());
-        if (sysUserDTO.getRoles() != null && !sysUserDTO.getRoles().isEmpty()) {
+        if (Optional.ofNullable(sysUserDTO.getRoles()).isPresent()) {
             this.authorities = sysUserDTO.getRoles().stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toSet());
         }
-        this.perms = sysUserDTO.getPerms();
     }
 
     @Override

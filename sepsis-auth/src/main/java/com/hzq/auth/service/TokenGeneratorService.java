@@ -21,19 +21,19 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class TokenGeneratorService {
+    // JWT默认的有效时间（单位：s）
+    private static final int DEFAULT_EXPIRE_INTERVAL = 3600;
+    // 签署 JWS 或 加密 JWE 的接口
     private final JwtEncoder jwtEncoder;
 
     public String generateAccessToken(LoginUser loginUser) {
-        // 设置过期时间
+        // 获取当前时间和过期时间
         Instant issuedAt = Instant.now();
-        Instant expiresAt = issuedAt.plusSeconds(3600);
-
+        Instant expiresAt = issuedAt.plusSeconds(DEFAULT_EXPIRE_INTERVAL);
         // 创建 JWT 负载
-        JwtClaimsSet.Builder claimsBuilder = createJwtClaimsSet(loginUser, issuedAt, expiresAt);
-
+        JwtClaimsSet jwtClaimsSet = createJwtClaimsSet(loginUser, issuedAt, expiresAt);
         // 生成 JWT
-        Jwt jwt = this.jwtEncoder.encode(JwtEncoderParameters.from(claimsBuilder.build()));
-
+        Jwt jwt = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet));
         // 返回生成的 JWT 字符串
         return jwt.getTokenValue();
     }
@@ -47,7 +47,7 @@ public class TokenGeneratorService {
      * @return org.springframework.security.oauth2.jwt.JwtClaimsSet.Builder
      * @apiNote 创建 JWT 负载
      **/
-    private JwtClaimsSet.Builder createJwtClaimsSet(LoginUser loginUser, Instant issuedAt, Instant expiresAt) {
+    private JwtClaimsSet createJwtClaimsSet(LoginUser loginUser, Instant issuedAt, Instant expiresAt) {
         return JwtClaimsSet.builder()
                 // 设置主题为用户名
                 .subject(loginUser.getUsername())
@@ -56,25 +56,11 @@ public class TokenGeneratorService {
                 // 设置过期时间
                 .expiresAt(expiresAt)
                 // 设置用户 ID
-                .claim("userId", loginUser.getUserId());
-//                // 设置用户角色
-//                .claim("roles", getUserRoles(loginUser))
-//                // 设置用户权限
-//                .claim("perms", loginUser.getPerms());
-    }
-
-    /**
-     * @author hua
-     * @date 2024/10/4 16:51
-     * @param loginUser 系统用户信息
-     * @return java.util.Set<java.lang.String>
-     * @apiNote TODO
-     **/
-    private Set<String> getUserRoles(LoginUser loginUser) {
-        return loginUser.getAuthorities().stream()
-                // 将 GrantedAuthority 转换为角色字符串
-                .map(GrantedAuthority::getAuthority)
-                // 收集为 Set
-                .collect(Collectors.toSet());
+                .claim("userId", loginUser.getUserId())
+                // 设置用户所属角色
+                .claim("roles", loginUser.getRoles())
+                // 设置用户拥有权限
+//                .claim("perms", loginUser.getPerms())
+                .build();
     }
 }

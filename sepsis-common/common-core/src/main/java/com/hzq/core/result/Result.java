@@ -24,8 +24,8 @@ public class Result<T> {
         this(resultEnum.getCode(), resultEnum.getMessage(), data);
     }
 
-    public Result(int code, String msg) {
-        this(code, msg, null);
+    public Result(int code, String message) {
+        this(code, message, null);
     }
 
     public Result(int code, String message, T data) {
