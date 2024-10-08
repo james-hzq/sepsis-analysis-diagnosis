@@ -29,10 +29,10 @@ public enum ResultEnum {
     CUSTOM_ERROR(2000, "自定义异常");
 
     private final int code;
-    private final String msg;
+    private final String message;
 
-    ResultEnum(int code, String msg) {
+    ResultEnum(int code, String message) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
     }
 }

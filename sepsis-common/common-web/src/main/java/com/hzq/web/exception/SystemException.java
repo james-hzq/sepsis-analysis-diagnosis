@@ -21,7 +21,7 @@ public class SystemException extends RuntimeException {
     public SystemException() {}
 
     public SystemException(ResultEnum resultEnum) {
-        this(resultEnum.getCode(), resultEnum.getMsg());
+        this(resultEnum.getCode(), resultEnum.getMessage());
     }
 
     public SystemException(String msg) {

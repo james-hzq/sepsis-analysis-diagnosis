@@ -1,7 +1,6 @@
 package com.hzq.auth.service;
 
-import com.hzq.auth.domian.LoginUser;
-import com.hzq.core.result.Result;
+import com.hzq.auth.domain.LoginUser;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.system.api.SysUserFeignClient;
 import com.hzq.system.dto.SysUserDTO;

@@ -11,26 +11,26 @@ import lombok.Data;
 @Data
 public class Result<T> {
     private int code;
-    private String msg;
+    private String message;
     private T data;
 
     public Result() {}
 
     public Result(ResultEnum resultEnum) {
-        this(resultEnum.getCode(), resultEnum.getMsg(), null);
+        this(resultEnum.getCode(), resultEnum.getMessage(), null);
     }
 
     public Result(ResultEnum resultEnum, T data) {
-        this(resultEnum.getCode(), resultEnum.getMsg(), data);
+        this(resultEnum.getCode(), resultEnum.getMessage(), data);
     }
 
     public Result(int code, String msg) {
         this(code, msg, null);
     }
 
-    public Result(int code, String msg, T data) {
+    public Result(int code, String message, T data) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = data;
     }
 

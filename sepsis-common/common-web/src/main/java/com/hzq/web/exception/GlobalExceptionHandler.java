@@ -105,8 +105,8 @@ public class GlobalExceptionHandler {
      **/
     @ExceptionHandler(value = SystemException.class)
     public Result<?> SystemExceptionHandler(SystemException e, HttpServletRequest request) {
-        log.error(e.getMsg(), request.getRequestURI(), e);
-        return Result.error(e.getCode(), e.getMsg());
+        log.error(e.getMessage(), request.getRequestURI(), e);
+        return Result.error(e.getCode(), e.getMessage());
     }
 
     /**

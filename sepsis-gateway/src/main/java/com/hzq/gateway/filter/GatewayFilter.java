@@ -52,7 +52,7 @@ public class GatewayFilter implements GlobalFilter {
             // 如果 authorization 不是空字符串，获取 JWT 主体，并加入请求头，转发到其他微服务
             payload = JWSObject.parse(authorization).getPayload().toString();
         } catch (ParseException e) {
-            log.error("在请求路径 {} 上发生错误 {}", request.getURI(), ResultEnum.JWT_PARSE_ERROR.getMsg());
+            log.error("在请求路径 {} 上发生错误 {}", request.getURI(), ResultEnum.JWT_PARSE_ERROR.getMessage());
             return WebFluxUtils.writeResponse(response, ResultEnum.JWT_PARSE_ERROR);
         }
 
