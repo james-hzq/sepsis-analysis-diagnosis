@@ -14,12 +14,9 @@ import java.util.List;
  * @date 2024/9/3 14:44
  * @description TODO
  */
-@FeignClient(value = "sepsis-system")
+@FeignClient(contextId = "sys-user", name = "sepsis-system")
 public interface SysUserFeignClient {
 
     @GetMapping("/system/user/username/{username}")
     Result<SysUserDTO> selectByUsername(@PathVariable("username") String username);
-
-    @GetMapping("/system/user-role/roleIds/{userId}")
-    Result<List<Long>> selectRolesByUserId(@PathVariable("userId") Long userId);
 }
