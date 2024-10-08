@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author hua
@@ -31,7 +32,7 @@ public class SysRoleController {
      * @apiNote 根据角色唯一标识集合查询角色Key的集合
      **/
     @GetMapping("/roleKeys/{roleIds}")
-    public Result<List<String>> selectRoleKeys(@PathVariable("roleIds") @NotNull(message = "roleIds不得为空") List<Long> roleIds) {
+    public Result<Set<String>> selectRoleKeys(@PathVariable("roleIds") @NotNull(message = "roleIds不得为空") List<Long> roleIds) {
         return Result.success(sysRoleService.selectRoleKeys(roleIds));
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
  * @description 角色DAO
  */
 public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificationExecutor<SysRole> {
+
     @Query(value = "select r from SysRole r where r.roleId in :roleIds")
     List<SysRole> findSysRolesByRoleIds(@Param("roleIds") List<Long> roleIds);
 }

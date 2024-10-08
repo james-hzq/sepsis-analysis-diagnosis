@@ -14,6 +14,7 @@ import java.util.List;
  * @description TODO
  */
 public interface SysUserRoleDao extends JpaRepository<SysUserRole, SysUserRole.SysUserRoleId> {
+    
     @Query("select ur.id.roleId from SysUserRole ur where ur.id.userId = :userId")
     List<Long> findRoleIdsByUserId(@Param("userId") Long userId);
 }

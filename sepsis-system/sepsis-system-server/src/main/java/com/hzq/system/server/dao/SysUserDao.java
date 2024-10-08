@@ -17,6 +17,7 @@ import java.util.List;
  * @description TODO
  */
 public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysUser> {
+
     @Query("select u from SysUser u where u.username = :username")
     SysUser findSysUserByUsername(@Param("username") String username);
 }

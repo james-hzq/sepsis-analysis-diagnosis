@@ -1,12 +1,12 @@
 package com.hzq.system.api;
 
 import com.hzq.core.result.Result;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author gc
@@ -18,5 +18,5 @@ import java.util.List;
 public interface SysRoleFeignClient {
 
     @GetMapping("/roleKeys/{roleIds}")
-    Result<List<String>> selectRoleKeys(@PathVariable("roleIds") List<Long> roleIds);
+    Result<Set<String>> selectRoleKeys(@PathVariable("roleIds") List<Long> roleIds);
 }

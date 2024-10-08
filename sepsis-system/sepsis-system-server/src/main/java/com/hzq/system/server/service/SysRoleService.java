@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author hua
@@ -19,8 +21,8 @@ import java.util.Optional;
 public class SysRoleService extends SysBaseService {
     private SysRoleDao sysRoleDao;
 
-    public List<String> selectRoleKeys(List<Long> roleIds) {
+    public Set<String> selectRoleKeys(List<Long> roleIds) {
         List<SysRole> sysRoleList = sysRoleDao.findSysRolesByRoleIds(roleIds);
-        return sysRoleList.stream().map(SysRole::getRoleKey).toList();
+        return sysRoleList.stream().map(SysRole::getRoleKey).collect(Collectors.toSet());
     }
 }
