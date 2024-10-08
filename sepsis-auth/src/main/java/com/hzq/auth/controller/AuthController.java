@@ -41,7 +41,7 @@ public class AuthController {
         String username = loginBody.getUsername();
         String password = loginBody.getPassword();
         // TODO 验证码服务校验验证码
-        // 使用配置的认证器进行用户名密码认证
+        // 使用配置的认证器进行用户名密码认证, 认证成功返回用户的登录信息
         Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
         try {
             authentication = authenticationManager.authenticate(authentication);
@@ -57,7 +57,7 @@ public class AuthController {
             throw new SystemException("系统外部错误，引发认证异常");
         }
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        // token生成服务生成 access_token
+        // Token生成服务生成 access_token
         String accessToken = tokenGeneratorService.generateAccessToken(loginUser);
         return Result.success(accessToken);
     }

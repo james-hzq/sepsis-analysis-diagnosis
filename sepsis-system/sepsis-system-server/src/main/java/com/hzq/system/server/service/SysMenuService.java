@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
  */
 @AllArgsConstructor
 @Service
-public class SysMenuService {
+public class SysMenuService extends SysBaseService {
     private SysMenuDao sysMenuDao;
 }

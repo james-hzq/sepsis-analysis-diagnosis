@@ -2,6 +2,7 @@ package com.hzq.auth.service;
 
 import com.hzq.auth.domain.LoginUser;
 import com.hzq.core.result.ResultEnum;
+import com.hzq.system.api.SysRoleFeignClient;
 import com.hzq.system.api.SysUserFeignClient;
 import com.hzq.system.api.SysUserRoleFeignClient;
 import com.hzq.system.dto.SysUserDTO;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class LoginUserService implements UserDetailsService {
     private final SysUserFeignClient sysUserFeignClient;
     private final SysUserRoleFeignClient sysUserRoleFeignClient;
+    private final SysRoleFeignClient sysRoleFeignClient;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -34,6 +36,9 @@ public class LoginUserService implements UserDetailsService {
                 .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
         // 通过用户ID查找角色信息
         List<Long> roleIds = Optional.ofNullable(sysUserRoleFeignClient.selectRolesByUserId(sysUserDTO.getUserId()).getData())
+                .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
+        // 通过角色ID集合查找用户所属的角色字符串
+        List<String> roleKeys = Optional.ofNullable(sysRoleFeignClient.selectRoleKeys(roleIds).getData())
                 .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
         return new LoginUser(sysUserDTO);
     }

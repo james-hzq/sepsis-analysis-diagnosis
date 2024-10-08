@@ -28,6 +28,13 @@ import java.util.Optional;
 public class SysUserController {
     private final SysUserService sysUserService;
 
+    /**
+     * @param username 用户名
+     * @return com.hzq.core.result.Result<com.hzq.system.dto.SysUserDTO>
+     * @author gc
+     * @date 2024/10/8 16:35
+     * @apiNote 根据用户名查询用户信息
+     **/
     @GetMapping("/username/{username}")
     public Result<SysUserDTO> selectSysUserByUsername(@PathVariable("username") String username) {
         if (Strings.isNullOrEmpty(username))
@@ -35,6 +42,13 @@ public class SysUserController {
         return Result.success(sysUserService.selectSysUserByUsername(username));
     }
 
+    /**
+     * @param sysUserForm 用户查询表单对象
+     * @return com.hzq.core.result.Result<java.util.List<com.hzq.system.server.domain.vo.SysUserVO>>
+     * @author gc
+     * @date 2024/10/8 16:36
+     * @apiNote 根据用户表单查询用户信息
+     **/
     @GetMapping("/list")
     public Result<List<SysUserVO>> list(@Validated @RequestBody SysUserForm sysUserForm) {
         List<SysUserVO> sysUserVOList = Optional.ofNullable(sysUserService.list(sysUserForm))

@@ -24,9 +24,9 @@ public class TokenGeneratorService {
     private final JwtEncoder jwtEncoder;
 
     public String generateAccessToken(LoginUser loginUser) {
-        // 获取当前时间和过期时间
+        // 设置过期时间
         Instant issuedAt = Instant.now();
-        Instant expiresAt = issuedAt.plusSeconds(3600); // 设置 Token 有效期为 2 小时
+        Instant expiresAt = issuedAt.plusSeconds(3600);
 
         // 创建 JWT 负载
         JwtClaimsSet.Builder claimsBuilder = createJwtClaimsSet(loginUser, issuedAt, expiresAt);
@@ -51,12 +51,12 @@ public class TokenGeneratorService {
         return JwtClaimsSet.builder()
                 // 设置主题为用户名
                 .subject(loginUser.getUsername())
-                // 设置用户 ID
-                .claim("userId", loginUser.getUserId())
                 // 设置签发时间
                 .issuedAt(issuedAt)
                 // 设置过期时间
-                .expiresAt(expiresAt);
+                .expiresAt(expiresAt)
+                // 设置用户 ID
+                .claim("userId", loginUser.getUserId());
 //                // 设置用户角色
 //                .claim("roles", getUserRoles(loginUser))
 //                // 设置用户权限

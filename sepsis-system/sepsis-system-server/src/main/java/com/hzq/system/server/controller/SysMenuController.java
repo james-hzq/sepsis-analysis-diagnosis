@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author hua
  * @className com.hzq.system.server.controller SysMenuController
  * @date 2024/10/1 16:08
- * @description TODO
+ * @description 系统菜单表请求处理器
  */
 @AllArgsConstructor
 @RestController

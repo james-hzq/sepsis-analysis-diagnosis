@@ -29,7 +29,6 @@ import java.util.Optional;
 @Service
 public class SysUserService extends SysBaseService {
     private final SysUserDao sysUserDao;
-    private final SysUserRoleDao sysUserRoleDao;
 
     public SysUserDTO selectSysUserByUsername(String username) {
         // 从数据库根据用户名查询出 SysUser 实体对象

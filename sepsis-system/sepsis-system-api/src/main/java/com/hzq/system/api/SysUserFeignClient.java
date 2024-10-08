@@ -12,11 +12,11 @@ import java.util.List;
  * @author gc
  * @interface com.hzq.api.feign SysUserFeignClient
  * @date 2024/9/3 14:44
- * @description TODO
+ * @description 用户远程调用服务
  */
-@FeignClient(contextId = "sys-user", name = "sepsis-system")
+@FeignClient(contextId = "sys-user", name = "sepsis-system", path = "/system/user")
 public interface SysUserFeignClient {
 
-    @GetMapping("/system/user/username/{username}")
+    @GetMapping("/username/{username}")
     Result<SysUserDTO> selectByUsername(@PathVariable("username") String username);
 }
