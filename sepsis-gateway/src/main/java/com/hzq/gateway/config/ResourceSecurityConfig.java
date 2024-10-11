@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -23,6 +24,7 @@ import org.springframework.security.web.server.authorization.ServerAccessDeniedH
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
@@ -135,8 +137,10 @@ public class ResourceSecurityConfig {
      **/
     @Bean
     public ServerAuthenticationEntryPoint customAuthenticationEntryPoint() {
-        return (exchange, e) -> Mono.defer(() -> Mono.just(exchange.getResponse()))
-                .flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.TOKEN_INVALID_OR_EXPIRED));
+        return (exchange, denied) -> Mono.defer(() -> {
+            log.error("在请求 {} 上出现错误，Token无效或已过期", exchange.getRequest().getURI());
+            return Mono.just(exchange.getResponse());
+        }).flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.TOKEN_INVALID_OR_EXPIRED));
     }
 
     /**
@@ -152,8 +156,10 @@ public class ResourceSecurityConfig {
      **/
     @Bean
     public ServerAccessDeniedHandler customAccessDeniedHandler() {
-        return (exchange, denied) -> Mono.defer(() -> Mono.just(exchange.getResponse()))
-                .flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.ACCESS_UNAUTHORIZED));
+        return (exchange, denied) -> Mono.defer(() -> {
+            log.error("在请求 {} 上出现错误，用户访问未被授权", exchange.getRequest().getURI());
+            return Mono.just(exchange.getResponse());
+        }).flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.ACCESS_UNAUTHORIZED));
     }
 
     /**

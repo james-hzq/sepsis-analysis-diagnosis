@@ -2,15 +2,10 @@ package com.hzq.auth.service;
 
 import com.hzq.auth.domain.LoginUser;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author hua
@@ -57,6 +52,8 @@ public class TokenGeneratorService {
                 .expiresAt(expiresAt)
                 // 设置用户 ID
                 .claim("userId", loginUser.getUserId())
+                // 设置用户名
+                .claim("username", loginUser.getUsername())
                 // 设置用户所属角色
                 .claim("roles", loginUser.getRoles())
                 // 设置用户拥有权限

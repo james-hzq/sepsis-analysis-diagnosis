@@ -45,7 +45,7 @@ import java.util.List;
 public class AuthSecurityConfig {
     // 请求响应白名单列表
     private static final List<String> whitePaths = List.of(
-            "/oauth/login"
+            "/oauth/login", "/oauth/login/user-info"
     );
 
     private final LoginUserService loginUserService;
