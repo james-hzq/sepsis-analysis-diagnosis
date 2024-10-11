@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,11 +37,12 @@ public class LoginUserService implements UserDetailsService {
         SysUserDTO sysUserDTO = Optional.ofNullable(sysUserFeignClient.selectByUsername(username).getData())
                 .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
         // 通过用户ID查找角色信息
-        List<Long> roleIds = Optional.ofNullable(sysUserRoleFeignClient.selectRolesByUserId(sysUserDTO.getUserId()).getData())
-                .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
+        List<Long> roleIds = sysUserRoleFeignClient.selectRolesByUserId(sysUserDTO.getUserId()).getData();
+        if (CollectionUtils.isEmpty(roleIds)) throw new SystemException(ResultEnum.USER_NO_ROLE);
         // 通过角色ID集合查找用户所属的角色字符串
-        Set<String> roleKeys = Optional.ofNullable(sysRoleFeignClient.selectRoleKeys(roleIds).getData())
-                .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
+        Set<String> roleKeys = sysRoleFeignClient.selectRoleKeys(roleIds).getData();
+        if (CollectionUtils.isEmpty(roleKeys)) throw new SystemException(ResultEnum.USER_NO_ROLE);
+        // 通过角色ID查找拥有的菜单ID
         // 更新 sysUserDTO
         sysUserDTO.setRoles(roleKeys);
         // 创建并返回用户登录信息对象

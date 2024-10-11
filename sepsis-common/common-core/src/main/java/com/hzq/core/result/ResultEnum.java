@@ -25,6 +25,7 @@ public enum ResultEnum {
     JWT_PARSE_ERROR(2000, "JWT 格式不正确，解析失败"),
     USERNAME_OR_PASSWORD_ERROR(2000, "用户名或密码错误"),
     USER_DISABLED(2000, "用户被禁用"),
+    USER_NO_ROLE(2000, "用户未拥有角色"),
     // 自定义业务失败提示 3xxx
     CUSTOM_ERROR(2000, "自定义异常");
 

@@ -2,19 +2,21 @@ package com.hzq.auth.controller;
 
 import com.hzq.auth.domain.LoginBody;
 import com.hzq.auth.domain.LoginUser;
+import com.hzq.auth.domain.LoginUserInfo;
 import com.hzq.auth.service.TokenGeneratorService;
+import com.hzq.core.constant.LoginConstants;
 import com.hzq.core.result.Result;
 import com.hzq.core.result.ResultEnum;
+import com.hzq.jackson.JacksonUtil;
 import com.hzq.web.exception.SystemException;
+import com.hzq.web.util.ServletUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author hua
@@ -60,5 +62,18 @@ public class AuthController {
         // Token生成服务生成 access_token
         String accessToken = tokenGeneratorService.generateAccessToken(loginUser);
         return Result.success(accessToken);
+    }
+
+    /**
+     * @return com.hzq.core.result.Result<?>
+     * @author gc
+     * @date 2024/10/11 14:01
+     * @apiNote 获取用户登录信息
+     **/
+    @GetMapping("/login/user-info")
+    public Result<LoginUserInfo> getLoginUserInfo(HttpServletRequest request) {
+        String loginUserInfoStr = ServletUtils.getHeader(request, LoginConstants.LOGIN_USER_INFO_HEADER);
+        LoginUserInfo loginUserInfo = JacksonUtil.parseObject(loginUserInfoStr, LoginUserInfo.class);
+        return Result.success(loginUserInfo);
     }
 }

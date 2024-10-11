@@ -9,4 +9,5 @@ package com.hzq.core.constant;
 public class LoginConstants {
     public static final String AUTHENTICATION = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String LOGIN_USER_INFO_HEADER = "login_user_info";
 }
