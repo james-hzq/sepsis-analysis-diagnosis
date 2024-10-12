@@ -5,8 +5,8 @@ import { useTagsViewStore } from "./tags-view"
 import { useSettingsStore } from "./settings"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import { resetRouter } from "@/router"
-import { loginApi, getLoginUserInfoApi } from "@/api/login"
-import { type LoginRequestData } from "@/api/login/types/login"
+import { SystemLoginApi, GithubLoginApi, getLoginUserInfoApi } from "@/api/login"
+import { type SystemLoginRequestData, GithubLoginRequestData } from "@/api/login/types/login"
 import routeSettings from "@/config/route"
 
 export const useUserStore = defineStore("user", () => {
@@ -17,12 +17,20 @@ export const useUserStore = defineStore("user", () => {
   const tagsViewStore = useTagsViewStore()
   const settingsStore = useSettingsStore()
 
-  /** 登录 */
-  const login = async ({ username, password, code }: LoginRequestData) => {
-    const { data } = await loginApi({ username, password, code })
+  /** 系统用户登录 */
+  const systemLogin = async ({ username, password, code }: SystemLoginRequestData) => {
+    const { data } = await SystemLoginApi({ username, password, code })
     setToken(data)
     token.value = data
   }
+
+  /** github登录 */
+  const githubLogin = async ()=> {
+    const { data } = await GithubLoginApi()
+    setToken(data)
+    token.value = data
+  }
+
   /** 获取用户详情 */
   const getInfo = async () => {
     const { data } = await getLoginUserInfoApi()
@@ -30,6 +38,7 @@ export const useUserStore = defineStore("user", () => {
     // 验证返回的 roles 是否为一个非空数组，否则塞入一个没有任何作用的默认角色，防止路由守卫逻辑进入无限循环
     roles.value = data.roles?.length > 0 ? data.roles : routeSettings.defaultRoles
   }
+
   /** 模拟角色变化 */
   const changeRoles = async (role: string) => {
     const newToken = "token-" + role
@@ -38,6 +47,7 @@ export const useUserStore = defineStore("user", () => {
     // 用刷新页面代替重新登录
     window.location.reload()
   }
+
   /** 登出 */
   const logout = () => {
     removeToken()
@@ -60,7 +70,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  return { token, roles, username, login, getInfo, changeRoles, logout, resetToken }
+  return { token, roles, username, systemLogin, githubLogin, getInfo, changeRoles, logout, resetToken }
 })
 
 /** 在 setup 外使用 */

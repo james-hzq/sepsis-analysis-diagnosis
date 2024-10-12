@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,7 @@ public class AuthController {
      * @return com.hzq.core.result.Result<java.lang.String>
      * @apiNote 走系统账户名和密码登录的请求
      **/
-    @PostMapping("/login")
+    @PostMapping("/system/login")
     public Result<String> login(@Validated @RequestBody LoginBody loginBody) {
         String code = loginBody.getCode();
         String username = loginBody.getUsername();
@@ -62,6 +63,20 @@ public class AuthController {
         // Token生成服务生成 access_token
         String accessToken = tokenGeneratorService.generateAccessToken(loginUser);
         return Result.success(accessToken);
+    }
+
+    @PostMapping("/github/login")
+    public Result<String> githubLogin(OAuth2AuthenticationToken authentication) {
+        // 从 OAuth2AuthenticationToken 中获取用户信息
+        String username = authentication.getPrincipal().getAttribute("login");
+        System.out.println("username");
+        System.out.println("执行到这里");
+        return Result.success();
+    }
+
+    @GetMapping("/github/callback")
+    public Result<String> githubLoginCallback() {
+        return Result.success();
     }
 
     /**

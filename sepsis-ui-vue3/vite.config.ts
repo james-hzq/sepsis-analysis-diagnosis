@@ -39,6 +39,11 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           ws: true,
           changeOrigin: true,
           rewrite: (path) => path.replace("/dev-api", "")
+        },
+        "/oauth/github": {
+          target: "http://localhost:9100", // 后端处理 GitHub OAuth 请求的 API 地址
+          changeOrigin: true,
+          rewrite: (path) => path.replace( "/oauth/github","/oauth/github" )
         }
       },
       /** 预热常用文件，提高初始页面加载速度 */

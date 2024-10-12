@@ -9,12 +9,20 @@ export function getLoginCodeApi() {
   })
 }
 
-/** 登录并返回 Token */
-export function loginApi(data: Login.LoginRequestData) {
+/** 系统登录并返回 Token */
+export function SystemLoginApi(data: Login.SystemLoginRequestData) {
   return request<Login.LoginResponseData>({
-    url: "/oauth/login",
+    url: "/oauth/system/login",
     method: "post",
     data
+  })
+}
+
+/** Github授权登录并返回 Token */
+export function GithubLoginApi() {
+  return request<Login.LoginResponseData>({
+    url: "/oauth/github/login",
+    method: "post",
   })
 }
 

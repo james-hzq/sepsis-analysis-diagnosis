@@ -1,10 +1,13 @@
-export interface LoginRequestData {
+export interface SystemLoginRequestData {
   /** 用户名 */
   username: string
   /** 密码 */
   password: string
   /** 验证码 */
   code: string
+}
+
+export interface GithubLoginRequestData {
 }
 
 /** 登录获取验证码响应数据 */

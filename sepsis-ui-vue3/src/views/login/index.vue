@@ -5,7 +5,7 @@ import { useUserStore } from "@/store/modules/user"
 import { type FormInstance, type FormRules } from "element-plus"
 import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
 import { getLoginCodeApi } from "@/api/login"
-import { type LoginRequestData } from "@/api/login/types/login"
+import { type SystemLoginRequestData } from "@/api/login/types/login"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import Owl from "./components/Owl.vue"
 import { useFocus } from "./hooks/useFocus"
@@ -21,11 +21,12 @@ const loading = ref(false)
 /** 验证码图片 URL */
 const codeUrl = ref("")
 /** 登录表单数据 */
-const loginFormData: LoginRequestData = reactive({
+const loginFormData: SystemLoginRequestData = reactive({
   username: "hzq",
   password: "318777541",
   code: "1111"
 })
+
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
   username: [
@@ -39,13 +40,14 @@ const loginFormRules: FormRules = {
     { required: true, message: "请输入验证码", trigger: "blur" }
   ]
 }
-/** 登录逻辑 */
-const handleLogin = () => {
+
+/** 系统用户登录逻辑 */
+const handleSystemLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       loading.value = true
       useUserStore()
-        .login(loginFormData)
+        .systemLogin(loginFormData)
         .then(() => {
           router.push({ path: "/" })
         })
@@ -61,6 +63,22 @@ const handleLogin = () => {
     }
   })
 }
+
+/** github 登录逻辑 */
+const handleGithubLogin = () => {
+  useUserStore()
+    .githubLogin()
+    .then(() => {
+       router.push({ path: "/" })
+     })
+    .catch(() => {
+       console.error("github 登录失败")
+     })
+    .finally(() => {
+
+    })
+}
+
 /** 创建验证码 */
 const createCode = () => {
   // 先清空验证码的输入
@@ -85,7 +103,7 @@ const createCode = () => {
         <img src="@/assets/layouts/logo-text-2.png" />
       </div>
       <div class="content">
-        <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
+        <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules">
           <el-form-item prop="username">
             <el-input
               v-model.trim="loginFormData.username"
@@ -135,7 +153,8 @@ const createCode = () => {
               </template>
             </el-input>
           </el-form-item>
-          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin">登 录</el-button>
+          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleSystemLogin">登 录</el-button>
+          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleGithubLogin">Github 登 录</el-button>
         </el-form>
       </div>
     </div>
