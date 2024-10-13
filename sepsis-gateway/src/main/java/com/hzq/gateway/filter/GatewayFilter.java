@@ -13,6 +13,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -25,7 +26,7 @@ import java.text.ParseException;
  * @author hua
  * @className com.hzq.gateway.config AuthFilter
  * @date 2024/9/16 22:31
- * @description 网关认证过滤器，设置最高优先级执行，为请求执行的第一个过滤器
+ * @description 网关认证过滤器，设置最高优先级执行，为请求执行的第一个过滤器，执行完毕将请求传递给资源服务器安全配置
  */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -75,12 +76,13 @@ public class GatewayFilter implements GlobalFilter {
     private String getAuthorization(ServerHttpRequest request) {
         // 从请求头中获取 token
         String token = request.getHeaders().getFirst(LoginConstants.AUTHENTICATION);
-        // 如果 token 为 Null or Empty，返回空字符串。
+        // 如果 token 为空，则返回空字符串。
         if (Strings.isNullOrEmpty(token))
             return "";
-        // 如果前端设置了令牌前缀，则裁剪掉前缀
-        if (token.startsWith(LoginConstants.TOKEN_PREFIX))
+        // 裁剪前缀
+        if (token.startsWith(LoginConstants.TOKEN_PREFIX)) {
             token = token.replaceFirst(LoginConstants.TOKEN_PREFIX, "");
+        }
         return token;
     }
 }

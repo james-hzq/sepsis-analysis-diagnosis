@@ -2,6 +2,8 @@ package com.hzq.auth.config;
 
 import com.hzq.auth.handler.HzqAuthenticationFailureHandler;
 import com.hzq.auth.handler.HzqAuthenticationSuccessHandler;
+import com.hzq.auth.login.github.GithubLoginClient;
+import com.hzq.auth.login.system.SystemLoginClient;
 import com.hzq.auth.service.LoginUserService;
 import com.hzq.core.util.RSAUtils;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -13,19 +15,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.filter.CorsFilter;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
@@ -39,8 +46,9 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class AuthServerConfig {
-
-    private final GithubLoginConfig githubLoginConfig;
+    private final GithubLoginClient githubLoginClient;
+    private final SystemLoginClient systemLoginClient;
+    private final CorsFilter corsFilter;
     private final LoginUserService loginUserService;
     private final OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer;
 
@@ -51,14 +59,13 @@ public class AuthServerConfig {
      * @apiNote 授权服务器端点配置
      **/
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain authFilterChain(
-            HttpSecurity http,
-            AuthenticationManager authenticationManager,
-            OAuth2TokenGenerator<?> tokenGenerator
-    ) throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+    @Order(1)
+    public SecurityFilterChain authFilterChain(HttpSecurity httpSecurity) throws Exception {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity);
+
+        httpSecurity.addFilter(corsFilter);
+
+        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 // 自定义授权模式转换器(Converter)
                 .tokenEndpoint(tokenEndpoint -> tokenEndpoint
                         .accessTokenRequestConverters(
@@ -81,7 +88,7 @@ public class AuthServerConfig {
                         .errorResponseHandler(new HzqAuthenticationFailureHandler())
                 );
 
-        return http.build();
+        return httpSecurity.build();
     }
 
     /**
@@ -122,12 +129,41 @@ public class AuthServerConfig {
     }
 
     @Bean
-    OAuth2TokenGenerator<?> tokenGenerator(JWKSource<SecurityContext> jwkSource) {
+    public OAuth2TokenGenerator<?> tokenGenerator(JWKSource<SecurityContext> jwkSource) {
         JwtGenerator jwtGenerator = new JwtGenerator(new NimbusJwtEncoder(jwkSource));
         jwtGenerator.setJwtCustomizer(jwtCustomizer);
 
         OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
         OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+    }
+
+
+    /**
+     * @author hua
+     * @date 2024/10/13 17:11
+     * @return org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
+     * @apiNote 用于存储 OAuth2 授权服务器的客户端信息，特别是 RegisteredClient 实例。
+     * 1. InMemoryRegisteredClientRepository 用于存储 OAuth2 授权服务器的客户端信息 (RegisteredClient)，如密码授权、客户端凭据授权等。
+     * 2. InMemoryClientRegistrationRepository 用于存储与外部 OAuth2 提供者（如 GitHub、Google 等）集成的客户端注册信息 (ClientRegistration)。
+     **/
+    @Bean
+    public RegisteredClientRepository systemClientRegistrationRepository() {
+        RegisteredClient systemRegisteredClient = systemLoginClient.systemRegisteredClient();
+        return new InMemoryRegisteredClientRepository(List.of(systemRegisteredClient));
+    }
+
+    /**
+     * @author hua
+     * @date 2024/10/13 17:11
+     * @return org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
+     * @apiNote 用于存储与外部 OAuth2 提供者（如 GitHub、Google 等）集成的客户端注册信息，特别是 ClientRegistration 实例。
+     * 1. InMemoryRegisteredClientRepository 用于存储 OAuth2 授权服务器的客户端信息 (RegisteredClient)，如密码授权、客户端凭据授权等。
+     * 2. InMemoryClientRegistrationRepository 用于存储与外部 OAuth2 提供者（如 GitHub、Google 等）集成的客户端注册信息 (ClientRegistration)。
+     **/
+    @Bean
+    public ClientRegistrationRepository githubClientRegistrationRepository() {
+        ClientRegistration githubClientRegistration = githubLoginClient.githubClientRegistration();
+        return new InMemoryClientRegistrationRepository(List.of(githubClientRegistration));
     }
 }

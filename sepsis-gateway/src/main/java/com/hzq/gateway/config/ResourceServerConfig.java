@@ -8,9 +8,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -24,28 +22,28 @@ import org.springframework.security.web.server.authorization.ServerAccessDeniedH
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 /**
  * @author hua
  * @className com.hzq.gateway.config ResourceServerConfig
  * @date 2024/9/26 20:32
- * @description 资源访问安全配置类，所有请求先进入这里，根据规则进行请求放行和认证处理，通过后进入网关全局过滤器
+ * @description 资源服务访问安全配置类
  */
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
-public class ResourceSecurityConfig {
+public class ResourceServerConfig {
 
-    // 存放在 resource 下的公钥文件
-    private static final String PUBLIC_KEY_FILE_NAME = "public.key";
-
-    // 请求白名单，该集合中的路径，跳过认证，可直接进入系统
-    private static final String[] whitesUrIs = new String[] {"/oauth/**"};
+    // 请求白名单，该集合中的路径，跳过认证，可直接进入网关过滤器
+    private static final List<String> whitesUrIs = List.of(
+            "/oauth/system/login",
+            "/oauth/github/login"
+    );
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -57,34 +55,36 @@ public class ResourceSecurityConfig {
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
         // 配置访问限制, 通过 URL 模式限制请求的访问
-        serverHttpSecurity.authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-                .pathMatchers(whitesUrIs).permitAll()
-                .anyExchange().authenticated()
-        );
-        // 配置认证和授权失败的处理器
-        serverHttpSecurity.exceptionHandling(exception -> exception
-                .authenticationEntryPoint(customAuthenticationEntryPoint())
-                .accessDeniedHandler(customAccessDeniedHandler())
-        );
-        // 配置 OAuth 2.0 资源服务器保护支持
-        serverHttpSecurity.oauth2ResourceServer(oauth2 -> oauth2
-                // 配置自定义 JWT 身份验证转换器, 以及jwt解码器
-                .jwt(jwtSpec -> jwtSpec
-                        .jwtAuthenticationConverter(customJwtConverter())
-                        .jwtDecoder(reactiveJwtDecoder())
-                )
-        );
-        // 其他配置
         serverHttpSecurity
+                // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要认证
+                .authorizeExchange(exchange -> {
+                            if (!whitesUrIs.isEmpty()) {
+                                exchange.pathMatchers(whitesUrIs.toArray(String[]::new)).permitAll();
+                            }
+                            exchange.anyExchange().authenticated();
+                        }
+                )
+                // 配置 OAuth 2.0 资源服务器保护支持
+                .oauth2ResourceServer(oAuth2ResourceServerSpec ->
+                        oAuth2ResourceServerSpec
+                                .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(customJwtConverter())
+                        )
+                )
+                // 配置认证和授权失败的处理器
+                .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(customAuthenticationEntryPoint())
+                    .accessDeniedHandler(customAccessDeniedHandler())
+                )
+                // 禁用 CSRF
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // 自定义 CORS 跨域
+                .cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()))
                 // 禁用默认登录页面
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 // 禁用默认登出页面
-                .logout(ServerHttpSecurity.LogoutSpec::disable)
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                // 配置 CORS 跨域
-                .cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()));
+                .logout(ServerHttpSecurity.LogoutSpec::disable);
 
-        log.info("sepsis gateway resource server config init successfully");
+        log.info("sepsis resource server config init successfully");
         return serverHttpSecurity.build();
     }
 
@@ -172,7 +172,7 @@ public class ResourceSecurityConfig {
     public CorsConfigurationSource customCorsConfiguration() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 放行所有域名，生产环境请对此进行修改
-        corsConfiguration.addAllowedOriginPattern("*");
+        corsConfiguration.addAllowedOriginPattern("http://127.0.0.1:9050");
         // 放行的请求头
         corsConfiguration.addAllowedHeader("*");
         // 放行的请求方式，主要有：GET, POST, PUT, DELETE, OPTIONS
@@ -183,6 +183,9 @@ public class ResourceSecurityConfig {
         corsConfiguration.setAllowCredentials(true);
         // 使用 UrlBasedCorsConfigurationSource 来注册 CorsConfiguration, 注册路径为所有请求
         UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
+        // 给配置源对象设置过滤的参数
+        // 参数一: 过滤的路径 == > 所有的路径都要求校验是否跨域
+        // 参数二: 配置类
         configSource.registerCorsConfiguration("/**", corsConfiguration);
         return configSource;
     }

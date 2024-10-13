@@ -26,6 +26,8 @@ public enum ResultEnum {
     USERNAME_OR_PASSWORD_ERROR(2000, "用户名或密码错误"),
     USER_DISABLED(2000, "用户被禁用"),
     USER_NO_ROLE(2000, "用户未拥有角色"),
+    SYSTEM_CLIENT_NOT_REGISTERED(2000, "系统客户端未注册"),
+    SYSTEM_CLIENT_NO_SCOPE(2000, "系统客户端没有该访问范围"),
     // 自定义业务失败提示 3xxx
     CUSTOM_ERROR(2000, "自定义异常");
 

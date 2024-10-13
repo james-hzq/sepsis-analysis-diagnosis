@@ -1,23 +1,20 @@
-package com.hzq.auth.config;
+package com.hzq.auth.login.github;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 /**
  * @author gc
- * @class com.hzq.auth.config GithubLoginConfig
+ * @class com.hzq.auth.config GithubLoginClient
  * @date 2024/10/12 9:53
  * @description Github 第三方登录配置
  */
 @Data
 @Configuration
-public class GithubLoginConfig {
+public class GithubLoginClient {
 
     private static final String registrationId = "github";
 
@@ -51,13 +48,9 @@ public class GithubLoginConfig {
     @Value("${spring.security.oauth2.client.provider.github.user-name-attribute}")
     private String userNameAttributeName;
 
-    @Bean
-    public ClientRegistrationRepository githubClientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(githubClientRegistration());
-    }
-
-    private ClientRegistration githubClientRegistration() {
-        return ClientRegistration.withRegistrationId(registrationId)
+    public ClientRegistration githubClientRegistration() {
+        return ClientRegistration
+                .withRegistrationId(registrationId)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .clientName(clientName)
