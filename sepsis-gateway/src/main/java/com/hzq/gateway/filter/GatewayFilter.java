@@ -48,6 +48,8 @@ public class GatewayFilter implements GlobalFilter {
             return chain.filter(exchange);
         }
 
+        log.info("请求 {}, authorization 不为 null or empty", request.getURI());
+
         String payload;
         try {
             // 如果 authorization 不是空字符串，获取 JWT 主体，并加入请求头，转发到其他微服务
@@ -71,7 +73,7 @@ public class GatewayFilter implements GlobalFilter {
      * @date 2024/9/22 18:43
      * @param request http请求
      * @return java.lang.String
-     * @apiNote 获取请求头中的 access_token
+     * @apiNote 获取请求头中的 Authorization参数的 token 值
      **/
     private String getAuthorization(ServerHttpRequest request) {
         // 从请求头中获取 token

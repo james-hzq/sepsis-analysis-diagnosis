@@ -36,7 +36,7 @@ spring:
           enabled: true
       routes:
         - id: sepsis-auth
-          uri: http://localhost:9200
+          uri: lb://sepsis-auth
           predicates:
             - Path=/oauth/**
         - id: sepsis-system

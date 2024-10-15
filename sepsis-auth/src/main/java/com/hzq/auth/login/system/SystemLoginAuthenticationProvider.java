@@ -3,30 +3,28 @@ package com.hzq.auth.login.system;
 import com.hzq.auth.util.OAuth2AuthenticationProviderUtils;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.web.exception.SystemException;
-import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.Setter;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
 import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * @author hua
@@ -34,21 +32,30 @@ import java.util.function.Consumer;
  * @date 2024/10/13 15:43
  * @description 系统用户密码登录身份验证提供者
  */
-@Component
-@AllArgsConstructor
+@Setter
 public class SystemLoginAuthenticationProvider implements AuthenticationProvider {
-    private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
-    private final AuthenticationManager authenticationManager;
-    private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
-    private final RegisteredClientRepository registeredClientRepository;
+    // 认证管理器
+    private AuthenticationManager authenticationManager;
+    // OAuth2令牌生成器
+    private OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
+    // 注册客户端仓库
+    private RegisteredClientRepository registeredClientRepository;
+    // 授权信息存储服务
+    private OAuth2AuthorizationService authorizationService;
+
+    public SystemLoginAuthenticationProvider() {
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SystemLoginAuthenticationToken systemLoginAuthenticationToken = (SystemLoginAuthenticationToken) authentication;
-
-        RegisteredClient registeredClient = Optional.ofNullable(registeredClientRepository.findByClientId(SystemLoginClient.SYSTEM_REGISTERED_CLIENT_ID))
+        // 从身份验证令牌获取客户端主体
+        OAuth2ClientAuthenticationToken clientPrincipal = OAuth2AuthenticationProviderUtils
+                .getAuthenticatedClient(systemLoginAuthenticationToken);
+        // 获取注册的客户端信息
+        RegisteredClient registeredClient = Optional.ofNullable(registeredClientRepository.findByClientId("sepsis-web-client"))
                 .orElseThrow(() -> new SystemException(ResultEnum.SYSTEM_CLIENT_NOT_REGISTERED));
-
+        // 获取附加参数
         Map<String, Object> additionalParameters = systemLoginAuthenticationToken.getAdditionalParameters();
         String username = (String) additionalParameters.get(OAuth2ParameterNames.USERNAME);
         String password = (String) additionalParameters.get(OAuth2ParameterNames.PASSWORD);
@@ -84,14 +91,10 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
                 .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                 .authorizationGrantType(SystemLoginAuthenticationToken.AUTH_TYPE)
                 .authorizationGrant(systemLoginAuthenticationToken);
-
+        // 构建Access Token
         OAuth2TokenContext accessTokenContext = tokenContextBuilder.tokenType((OAuth2TokenType.ACCESS_TOKEN)).build();
-        OAuth2Token generatedAccessToken = this.tokenGenerator.generate(accessTokenContext);
-        if (generatedAccessToken == null) {
-            OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
-                    "The token generator failed to generate the access token.", ERROR_URI);
-            throw new OAuth2AuthenticationException(error);
-        }
+        OAuth2Token generatedAccessToken = Optional.ofNullable(tokenGenerator.generate(accessTokenContext))
+                .orElseThrow(() -> new SystemException(ResultEnum.ACCESS_TOKEN_GENERATE_ERROR));
 
         // 构建访问令牌
         OAuth2AccessToken accessToken = new OAuth2AccessToken(
@@ -110,18 +113,16 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
                 .accessToken(accessToken);
 
         // 生成刷新令牌(Refresh Token)
-
-
         OAuth2TokenContext refreshTokenContext = tokenContextBuilder.tokenType((OAuth2TokenType.ACCESS_TOKEN)).build();
-        OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(refreshTokenContext);
-        if (generatedRefreshToken == null) {
-            OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
-                    "The token generator failed to generate the refresh token.", ERROR_URI);
-            throw new OAuth2AuthenticationException(error);
-        }
+        OAuth2Token generatedRefreshToken = Optional.ofNullable(tokenGenerator.generate(refreshTokenContext))
+                .orElseThrow(() -> new SystemException(ResultEnum.REFRESH_TOKEN_GENERATE_ERROR));
+
 
         OAuth2RefreshToken refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
         authorizationBuilder.refreshToken(refreshToken);
+
+        OAuth2Authorization authorization = authorizationBuilder.build();
+        authorizationService.save(authorization);
 
         return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, additionalParameters);
     }

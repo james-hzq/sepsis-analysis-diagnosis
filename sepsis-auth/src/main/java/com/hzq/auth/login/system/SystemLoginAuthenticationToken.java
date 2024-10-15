@@ -20,7 +20,7 @@ import java.util.Set;
 @Getter
 public class SystemLoginAuthenticationToken extends OAuth2AuthorizationGrantAuthenticationToken {
     // 定义身份验证令牌类型
-    public static final AuthorizationGrantType AUTH_TYPE = new AuthorizationGrantType("password");
+    public static final AuthorizationGrantType AUTH_TYPE = AuthorizationGrantType.PASSWORD;
     // 令牌申请的访问范围
     private Set<String> scopes;
 

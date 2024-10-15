@@ -19,7 +19,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 放行所有域名，生产环境请对此进行修改
-        corsConfiguration.addAllowedOrigin("http://127.0.0.1:9050");
+        corsConfiguration.addAllowedOriginPattern("*");
         // 放行的请求头
         corsConfiguration.addAllowedHeader("*");
         // 放行的请求方式，主要有：GET, POST, PUT, DELETE, OPTIONS

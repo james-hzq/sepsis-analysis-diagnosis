@@ -73,7 +73,6 @@ public class ServletUtils {
     }
 
     /**
-     * @param request 请求对象
      * @return java.util.Map<java.lang.String,java.lang.String>
      * @author gc
      * @date 2024/10/11 14:55

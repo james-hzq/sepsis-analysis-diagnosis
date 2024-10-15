@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -28,8 +29,11 @@ import java.util.Map;
  * @description 认证成功处理器
  */
 public class HzqAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-    private final HttpMessageConverter<Object> accessTokenHttpResponseConverter = new MappingJackson2HttpMessageConverter();
-    private final Converter<OAuth2AccessTokenResponse, Map<String, Object>> accessTokenResponseParametersConverter = new DefaultOAuth2AccessTokenResponseMapConverter();
+    // HttpMessageConverter 是 Spring MVC 提供的一个策略接口。可以将 HTTP请求转换为Java对象，将Java对象转换为HTTP响应
+    private final HttpMessageConverter<Object> httpMessageConverter = new MappingJackson2HttpMessageConverter();
+    // 当客户端请求成功获取访问令牌时，服务器会返回一个OAuth2AccessTokenResponse对象，其中包含了访问令牌的相关信息.
+    // Converter<OAuth2AccessTokenResponse, Map<String, Object>> 将 OAuth2AccessTokenResponse对象转换为 Map<String, Object> 类型的转换器
+    private final Converter<OAuth2AccessTokenResponse, Map<String, Object>> accessTokenResponseConverter = new DefaultOAuth2AccessTokenResponseMapConverter();
 
     /**
      * @param request 请求对象
@@ -41,33 +45,37 @@ public class HzqAuthenticationSuccessHandler implements AuthenticationSuccessHan
      **/
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // 将认证对象转换为OAuth2AccessTokenAuthenticationToken类型
         OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
 
+        // 获取访问令牌和刷新令牌
         OAuth2AccessToken accessToken = accessTokenAuthentication.getAccessToken();
         OAuth2RefreshToken refreshToken = accessTokenAuthentication.getRefreshToken();
 
+        // 获取额外的参数
         Map<String, Object> additionalParameters = accessTokenAuthentication.getAdditionalParameters();
 
-        OAuth2AccessTokenResponse.Builder builder = OAuth2AccessTokenResponse
+        // 构建 OAuth2AccessTokenResponse 对象
+        OAuth2AccessTokenResponse accessTokenResponse = OAuth2AccessTokenResponse
                 .withToken(accessToken.getTokenValue())
-                .tokenType(accessToken.getTokenType());
+                .tokenType(accessToken.getTokenType())
+                .expiresIn(accessToken.getIssuedAt() != null && accessToken.getExpiresAt() != null ?
+                        ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt()) : 0
+                )
+                .refreshToken(refreshToken != null ? refreshToken.getTokenValue() : null)
+                .additionalParameters(!CollectionUtils.isEmpty(additionalParameters) ? additionalParameters : Collections.emptyMap())
+                .build();
 
-        if (accessToken.getIssuedAt() != null && accessToken.getExpiresAt() != null) {
-            builder.expiresIn(ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt()));
-        }
+        // 将 OAuth2AccessTokenResponse 对象转换为 Map<String, Object> 类型的参数集合
+        Map<String, Object> tokenResponseParameters = accessTokenResponseConverter.convert(accessTokenResponse);
 
-        if (refreshToken != null) {
-            builder.refreshToken(refreshToken.getTokenValue());
-        }
-
-        if (!CollectionUtils.isEmpty(additionalParameters)) {
-            builder.additionalParameters(additionalParameters);
-        }
-
-        OAuth2AccessTokenResponse accessTokenResponse = builder.build();
-        Map<String, Object> tokenResponseParameters = this.accessTokenResponseParametersConverter.convert(accessTokenResponse);
+        // 将 HttpServletResponse 对象包装成 Spring 框架中的 ServerHttpResponse 的实现，以便后续的消息转换处理
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
 
-        this.accessTokenHttpResponseConverter.write(Result.success(tokenResponseParameters), null, httpResponse);
+        httpMessageConverter.write(
+                Result.success(tokenResponseParameters),
+                null,
+                httpResponse
+        );
     }
 }

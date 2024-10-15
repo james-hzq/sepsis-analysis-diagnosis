@@ -25,6 +25,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -172,7 +173,7 @@ public class ResourceServerConfig {
     public CorsConfigurationSource customCorsConfiguration() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 放行所有域名，生产环境请对此进行修改
-        corsConfiguration.addAllowedOriginPattern("http://127.0.0.1:9050");
+        corsConfiguration.addAllowedOriginPattern("*");
         // 放行的请求头
         corsConfiguration.addAllowedHeader("*");
         // 放行的请求方式，主要有：GET, POST, PUT, DELETE, OPTIONS

@@ -18,11 +18,12 @@ function createService() {
   service.interceptors.request.use(
     (config) => config,
     // 发送失败
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
   )
   // 响应拦截（可根据具体业务作出相应的调整）
   service.interceptors.response.use(
     (response) => {
+      console.log('收到响应: ' + response)
       // apiData 是 api 返回的数据
       const apiData = response.data
       // 二进制数据则直接返回
@@ -103,7 +104,7 @@ function createRequest(service: AxiosInstance) {
     const defaultConfig = {
       headers: {
         // 携带 Token
-        Authorization: token ? `Bearer ${token}` : undefined,
+        Authorization: token ? `Bearer ${token}` : "",
         "Content-Type": "application/json"
       },
       timeout: 5000,

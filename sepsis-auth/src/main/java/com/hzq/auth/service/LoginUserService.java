@@ -8,6 +8,7 @@ import com.hzq.system.api.SysUserRoleFeignClient;
 import com.hzq.system.dto.SysUserDTO;
 import com.hzq.web.exception.SystemException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +25,7 @@ import java.util.Set;
  * @date 2024/9/28 11:04
  * @description 登录业务核心类
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class LoginUserService implements UserDetailsService {
