@@ -1,4 +1,4 @@
-package com.hzq.auth.config;
+package com.hzq.auth.filter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,12 +8,12 @@ import org.springframework.web.filter.CorsFilter;
 
 /**
  * @author hua
- * @className com.hzq.auth.config CorsConfig
+ * @className com.hzq.auth.config HzqCorsFilter
  * @date 2024/10/13 15:07
  * @description 跨域配置
  */
 @Configuration
-public class CorsConfig {
+public class HzqCorsFilter {
 
     @Bean
     public CorsFilter corsFilter() {

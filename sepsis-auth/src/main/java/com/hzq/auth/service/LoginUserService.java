@@ -1,5 +1,6 @@
 package com.hzq.auth.service;
 
+import com.google.common.base.Strings;
 import com.hzq.auth.domain.LoginUser;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.system.api.SysRoleFeignClient;
@@ -35,6 +36,7 @@ public class LoginUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (Strings.isNullOrEmpty(username)) log.error("用户名为空");
         // 通过用户名查找用户表信息
         SysUserDTO sysUserDTO = Optional.ofNullable(sysUserFeignClient.selectByUsername(username).getData())
                 .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));

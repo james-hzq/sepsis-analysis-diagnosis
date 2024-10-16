@@ -124,7 +124,13 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
         OAuth2Authorization authorization = authorizationBuilder.build();
         authorizationService.save(authorization);
 
-        return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, additionalParameters);
+        return new OAuth2AccessTokenAuthenticationToken(
+                registeredClient,
+                clientPrincipal,
+                accessToken,
+                refreshToken,
+                additionalParameters
+        );
     }
 
     @Override

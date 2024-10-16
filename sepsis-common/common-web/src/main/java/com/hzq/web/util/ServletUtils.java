@@ -4,12 +4,16 @@ import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
+import com.hzq.jackson.JacksonUtil;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -84,6 +88,28 @@ public class ServletUtils {
             params.put(entry.getKey(), Joiner.on(",").join(entry.getValue()));
         }
         return params;
+    }
+
+    /**
+     * @param request 请求对象
+     * @param clazz 请求体解析后的类型
+     * @return T
+     * @author gc
+     * @date 2024/10/16 11:12
+     * @apiNote 从传入请求的请求体内反序列化为Java对象
+     **/
+    public static <T> T getRequestBody(HttpServletRequest request, Class<T> clazz) {
+        try {
+            // 将请求体的 InputStream 读取为字符串
+            String requestBody = new BufferedReader(new InputStreamReader(request.getInputStream()))
+                    .lines()
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+            // 使用 JacksonUtil 解析 JSON 字符串
+            return JacksonUtil.parseObject(requestBody, clazz);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read request body", e);
+        }
     }
 
     /**

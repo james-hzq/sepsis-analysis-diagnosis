@@ -26,4 +26,7 @@ public class LoginBody {
 
     @NotBlank(message = "验证码不得为空")
     private String code;
+
+    @NotBlank(message = "授权类型不得为空")
+    private String grantType;
 }

@@ -1,11 +1,16 @@
 package com.hzq.auth.config;
 
+import com.hzq.auth.filter.HzqUsernamePasswordAuthenticationFilter;
 import com.hzq.auth.handler.HzqAuthenticationFailureHandler;
 import com.hzq.auth.handler.HzqAuthenticationSuccessHandler;
 import com.hzq.auth.login.github.GithubLoginClient;
 import com.hzq.auth.login.system.SystemLoginAuthenticationConverter;
 import com.hzq.auth.login.system.SystemLoginAuthenticationProvider;
+import com.hzq.auth.login.system.SystemLoginTargetAuthenticationEntryPoint;
+import com.hzq.core.result.Result;
+import com.hzq.core.result.ResultEnum;
 import com.hzq.core.util.RSAUtils;
+import com.hzq.jackson.JacksonUtil;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -16,10 +21,14 @@ import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -29,6 +38,7 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
@@ -42,7 +52,14 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.nio.charset.StandardCharsets;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.List;
@@ -67,9 +84,16 @@ public class AuthServerConfig {
      * @apiNote 授权服务器端点配置
      **/
     @Bean
-    @Order(1)
-    public SecurityFilterChain authFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain authFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity);
+
+        // 当用户未登录且尝试访问需要认证的端点时，重定向至登录页面
+        httpSecurity.exceptionHandling((exceptions) -> exceptions
+                .defaultAuthenticationEntryPointFor(
+                        new SystemLoginTargetAuthenticationEntryPoint("/oauth/system/login"),
+                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                )
+        );
 
         SystemLoginAuthenticationProvider systemLoginAuthenticationProvider = new SystemLoginAuthenticationProvider();
 
@@ -97,10 +121,10 @@ public class AuthServerConfig {
                         .accessTokenResponseHandler(new HzqAuthenticationSuccessHandler())
                         .errorResponseHandler(new HzqAuthenticationFailureHandler())
                 );
+
         DefaultSecurityFilterChain securityFilterChain = httpSecurity.build();
 
         OAuth2TokenGenerator<?> tokenGenerator = httpSecurity.getSharedObject(OAuth2TokenGenerator.class);
-        AuthenticationManager authenticationManager = httpSecurity.getSharedObject(AuthenticationManager.class);
         OAuth2AuthorizationService authorizationService = httpSecurity.getSharedObject(OAuth2AuthorizationService.class);
 
         systemLoginAuthenticationProvider.setTokenGenerator(tokenGenerator);
@@ -182,6 +206,12 @@ public class AuthServerConfig {
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
     }
 
+    @Bean
+    public OAuth2AuthorizationService authorizationService(RegisteredClientRepository registeredClientRepository) {
+        // 创建基于内存的OAuth2授权服务
+        return new InMemoryOAuth2AuthorizationService();
+    }
+
     /**
      * @return org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService
      * @author gc
@@ -229,7 +259,7 @@ public class AuthServerConfig {
      **/
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     private RegisteredClient initSepsisSystemClient() {
