@@ -36,13 +36,18 @@ spring:
           enabled: true
       routes:
         - id: sepsis-auth
-          uri: lb://sepsis-auth
+          uri: http://localhost:9200
           predicates:
-            - Path=/oauth/**
+            - Path=/oauth2/**
         - id: sepsis-system
           uri: http://localhost:9201
           predicates:
             - Path=/system/**
+  security:
+    oauth2:
+      resource server:
+        jwt:
+          issuer-uri: http://127.0.0.1:9200
 
 logging:
   config: classpath:logback-spring.xml

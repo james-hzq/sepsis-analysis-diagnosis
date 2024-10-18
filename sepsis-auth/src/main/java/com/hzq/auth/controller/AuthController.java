@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("/oauth")
+@RequestMapping("/oauth2")
 public class AuthController {
 //    private final AuthenticationManager authenticationManager;
 //    private final TokenGeneratorService tokenGeneratorService;
@@ -38,7 +38,7 @@ public class AuthController {
 //     * @return com.hzq.core.result.Result<java.lang.String>
 //     * @apiNote 走系统账户名和密码登录的请求
 //     **/
-    @PostMapping("/system/login")
+    @PostMapping("/login")
     public Result<String> login(@Validated @RequestBody LoginBody loginBody) {
         System.out.println("进入方法");
 //        String code = loginBody.getCode();
@@ -65,31 +65,4 @@ public class AuthController {
 //        String accessToken = tokenGeneratorService.generateAccessToken(loginUser);
         return Result.success();
     }
-//
-//    @PostMapping("/github/login")
-//    public Result<String> githubLogin(OAuth2AuthenticationToken authentication) {
-//        // 从 OAuth2AuthenticationToken 中获取用户信息
-//        String username = authentication.getPrincipal().getAttribute("login");
-//        System.out.println("username");
-//        System.out.println("执行到这里");
-//        return Result.success();
-//    }
-//
-//    @GetMapping("/github/callback")
-//    public Result<String> githubLoginCallback() {
-//        return Result.success();
-//    }
-//
-//    /**
-//     * @return com.hzq.core.result.Result<?>
-//     * @author gc
-//     * @date 2024/10/11 14:01
-//     * @apiNote 获取用户登录信息
-//     **/
-//    @GetMapping("/login/user-info")
-//    public Result<LoginUserInfo> getLoginUserInfo(HttpServletRequest request) {
-//        String loginUserInfoStr = ServletUtils.getHeader(request, LoginConstants.LOGIN_USER_INFO_HEADER);
-//        LoginUserInfo loginUserInfo = JacksonUtil.parseObject(loginUserInfoStr, LoginUserInfo.class);
-//        return Result.success(loginUserInfo);
-//    }
 }

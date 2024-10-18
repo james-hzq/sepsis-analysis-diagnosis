@@ -46,7 +46,7 @@ public class HzqAuthenticationSuccessHandler implements AuthenticationSuccessHan
      * @apiNote 认证成功处理逻辑
      **/
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
 
         // 获取访问令牌和刷新令牌

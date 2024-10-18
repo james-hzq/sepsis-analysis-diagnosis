@@ -36,7 +36,6 @@ public class LoginUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (Strings.isNullOrEmpty(username)) log.error("用户名为空");
         // 通过用户名查找用户表信息
         SysUserDTO sysUserDTO = Optional.ofNullable(sysUserFeignClient.selectByUsername(username).getData())
                 .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));
@@ -46,7 +45,6 @@ public class LoginUserService implements UserDetailsService {
         // 通过角色ID集合查找用户所属的角色字符串
         Set<String> roleKeys = sysRoleFeignClient.selectRoleKeys(roleIds).getData();
         if (CollectionUtils.isEmpty(roleKeys)) throw new SystemException(ResultEnum.USER_NO_ROLE);
-        // 通过角色ID查找拥有的菜单ID
         // 更新 sysUserDTO
         sysUserDTO.setRoles(roleKeys);
         // 创建并返回用户登录信息对象

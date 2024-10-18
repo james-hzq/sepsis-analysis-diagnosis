@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.web.authentication.AuthenticationConverter;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  * @date 2024/10/14 9:59
  * @description 系统用户名密码登录模式参数解析器
  */
-@Slf4j
+@Component
 public class SystemLoginAuthenticationConverter implements AuthenticationConverter {
 
     @Override
