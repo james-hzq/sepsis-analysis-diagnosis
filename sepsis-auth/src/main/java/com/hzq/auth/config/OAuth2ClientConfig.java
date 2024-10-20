@@ -10,6 +10,10 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -22,7 +26,7 @@ import java.util.Set;
 
 /**
  * @author gc
- * @class com.hzq.auth.config RegisteredClientConfig
+ * @class com.hzq.auth.config OAuth2ClientConfig
  * @date 2024/10/18 15:29
  * @description TODO
  */
@@ -31,6 +35,28 @@ import java.util.Set;
 public class OAuth2ClientConfig {
     private final GithubLoginClient githubLoginClient;
     private final PasswordEncoder passwordEncoder;
+
+    /**
+     * @return org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
+     * @author gc
+     * @date 2024/10/18 15:53
+     * @apiNote 创建基于内存的OAuth2授权服务
+     **/
+    @Bean
+    public OAuth2AuthorizationService authorizationService() {
+        return new InMemoryOAuth2AuthorizationService();
+    }
+
+    /**
+     * @return org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService
+     * @author gc
+     * @date 2024/10/15 11:13
+     * @apiNote 将授权同意信息存储在内存中
+     **/
+    @Bean
+    public OAuth2AuthorizationConsentService authorizationConsentService() {
+        return new InMemoryOAuth2AuthorizationConsentService();
+    }
 
     /**
      * @author hua

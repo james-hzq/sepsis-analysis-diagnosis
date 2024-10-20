@@ -37,9 +37,6 @@ public class LoginUser implements UserDetails {
     /** 用户的所属角色集合 */
     private Set<String> roles;
 
-    /** 用户的权限标识集合, 通常用于更细粒度的权限控制 */
-    private Set<String> perms;
-
     /** 用户的角色集合，表示用户在系统中所属角色信息 */
     private Collection<GrantedAuthority> authorities;
 
@@ -48,7 +45,6 @@ public class LoginUser implements UserDetails {
         this.username = sysUserDTO.getUsername();
         this.password = sysUserDTO.getPassword();
         this.roles = sysUserDTO.getRoles();
-        this.perms = sysUserDTO.getPerms();
         this.enabled = UserConstants.STATUS_OK.equals(sysUserDTO.getStatus());
         if (Optional.ofNullable(sysUserDTO.getRoles()).isPresent()) {
             this.authorities = sysUserDTO.getRoles().stream()

@@ -1,11 +1,12 @@
 package com.hzq.auth.handler;
 
+import com.hzq.auth.login.system.SystemLoginAuthenticationConverter;
 import com.hzq.core.result.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -13,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -26,6 +28,7 @@ import java.io.IOException;
 public class HzqAuthenticationFailureHandler implements AuthenticationFailureHandler {
     // HttpMessageConverter 是 Spring MVC 提供的一个策略接口。可以将 HTTP请求转换为Java对象，将Java对象转换为HTTP响应
     private final HttpMessageConverter<Object> httpMessageConverter = new MappingJackson2HttpMessageConverter();
+
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {

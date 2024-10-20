@@ -1,16 +1,11 @@
 package com.hzq.auth.config;
 
 import com.hzq.auth.filter.SystemLoginAuthenticationFilter;
-import com.hzq.auth.login.github.GithubLoginClient;
+import com.hzq.auth.login.system.SystemLoginAuthenticationConverter;
+//import com.hzq.auth.login.system.UsernamePasswordAuthenticationProvider;
 import com.hzq.auth.login.system.SystemLoginAuthenticationProvider;
-import com.hzq.core.util.RSAUtils;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
+import com.hzq.auth.service.LoginUserService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,33 +13,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
-import org.springframework.security.oauth2.server.authorization.token.*;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
@@ -52,14 +30,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.security.interfaces.RSAPublicKey;
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @class com.hzq.auth.config AuthSecurityConfig
@@ -76,20 +49,20 @@ public class AuthSecurityConfig {
     private static final List<String> whitePaths = List.of(
     );
 
+    private final PasswordEncoder passwordEncoder;
+    private final LoginUserService loginUserService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, HandlerMappingIntrospector introspector, AuthenticationManager authenticationManager) throws Exception {
         // 创建一个 MvcRequestMatcher 的构建器，用于根据路径匹配请求
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
-        // 系统用户名密码登录认证过滤器
-        SystemLoginAuthenticationFilter systemLoginAuthenticationFilter = new SystemLoginAuthenticationFilter(authenticationManager);
+        SystemLoginAuthenticationFilter systemLoginAuthenticationFilter = new SystemLoginAuthenticationFilter();
+        systemLoginAuthenticationFilter.setAuthenticationManager(authenticationManager);
 
         httpSecurity
-                // 通过 URL 匹配规则设置认证
                 .authorizeHttpRequests(requests -> {
-                    // 对每一个白名单路径，配置请求匹配器并允许所有访问
                     whitePaths.forEach(whitePath -> requests.requestMatchers(mvcMatcherBuilder.pattern(whitePath)).permitAll());
-                    // 对其他所有请求，要求进行身份验证
                     requests.anyRequest().authenticated();
                 })
                 // 禁用默认登录页面
@@ -121,11 +94,20 @@ public class AuthSecurityConfig {
      * a) AuthenticationProvider 通常按照认证请求链顺序去执行，若返回非null响应表示程序验证通过，不再尝试验证其它的provider。
      *    如果后续提供的身份验证程序成功地对请求进行身份认证，则忽略先前的身份验证异常及null响应，并将使用成功的身份验证。
      *    如果没有provider提供一个非null响应，或者有一个新的抛出AuthenticationException，那么最后的AuthenticationException将会抛出。
-     * b) AuthenticationProvider 接口提供了一个supports方法，用来验证是否支持某种身份验证方式，实现扩展
+     * b) AuthenticationProvider 接口提供
+     * 了一个supports方法，用来验证是否支持某种身份验证方式，实现扩展
      **/
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        ProviderManager authenticationManager = (ProviderManager) authenticationConfiguration.getAuthenticationManager();
+        List<AuthenticationProvider> providers = authenticationManager.getProviders();
+
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(loginUserService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        providers.add(daoAuthenticationProvider);
+        return authenticationManager;
     }
 
     /**

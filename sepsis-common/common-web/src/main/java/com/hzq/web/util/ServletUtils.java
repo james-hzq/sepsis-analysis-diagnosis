@@ -105,10 +105,9 @@ public class ServletUtils {
                     .lines()
                     .collect(Collectors.joining(System.lineSeparator()));
 
-            // 使用 JacksonUtil 解析 JSON 字符串
             return JacksonUtil.parseObject(requestBody, clazz);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read request body", e);
+            throw new RuntimeException("从请求体里面读取数据失败", e);
         }
     }
 

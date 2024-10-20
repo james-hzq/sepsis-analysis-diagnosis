@@ -31,7 +31,8 @@ public enum ResultEnum {
     ACCESS_TOKEN_GENERATE_ERROR(2000, "访问令牌生成失败"),
     REFRESH_TOKEN_GENERATE_ERROR(2000, "刷新令牌生成失败"),
     // 自定义业务失败提示 3xxx
-    CUSTOM_ERROR(2000, "自定义异常");
+    AUTHORIZATION_MODE_ERROR(2000, "登录请求授权模式错误"),
+    CUSTOM_ERROR(3000, "自定义异常");
 
     private final int code;
     private final String message;

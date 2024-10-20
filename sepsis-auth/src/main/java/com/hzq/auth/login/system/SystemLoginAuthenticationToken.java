@@ -27,13 +27,13 @@ public class SystemLoginAuthenticationToken extends OAuth2AuthorizationGrantAuth
     /**
      * @author hua
      * @date 2024/10/13 15:55
-     * @param clientPrincipal 客户端信息
+     * @param authentication 身份验证主体
      * @param scopes 令牌申请的访问范围
      * @param additionalParameters 自定义额外参数(用户名和密码)
      * @apiNote TODO
      **/
-    public SystemLoginAuthenticationToken(Authentication clientPrincipal, Set<String> scopes, Map<String, Object> additionalParameters) {
-        this(AUTH_TYPE, clientPrincipal, additionalParameters);
+    public SystemLoginAuthenticationToken(Authentication authentication, Set<String> scopes, Map<String, Object> additionalParameters) {
+        this(AUTH_TYPE, authentication, additionalParameters);
         this.scopes = Collections.unmodifiableSet(scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
     }
 

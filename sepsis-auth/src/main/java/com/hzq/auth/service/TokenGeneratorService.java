@@ -3,6 +3,7 @@ package com.hzq.auth.service;
 import com.hzq.auth.domain.LoginUser;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,7 +20,7 @@ public class TokenGeneratorService {
 //    // JWT默认的有效时间（单位：s）
 //    private static final int DEFAULT_EXPIRE_INTERVAL = 3600;
 //    // 签署 JWS 或 加密 JWE 的接口
-//    private final JwtEncoder jwtEncoder;
+//    private final OAuth2TokenGenerator<?> tokenGenerator;
 //
 //    public String generateAccessToken(LoginUser loginUser) {
 //        // 获取当前时间和过期时间

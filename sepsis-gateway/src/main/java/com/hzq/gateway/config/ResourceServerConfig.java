@@ -25,7 +25,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
 import java.util.List;
 
 /**

@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Configuration
 public class OAuth2JwtConfig {
+
     /**
      * @return com.nimbusds.jose.jwk.source.JWKSource<com.nimbusds.jose.proc.SecurityContext>
      * @author gc

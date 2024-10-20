@@ -1,6 +1,5 @@
 package com.hzq.auth.service;
 
-import com.google.common.base.Strings;
 import com.hzq.auth.domain.LoginUser;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.system.api.SysRoleFeignClient;

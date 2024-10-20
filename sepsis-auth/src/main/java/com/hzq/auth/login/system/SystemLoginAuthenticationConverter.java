@@ -1,13 +1,15 @@
 package com.hzq.auth.login.system;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.hzq.auth.domain.LoginBody;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.web.exception.SystemException;
 import com.hzq.web.util.ServletUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -18,15 +20,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author gc
  * @class com.hzq.auth.login.system SystemLoginAuthenticationConverter
  * @date 2024/10/14 9:59
- * @description 系统用户名密码登录模式参数解析器
+ * @description 将前端传递的登录参数转换为自定义认证对象。
  */
-@Component
+@Slf4j
+@Setter
 public class SystemLoginAuthenticationConverter implements AuthenticationConverter {
 
     @Override
@@ -38,11 +40,10 @@ public class SystemLoginAuthenticationConverter implements AuthenticationConvert
         String grantType = loginBody.getGrantType();
 
         if (!SystemLoginAuthenticationToken.AUTH_TYPE.getValue().equals(grantType)) {
-            return null;
+            throw new SystemException(ResultEnum.AUTHORIZATION_MODE_ERROR);
         }
 
-        // 获取当前的认证主体，即客户端凭证
-        Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Set<String> requestedScopes = new HashSet<>();
 
@@ -54,21 +55,13 @@ public class SystemLoginAuthenticationConverter implements AuthenticationConvert
         }
 
         Map<String, Object> additionalParameters = new HashMap<>() {{
-           put("username", username);
-           put("password", password);
-           put("code", loginBody.getCode());
+           put(OAuth2ParameterNames.USERNAME, username);
+           put(OAuth2ParameterNames.PASSWORD, password);
         }};
-
-//        // 将除 grant_type 和 scope 之外的其他请求参数过滤并收集为 Map<String, Object>
-//        Map<String, Object> additionalParameters = parameters
-//                .entrySet()
-//                .stream()
-//                .filter(e -> !Set.of(OAuth2ParameterNames.GRANT_TYPE, OAuth2ParameterNames.SCOPE).contains(e.getKey()))
-//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // 返回自定义的认证令牌，包含客户端凭证、请求的 scope 和其他附加参数
         return new SystemLoginAuthenticationToken(
-                clientPrincipal,
+                authentication,
                 requestedScopes,
                 additionalParameters
         );
