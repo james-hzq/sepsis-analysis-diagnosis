@@ -1,5 +1,6 @@
 package com.hzq.auth.config;
 
+import com.hzq.auth.filter.CachedRequestBodyFilter;
 import com.hzq.auth.handler.HzqAuthenticationFailureHandler;
 import com.hzq.auth.handler.HzqAuthenticationSuccessHandler;
 import com.hzq.auth.login.system.SystemLoginAuthenticationConverter;
@@ -12,36 +13,44 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
 
 /**
- * @className com.hzq.auth.config AuthServerConfig
- * @author hua
- * @date 2024/10/20 15:16
+ * @author gc
+ * @class com.hzq.auth.config AuthServerConfig
+ * @date 2024/10/21 15:34
  * @description TODO
  */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class AuthServerConfig {
-    @Bean
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+    private final CorsFilter corsFilter;
+    // 请求体缓存过滤器
+    private final CachedRequestBodyFilter cachedRequestBodyFilter;
+
+    @Bean
+    public SecurityFilterChain authFilterChain(HttpSecurity httpSecurity) throws Exception {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity);
+
+        httpSecurity.addFilter(corsFilter);
+        httpSecurity.addFilterAfter(cachedRequestBodyFilter, CorsFilter.class);
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         SystemLoginAuthenticationProvider systemLoginAuthenticationProvider = new SystemLoginAuthenticationProvider();
 
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+
+        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 // 自定义授权模式转换器(Converter)
                 .tokenEndpoint(tokenEndpoint -> tokenEndpoint
                         .accessTokenRequestConverters(
@@ -53,8 +62,7 @@ public class AuthServerConfig {
                                         )
                         )
                         .authenticationProviders(
-                                authenticationProviders -> // <2>
-                                        // 自定义授权模式提供者(Provider)
+                                authenticationProviders ->
                                         authenticationProviders.addAll(
                                                 List.of(
                                                         systemLoginAuthenticationProvider
@@ -64,12 +72,14 @@ public class AuthServerConfig {
                         .accessTokenResponseHandler(new HzqAuthenticationSuccessHandler()) // 自定义成功响应
                         .errorResponseHandler(new HzqAuthenticationFailureHandler()) // 自定义失败响应
                 );
-
-        return http.build();
+        return httpSecurity.build();
     }
+
+
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder().build();
+        return AuthorizationServerSettings.builder()
+                .build();
     }
 }

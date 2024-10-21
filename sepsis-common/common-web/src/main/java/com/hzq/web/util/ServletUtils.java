@@ -5,9 +5,11 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.hzq.jackson.JacksonUtil;
+import com.hzq.web.cache.request.CachedBodyHttpServletRequest;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
  * @date 2024/10/11 14:37
  * @description 客户端工具类
  */
+@Slf4j
 public class ServletUtils {
 
     /**
@@ -100,14 +103,15 @@ public class ServletUtils {
      **/
     public static <T> T getRequestBody(HttpServletRequest request, Class<T> clazz) {
         try {
-            // 将请求体的 InputStream 读取为字符串
-            String requestBody = new BufferedReader(new InputStreamReader(request.getInputStream()))
-                    .lines()
-                    .collect(Collectors.joining(System.lineSeparator()));
-
-            return JacksonUtil.parseObject(requestBody, clazz);
-        } catch (IOException e) {
-            throw new RuntimeException("从请求体里面读取数据失败", e);
+            if (!(request instanceof CachedBodyHttpServletRequest cachedRequest)) {
+                throw new IllegalArgumentException("请求对象必须是 CachedBodyHttpServletRequest 的实例");
+            }
+            // 直接使用 CachedBodyHttpServletRequest 中的缓存请求体
+            byte[] cachedBody = cachedRequest.getCachedBody();
+            return JacksonUtil.parseObject(cachedBody, clazz);
+        } catch (Exception e) {
+            log.error("反序列化请求体出错：{}", e.getMessage(), e);
+            throw new RuntimeException("反序列化请求体出错", e);
         }
     }
 

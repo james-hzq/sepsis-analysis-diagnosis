@@ -19,8 +19,6 @@ import java.util.Set;
  */
 @Getter
 public class SystemLoginAuthenticationToken extends OAuth2AuthorizationGrantAuthenticationToken {
-    // 定义身份验证令牌类型
-    public static final AuthorizationGrantType AUTH_TYPE = AuthorizationGrantType.PASSWORD;
     // 令牌申请的访问范围
     private Set<String> scopes;
 
@@ -33,7 +31,7 @@ public class SystemLoginAuthenticationToken extends OAuth2AuthorizationGrantAuth
      * @apiNote TODO
      **/
     public SystemLoginAuthenticationToken(Authentication authentication, Set<String> scopes, Map<String, Object> additionalParameters) {
-        this(AUTH_TYPE, authentication, additionalParameters);
+        this(SystemLoginAuthenticationProperty.AUTH_TYPE, authentication, additionalParameters);
         this.scopes = Collections.unmodifiableSet(scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
     }
 

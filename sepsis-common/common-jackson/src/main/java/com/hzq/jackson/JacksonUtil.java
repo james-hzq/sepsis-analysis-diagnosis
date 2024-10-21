@@ -94,7 +94,7 @@ public class JacksonUtil {
 
     public static String toJsonString(Object object) {
         if (Objects.isNull(object)) {
-            return null;
+            return "";
         }
         try {
             return OBJECT_MAPPER.writeValueAsString(object);
@@ -104,7 +104,7 @@ public class JacksonUtil {
     }
 
     public static <T> T parseObject(String text, Class<T> clazz) {
-        if (text != null && text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
             return null;
         }
         try {
@@ -115,7 +115,7 @@ public class JacksonUtil {
     }
 
     public static <T> T parseObject(byte[] bytes, Class<T> clazz) {
-        if (bytes != null && bytes.length > 0) {
+        if (bytes == null || bytes.length == 0) {
             return null;
         }
         try {
@@ -126,7 +126,7 @@ public class JacksonUtil {
     }
 
     public static <T> T parseObject(String text, TypeReference<T> typeReference) {
-        if (text != null && text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
             return null;
         }
         try {

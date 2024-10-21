@@ -1,8 +1,7 @@
 package com.hzq.auth.config;
 
+import com.hzq.auth.filter.CachedRequestBodyFilter;
 import com.hzq.auth.filter.SystemLoginAuthenticationFilter;
-import com.hzq.auth.login.system.SystemLoginAuthenticationConverter;
-//import com.hzq.auth.login.system.UsernamePasswordAuthenticationProvider;
 import com.hzq.auth.login.system.SystemLoginAuthenticationProvider;
 import com.hzq.auth.service.LoginUserService;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +21,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
@@ -49,8 +50,21 @@ public class AuthSecurityConfig {
     private static final List<String> whitePaths = List.of(
     );
 
+    // Cors过滤器
+    private final CorsFilter corsFilter;
+    // 请求体缓存过滤器
+    private final CachedRequestBodyFilter cachedRequestBodyFilter;
+    // 密码管理器
     private final PasswordEncoder passwordEncoder;
+    // 用于用户名密码认证的 UserDetailsService
     private final LoginUserService loginUserService;
+    // OAuth2令牌生成器
+    private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
+    // 注册客户端仓库
+    private final RegisteredClientRepository registeredClientRepository;
+    // 授权信息存储服务
+    private final OAuth2AuthorizationService authorizationService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, HandlerMappingIntrospector introspector, AuthenticationManager authenticationManager) throws Exception {
@@ -65,14 +79,16 @@ public class AuthSecurityConfig {
                     whitePaths.forEach(whitePath -> requests.requestMatchers(mvcMatcherBuilder.pattern(whitePath)).permitAll());
                     requests.anyRequest().authenticated();
                 })
-                // 禁用默认登录页面
+                // 配置系统用户名密码，表单登录
                 .formLogin(AbstractHttpConfigurer::disable)
                 // 禁用默认登出页面
                 .logout(AbstractHttpConfigurer::disable)
                 // 禁用 CSRF 保护
                 .csrf(AbstractHttpConfigurer::disable)
-                // 添加 CORS 跨域配置
-                .cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()))
+                // 添加 CORS 过滤器
+                .addFilter(corsFilter)
+                // 添加请求体缓存过滤器
+                .addFilterAfter(cachedRequestBodyFilter, CorsFilter.class)
                 // 添加系统用户名密码认证过滤器
                 .addFilterBefore(systemLoginAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -106,37 +122,14 @@ public class AuthSecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(loginUserService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
-        providers.add(daoAuthenticationProvider);
-        return authenticationManager;
-    }
+        SystemLoginAuthenticationProvider systemLoginAuthenticationProvider = new SystemLoginAuthenticationProvider();
+        systemLoginAuthenticationProvider.setTokenGenerator(tokenGenerator);
+        systemLoginAuthenticationProvider.setAuthorizationService(authorizationService);
+        systemLoginAuthenticationProvider.setRegisteredClientRepository(registeredClientRepository);
 
-    /**
-     * @return org.springframework.web.cors.reactive.CorsConfigurationSource
-     * @author gc
-     * @date 2024/10/18 16:05
-     * @apiNote 自定义 CORS 跨域
-     **/
-    @Bean
-    public CorsConfigurationSource customCorsConfiguration() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // 放行所有域名，生产环境请对此进行修改
-        corsConfiguration.addAllowedOriginPattern("*");
-        // 放行的请求头
-        corsConfiguration.addAllowedHeader("*");
-        // 放行的请求方式，主要有：GET, POST, PUT, DELETE, OPTIONS
-        corsConfiguration.addAllowedMethod("*");
-        // 暴露头部信息
-        corsConfiguration.addExposedHeader("*");
-        // 是否允许发送cookie
-        corsConfiguration.setAllowCredentials(true);
-        // 初始化cors配置源对象
-        UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
-        // 给配置源对象设置过滤的参数
-        // 参数一: 过滤的路径 == > 所有的路径都要求校验是否跨域
-        // 参数二: 配置类
-        configurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        // 返回配置好的过滤器
-        return configurationSource;
+        providers.add(daoAuthenticationProvider);
+        providers.add(systemLoginAuthenticationProvider);
+        return authenticationManager;
     }
 
     /**

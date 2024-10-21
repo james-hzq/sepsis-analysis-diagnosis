@@ -28,7 +28,7 @@ import java.util.Set;
  * @author gc
  * @class com.hzq.auth.config OAuth2ClientConfig
  * @date 2024/10/18 15:29
- * @description TODO
+ * @description OAuth2 客户端服务配置
  */
 @Configuration
 @AllArgsConstructor
