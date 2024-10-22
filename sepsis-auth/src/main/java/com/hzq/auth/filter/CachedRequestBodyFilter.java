@@ -16,7 +16,6 @@ import java.io.IOException;
  * @date 2024/10/21 9:31
  * @description TODO
  */
-@Component
 public class CachedRequestBodyFilter extends OncePerRequestFilter {
 
     @Override

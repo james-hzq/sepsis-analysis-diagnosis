@@ -13,17 +13,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author gc
@@ -34,11 +30,9 @@ import java.nio.charset.StandardCharsets;
  * 2. 这种方式必须从请求 Params 里面取 username and password，但是Post请求，将json字符串存储在请求体里面
  * 3. 调用源码堆栈信息发现，UsernamePasswordAuthenticationFilter 用于处理表单登录的请求，从请求参数里面取信息
  */
+@Slf4j
 @Setter
 public class SystemLoginAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-    public SystemLoginAuthenticationFilter() {
-    }
 
     /**
      * @param request  请求对象
@@ -54,9 +48,18 @@ public class SystemLoginAuthenticationFilter extends UsernamePasswordAuthenticat
         return SystemLoginAuthenticationProperty.FILTER_INTERCEPTION_PATH.stream().anyMatch(requestUri::equals);
     }
 
+    /***
+     * @param request 请求对象
+     * @param response 响应对象
+     * @return org.springframework.security.core.Authentication
+     * @author gc
+     * @date 2024/10/22 9:10
+     * @apiNote 过滤逻辑
+     **/
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        if (!request.getMethod().equals(HttpMethod.POST.toString())) {
+        log.error("请求路径 {}, 请求方法 {}", request.getRequestURI(), request.getMethod());
+        if (!request.getMethod().equals("POST")) {
             throw new SystemException(ResultEnum.BAD_REQUEST_METHOD);
         }
 
@@ -71,41 +74,19 @@ public class SystemLoginAuthenticationFilter extends UsernamePasswordAuthenticat
             throw new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR);
         }
 
-        // 判断是否为指定的授权类型，如果不是则返回 null
-        String grantType = loginBody.getGrantType();
-
-        if (!SystemLoginAuthenticationProperty.AUTH_TYPE.getValue().equals(grantType)) {
-            throw new SystemException(ResultEnum.AUTHORIZATION_MODE_ERROR);
-        }
-
         // 进行用户名密码认证
         UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
 
         return super.getAuthenticationManager().authenticate(authenticationToken);
     }
 
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        // 将当前认证成功的对象存入SecurityContext
-        SecurityContextHolder.getContext().setAuthentication(authResult);
-        // 返回成功响应
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(JacksonUtil.toJsonString(Result.success()));
-    }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException, ServletException {
-        Result<Object> errResult;
-        if (authenticationException instanceof BadCredentialsException) {
-            errResult = Result.error(ResultEnum.USERNAME_OR_PASSWORD_ERROR);
-        } else {
-            errResult = Result.error(ResultEnum.SERVER_ERROR);
-        }
-        // 返回失败响应
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(JacksonUtil.toJsonString(errResult));
-    }
+//    @Override
+//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+//        super.successfulAuthentication(request, response, chain, authResult);
+//    }
+//
+//    @Override
+//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+//        super.unsuccessfulAuthentication(request, response, failed);
+//    }
 }

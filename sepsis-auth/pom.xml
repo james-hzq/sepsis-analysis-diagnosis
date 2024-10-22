@@ -13,12 +13,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 内部模块: 全局 web -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-web</artifactId>
-        </dependency>
-
         <!-- SpringCloud bootstrap 加载器 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -55,10 +49,27 @@
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+        <!-- 内部模块: 全局 web -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-web</artifactId>
+        </dependency>
+
         <!-- OAuth2 客户端 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
+        <!-- Springboot 自定义配置 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
         <!-- 内部模块：自定义SpringBoot缓存策略 -->

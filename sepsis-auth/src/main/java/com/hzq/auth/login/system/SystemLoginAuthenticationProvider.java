@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author hua
  * @className com.hzq.auth.login.system SystemLoginAuthenticationProvider
  * @date 2024/10/13 15:43
- * @description 系统用户密码登录身份验证提供者
+ * @description 系统用户密码登录授权身份验证提供者
  */
 @Slf4j
 @Setter
@@ -47,6 +47,8 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SystemLoginAuthenticationToken systemLoginAuthenticationToken = (SystemLoginAuthenticationToken) authentication;
 
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) systemLoginAuthenticationToken.getPrincipal();
+
         // 从客户端仓库中取出签发认证的客户端
         RegisteredClient registeredClient = Optional.ofNullable(registeredClientRepository.findByClientId(SystemLoginAuthenticationProperty.REGISTERED_CLIENT_ID))
                 .orElseThrow(() -> new SystemException(ResultEnum.SYSTEM_CLIENT_NOT_REGISTERED));
@@ -56,7 +58,7 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) systemLoginAuthenticationToken.getPrincipal();
+
         // 验证申请访问范围是否符合
         Set<String> containedScopes = registeredClient.getScopes();
         Set<String> requestedScopes = systemLoginAuthenticationToken.getScopes();
@@ -100,10 +102,10 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
         );
 
         OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
-                .principalName(authenticationToken.getName())
+                .principalName(usernamePasswordAuthenticationToken.getName())
                 .authorizationGrantType(SystemLoginAuthenticationProperty.AUTH_TYPE)
                 .authorizedScopes(scopes)
-                .attribute(Principal.class.getName(), authenticationToken);
+                .attribute(Principal.class.getName(), usernamePasswordAuthenticationToken);
 
         // 生成刷新令牌(Refresh Token)
         OAuth2RefreshToken refreshToken = null;
@@ -118,7 +120,7 @@ public class SystemLoginAuthenticationProvider implements AuthenticationProvider
 
         return new OAuth2AccessTokenAuthenticationToken(
                 registeredClient,
-                authenticationToken,
+                usernamePasswordAuthenticationToken,
                 accessToken,
                 refreshToken,
                 systemLoginAuthenticationToken.getAdditionalParameters()

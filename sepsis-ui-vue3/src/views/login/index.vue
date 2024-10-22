@@ -66,17 +66,7 @@ const handleSystemLogin = () => {
 
 /** github 登录逻辑 */
 const handleGithubLogin = () => {
-  useUserStore()
-    .githubLogin()
-    .then(() => {
-       router.push({ path: "/" })
-     })
-    .catch(() => {
-       console.error("github 登录失败")
-     })
-    .finally(() => {
-
-    })
+  window.location.href = `http://127.0.0.1:9200/oauth2/authorization/github`
 }
 
 /** 创建验证码 */

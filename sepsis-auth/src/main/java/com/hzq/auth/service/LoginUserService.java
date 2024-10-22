@@ -35,6 +35,7 @@ public class LoginUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("用户名为 {} ", username);
         // 通过用户名查找用户表信息
         SysUserDTO sysUserDTO = Optional.ofNullable(sysUserFeignClient.selectByUsername(username).getData())
                 .orElseThrow(() -> new SystemException(ResultEnum.USERNAME_OR_PASSWORD_ERROR));

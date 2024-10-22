@@ -1,7 +1,7 @@
 package com.hzq.auth.config;
 
-import com.hzq.auth.domain.LoginUser;
-import com.hzq.core.constant.LoginConstants;
+import com.hzq.auth.config.oauth2.CustomOAuth2TokenCustomizer;
+import com.hzq.auth.constant.SecurityConstants;
 import com.hzq.core.util.RSAUtils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -11,20 +11,14 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.token.*;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author gc
@@ -95,27 +89,24 @@ public class OAuth2JwtConfig {
      **/
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
-        return context -> {
-            // 检查令牌类型和主体类型
-            if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType()) &&
-                    context.getPrincipal() instanceof UsernamePasswordAuthenticationToken
-            ) {
-                Optional.ofNullable(context.getPrincipal().getPrincipal()).ifPresent(principal -> {
-                    JwtClaimsSet.Builder claims = context.getClaims();
-                    // 如果主体是LoginUser类型，即系统用户登录，则添加自定义字段
-                    if (principal instanceof LoginUser loginUser) {
+        return new CustomOAuth2TokenCustomizer();
+    }
 
-                        claims.claim(LoginConstants.SYSTEM_LOGIN_USER_ID, loginUser.getUserId());
-                        claims.claim(LoginConstants.SYSTEM_LOGIN_USER_NAME, loginUser.getUsername());
+    /**
+     * 自定义jwt解析器，设置解析出来的权限信息的前缀与在jwt中的key
+     *
+     * @return jwt解析器 JwtAuthenticationConverter
+     */
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // 设置解析权限信息的前缀，设置为空是去掉前缀
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+        // 设置权限信息在jwt claims中的key
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(SecurityConstants.AUTHORITIES_KEY);
 
-                        // 这里存入角色至JWT，解析JWT的角色用于鉴权的位置: ResourceServerConfig#jwtAuthenticationConverter
-                        Set<String> roles = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities())
-                                .stream()
-                                .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
-                        claims.claim(LoginConstants.SYSTEM_LOGIN_USER_ROLES, roles);
-                    }
-                });
-            }
-        };
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
     }
 }
