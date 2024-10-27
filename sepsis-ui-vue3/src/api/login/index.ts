@@ -21,7 +21,7 @@ export function SystemLoginApi(data: Login.SystemLoginRequestData) {
 /** Github授权登录并返回 Token */
 export function GithubLoginApi() {
   return request<Login.LoginResponseData>({
-    url: "/oauth/github/login",
+    url: "/auth/github/login",
     method: "post",
   })
 }

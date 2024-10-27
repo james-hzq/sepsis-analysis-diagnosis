@@ -2,6 +2,7 @@ package com.hzq.auth.config.oauth2;
 
 import com.hzq.auth.constant.SecurityConstants;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @date 2024/10/22 15:19
  * @description TODO
  */
+@Slf4j
 @Component
 public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
     private final DefaultOAuth2AuthorizationRequestResolver defaultOAuth2AuthorizationRequestResolver;
@@ -36,6 +38,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+        log.info("进入");
         OAuth2AuthorizationRequest authorizationRequest = this.defaultOAuth2AuthorizationRequestResolver.resolve(request, clientRegistrationId);
         return customizeAuthorizationRequest(authorizationRequest);
     }
@@ -52,7 +55,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 
         // 针对 GitHub 自定义参数
         if (SecurityConstants.THIRD_LOGIN_GITHUB.equals(clientRegistrationId)) {
-            additionalParameters.put("allow_signup", "false");
+            additionalParameters.put("prompt", "consent");
         }
 
         // 针对 Google 自定义参数

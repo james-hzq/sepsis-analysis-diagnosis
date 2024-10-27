@@ -27,8 +27,9 @@ export const useUserStore = defineStore("user", () => {
   /** github登录 */
   const githubLogin = async ()=> {
     const { data } = await GithubLoginApi()
-    setToken(data)
-    token.value = data
+    console.log(data)
+    // setToken(data)
+    // token.value = data
   }
 
   /** 获取用户详情 */

@@ -38,7 +38,7 @@ spring:
         - id: sepsis-auth
           uri: http://localhost:9200
           predicates:
-            - Path=/auth/**, /oauth2/**
+            - Path=/auth/**
         - id: sepsis-system
           uri: http://localhost:9201
           predicates:

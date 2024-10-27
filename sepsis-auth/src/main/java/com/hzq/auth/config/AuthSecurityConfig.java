@@ -6,6 +6,7 @@ import com.hzq.auth.constant.SecurityConstants;
 import com.hzq.auth.constant.SecurityProperties;
 import com.hzq.auth.filter.CachedRequestBodyFilter;
 import com.hzq.auth.filter.SystemLoginAuthenticationFilter;
+import com.hzq.auth.handler.HzqAuthenticationSuccessHandler;
 import com.hzq.auth.handler.LoginTargetAuthenticationEntryPoint;
 import com.hzq.auth.handler.SystemLoginFailureHandler;
 import com.hzq.auth.handler.SystemLoginSuccessHandler;
@@ -28,6 +29,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -64,6 +68,7 @@ public class AuthSecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
     private final LoginUserService loginUserService;
+    private final OAuth2AuthorizedClientService oAuth2AuthorizationService;
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
@@ -130,12 +135,14 @@ public class AuthSecurityConfig {
         // 联合身份认证
         httpSecurity.oauth2Login(oauth2Login -> oauth2Login
                 .loginPage(securityProperties.getLoginPageUrl())
+                .loginProcessingUrl("/auth/github/callback")
                 .authorizationEndpoint(authorization -> authorization
                         .authorizationRequestResolver(customAuthorizationRequestResolver)
                 )
                 .tokenEndpoint(token -> token
                         .accessTokenResponseClient(customAccessTokenResponseClient)
                 )
+                .successHandler(new HzqAuthenticationSuccessHandler(oAuth2AuthorizationService))
         );
 
         return httpSecurity.build();
