@@ -38,6 +38,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+        log.info("进入");
         OAuth2AuthorizationRequest authorizationRequest = this.defaultOAuth2AuthorizationRequestResolver.resolve(request, clientRegistrationId);
         return customizeAuthorizationRequest(authorizationRequest);
     }
@@ -55,7 +56,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 
         // 针对 GitHub 自定义参数
         if (SecurityConstants.THIRD_LOGIN_GITHUB.equals(clientRegistrationId)) {
-            additionalParameters.put("allow_signup", "false");
+            additionalParameters.put("prompt", "consent");
         }
 
         // 针对 Google 自定义参数
