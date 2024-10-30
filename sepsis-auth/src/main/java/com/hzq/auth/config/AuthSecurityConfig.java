@@ -1,6 +1,7 @@
 package com.hzq.auth.config;
 
 import com.hzq.auth.config.oauth2.CustomAccessTokenResponseClient;
+import com.hzq.auth.config.oauth2.CustomAuthorizationRequestRepository;
 import com.hzq.auth.config.oauth2.CustomAuthorizationRequestResolver;
 import com.hzq.auth.constant.SecurityConstants;
 import com.hzq.auth.constant.SecurityProperties;
@@ -28,6 +29,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -38,6 +40,7 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -59,6 +62,7 @@ public class AuthSecurityConfig {
     private final CorsFilter corsFilter;
     //
     private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
+    private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
     //
     private final CustomAccessTokenResponseClient customAccessTokenResponseClient;
 
@@ -67,11 +71,12 @@ public class AuthSecurityConfig {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
+
+
         CachedRequestBodyFilter cachedRequestBodyFilter = new CachedRequestBodyFilter();
 
         SystemLoginAuthenticationFilter systemLoginAuthenticationFilter = new SystemLoginAuthenticationFilter();
         systemLoginAuthenticationFilter.setAuthenticationManager(authenticationManager);
-
         // 添加过滤器
         httpSecurity
                 .addFilter(corsFilter)
@@ -122,7 +127,6 @@ public class AuthSecurityConfig {
                 // 指定登录页面
                 .formLogin(formLogin -> formLogin
                         .loginPage(securityProperties.getLoginPageUrl())
-                        .loginProcessingUrl(securityProperties.getLoginApiUrl())
                         .successHandler(new SystemLoginSuccessHandler())
                         .failureHandler(new SystemLoginFailureHandler())
                 );
@@ -132,10 +136,12 @@ public class AuthSecurityConfig {
                 .loginPage(securityProperties.getLoginPageUrl())
                 .authorizationEndpoint(authorization -> authorization
                         .authorizationRequestResolver(customAuthorizationRequestResolver)
+                        .authorizationRequestRepository(customAuthorizationRequestRepository)
                 )
                 .tokenEndpoint(token -> token
                         .accessTokenResponseClient(customAccessTokenResponseClient)
                 )
+
         );
 
         return httpSecurity.build();

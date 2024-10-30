@@ -49,17 +49,6 @@
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <!-- 内部模块: 全局 web -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-web</artifactId>
-        </dependency>
-
         <!-- OAuth2 客户端 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -76,6 +65,18 @@
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-cache</artifactId>
+        </dependency>
+
+        <!-- 内部模块：自定义Redis -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-redis</artifactId>
+        </dependency>
+
+        <!-- 内部模块: 全局 web -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-web</artifactId>
         </dependency>
 
         <!-- 系统服务 -->

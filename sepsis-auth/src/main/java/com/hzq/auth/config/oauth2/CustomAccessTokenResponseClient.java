@@ -1,5 +1,6 @@
 package com.hzq.auth.config.oauth2;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
@@ -17,6 +18,7 @@ import java.util.Arrays;
  * @date 2024/10/22 15:34
  * @description TODO
  */
+@Slf4j
 @Component
 public class CustomAccessTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
 
@@ -38,6 +40,7 @@ public class CustomAccessTokenResponseClient implements OAuth2AccessTokenRespons
 
     @Override
     public OAuth2AccessTokenResponse getTokenResponse(OAuth2AuthorizationCodeGrantRequest authorizationGrantRequest) {
+        log.info("进入 CustomAccessTokenResponseClient 类");
         // 使用默认的 token 响应处理
         OAuth2AccessTokenResponse tokenResponse = defaultTokenResponseClient.getTokenResponse(authorizationGrantRequest);
 

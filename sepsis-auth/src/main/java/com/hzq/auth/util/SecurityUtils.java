@@ -33,6 +33,7 @@ public class SecurityUtils {
      * @apiNote 认证与鉴权失败回调
      **/
     public static void exceptionHandler(HttpServletRequest request, HttpServletResponse response, Throwable e) {
+        log.info("进入 SecurityUtils.exceptionHandler 方法");
         Map<String, String> parameters = getErrorParameter(request, response, e);
         String wwwAuthenticate = computeWwwAuthenticateHeaderValue(parameters);
         response.addHeader(HttpHeaders.WWW_AUTHENTICATE, wwwAuthenticate);

@@ -31,6 +31,7 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        log.info("进入 LoginTargetAuthenticationEntryPoint 类");
         // 获取登录表单的地址
         String loginForm = determineUrlToUseForThisRequest(request, response, authException);
         if (!UrlUtils.isAbsoluteUrl(loginForm)) {

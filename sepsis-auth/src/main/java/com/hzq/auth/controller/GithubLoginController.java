@@ -1,10 +1,10 @@
 package com.hzq.auth.controller;
 
+import com.hzq.auth.login.github.GithubLoginClient;
 import com.hzq.core.result.Result;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author gc
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @description TODO
  */
 @Slf4j
+@AllArgsConstructor
 @RestController
-@RequestMapping("/oauth2/github")
 public class GithubLoginController {
 
-    @GetMapping("/callback")
-    public Result<String> githubLogin() {
-        log.error("进入Github登录");
+    @GetMapping("/login/oauth2/code/github")
+    public Result<String> githubCallback(@RequestParam("code") String code, @RequestParam("state") String state) {
+        log.info("收到 GitHub 授权码: {}, 收到 Github 状态: {}", code, state);
         return Result.success();
     }
 }

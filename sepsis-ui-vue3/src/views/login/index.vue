@@ -65,8 +65,8 @@ const handleSystemLogin = () => {
 }
 
 /** github 登录逻辑 */
-const handleGithubLogin = () => {
-  window.location.href = `http://127.0.0.1:9200/oauth2/authorization/github`
+const handleGithubLogin = (registrationId: String) => {
+  window.location.href = `http://localhost:9100/oauth2/authorization/${registrationId}`
 }
 
 /** 创建验证码 */
@@ -144,7 +144,7 @@ const createCode = () => {
             </el-input>
           </el-form-item>
           <el-button :loading="loading" type="primary" size="large" @click.prevent="handleSystemLogin">登 录</el-button>
-          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleGithubLogin">Github 登 录</el-button>
+          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleGithubLogin('github')">Github 登 录</el-button>
         </el-form>
       </div>
     </div>

@@ -2,6 +2,7 @@ package com.hzq.auth.config.oauth2;
 
 import com.hzq.auth.constant.SecurityConstants;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @date 2024/10/22 15:19
  * @description TODO
  */
+@Slf4j
 @Component
 public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
     private final DefaultOAuth2AuthorizationRequestResolver defaultOAuth2AuthorizationRequestResolver;
@@ -41,6 +43,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
     }
 
     private OAuth2AuthorizationRequest customizeAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest) {
+        log.info("进入 CustomAuthorizationRequestResolver ");
         if (authorizationRequest == null) {
             return null;
         }
@@ -48,7 +51,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
         // 从请求中获取 additionalParameters
         Map<String, Object> additionalParameters = authorizationRequest.getAdditionalParameters();
         // 从 additionalParameters 获取 registration_id
-        String clientRegistrationId = (String) additionalParameters.get("registration_id");
+        String clientRegistrationId = (String) additionalParameters.get("registrationId");
 
         // 针对 GitHub 自定义参数
         if (SecurityConstants.THIRD_LOGIN_GITHUB.equals(clientRegistrationId)) {
