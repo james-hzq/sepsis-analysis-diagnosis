@@ -7,9 +7,7 @@ import com.hzq.auth.constant.SecurityConstants;
 import com.hzq.auth.constant.SecurityProperties;
 import com.hzq.auth.filter.CachedRequestBodyFilter;
 import com.hzq.auth.filter.SystemLoginAuthenticationFilter;
-import com.hzq.auth.handler.LoginTargetAuthenticationEntryPoint;
-import com.hzq.auth.handler.SystemLoginFailureHandler;
-import com.hzq.auth.handler.SystemLoginSuccessHandler;
+import com.hzq.auth.handler.*;
 import com.hzq.auth.service.LoginUserService;
 import com.hzq.auth.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +36,6 @@ import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @class com.hzq.auth.config AuthSecurityConfig
@@ -141,7 +135,8 @@ public class AuthSecurityConfig {
                 .tokenEndpoint(token -> token
                         .accessTokenResponseClient(customAccessTokenResponseClient)
                 )
-
+                .successHandler(new GithubLoginSuccessHandler())
+                .failureHandler(new GithubLoginFailureHandler())
         );
 
         return httpSecurity.build();

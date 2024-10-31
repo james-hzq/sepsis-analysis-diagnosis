@@ -31,10 +31,10 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.info("进入 LoginTargetAuthenticationEntryPoint 类");
         // 获取登录表单的地址
-        String loginForm = determineUrlToUseForThisRequest(request, response, authException);
-        if (!UrlUtils.isAbsoluteUrl(loginForm)) {
+        String loginFormUrl = determineUrlToUseForThisRequest(request, response, authException);
+        log.info("进入 LoginTargetAuthenticationEntryPoint 类, loginFormUrl = {}", loginFormUrl);
+        if (!UrlUtils.isAbsoluteUrl(loginFormUrl)) {
             // 不是绝对路径调用父类方法处理
             super.commence(request, response, authException);
             return;
@@ -47,7 +47,7 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
 
         // 绝对路径在重定向前添加target参数
         String targetParameter = URLEncoder.encode(requestUrl.toString(), StandardCharsets.UTF_8);
-        String targetUrl = loginForm + "?target=" + targetParameter;
+        String targetUrl = loginFormUrl + "?target=" + targetParameter;
         log.info("重定向至前后端分离的登录页面：{}", targetUrl);
         this.redirectStrategy.sendRedirect(request, response, targetUrl);
     }

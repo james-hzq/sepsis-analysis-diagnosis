@@ -1,6 +1,7 @@
 package com.hzq.auth.constant;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,25 +17,30 @@ import java.util.List;
 @Configuration
 public class SecurityProperties {
     // 登录页面路径
-    private String loginPageUrl = "/login";
+    @Value("${hzq.security.login-page-url}")
+    private String loginPageUrl;
 
     // 登录API路径
-    private String loginApiUrl = "/auth/system/login";
+    @Value("${hzq.security.login-api-url}")
+    private String loginApiUrl;
 
     // 授权确认页面
-    private String consentPageUri = "/oauth2/consent";
+    @Value("${hzq.security.consent-page-uri}")
+    private String consentPageUri;
 
     // 授权码验证页面
-    private String deviceActivateUri = "/activate";
+    @Value("${hzq.security.device-activate-uri}")
+    private String deviceActivateUri;
 
     // 授权码验证成功后页面
-    private String deviceActivatedUri = "/activated";
-
-    // 跳过认证的白名单路径
-    private List<String> whiteUriList = List.of(
-            "/auth/system/login", "/auth/github/login", "/auth/github/callback"
-    );
+    @Value("${hzq.security.device-activated-uri}")
+    private String deviceActivatedUri;
 
     // token签发地址：如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
-    private String issuerUrl = "http://127.0.0.1:9200";
+    @Value("${hzq.security.issuer-url}")
+    private String issuerUrl;
+
+    // 跳过认证的白名单路径
+    @Value("${hzq.security.white-uri-list}")
+    private List<String> whiteUriList;
 }

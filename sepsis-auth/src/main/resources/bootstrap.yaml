@@ -73,5 +73,6 @@ hzq:
     consent-page-uri: /oauth2/consent
     device-activate-uri: /activate
     device-activated-uri: /activated
-    white-uri-list: /login, /favicon.ico, /login/oauth2/code/github
     issuer-url: http://127.0.0.1:9200
+    white-uri-list: /login, /favicon.ico, /login/oauth2/code/github
+

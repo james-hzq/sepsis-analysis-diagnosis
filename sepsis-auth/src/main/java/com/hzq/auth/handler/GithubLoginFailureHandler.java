@@ -3,26 +3,25 @@ package com.hzq.auth.handler;
 import com.hzq.core.result.Result;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.jackson.JacksonUtil;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author gc
- * @class com.hzq.auth.handler SystemLoginFailureHandler
- * @date 2024/10/22 14:55
+ * @author hua
+ * @className com.hzq.auth.handler GithubLoginFailureHandler
+ * @date 2024/10/31 19:59
  * @description TODO
  */
 @Slf4j
-public class SystemLoginFailureHandler implements AuthenticationFailureHandler {
+public class GithubLoginFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {

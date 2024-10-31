@@ -33,18 +33,17 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
+        log.info("进入 CustomAuthorizationRequestResolver 1");
         return this.defaultOAuth2AuthorizationRequestResolver.resolve(request);
     }
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
-        log.info("进入");
         OAuth2AuthorizationRequest authorizationRequest = this.defaultOAuth2AuthorizationRequestResolver.resolve(request, clientRegistrationId);
         return customizeAuthorizationRequest(authorizationRequest);
     }
 
     private OAuth2AuthorizationRequest customizeAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest) {
-        log.info("进入 CustomAuthorizationRequestResolver ");
         if (authorizationRequest == null) {
             return null;
         }

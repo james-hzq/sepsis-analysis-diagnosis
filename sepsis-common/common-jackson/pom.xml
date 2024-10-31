@@ -25,6 +25,7 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <!-- 内部缓存 -->
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-cache</artifactId>

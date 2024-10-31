@@ -41,8 +41,8 @@ public class ResourceServerConfig {
 
     // 请求白名单，该集合中的路径，跳过认证，可直接进入网关过滤器
     private static final List<String> whitesUrIs = List.of(
-            "/auth/**",
-            "/oauth2/**"
+            "/oauth2/**",
+            "/favicon.ico"
     );
 
     /**
