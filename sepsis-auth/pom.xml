@@ -13,12 +13,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 内部模块: 全局 web -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-web</artifactId>
-        </dependency>
-
         <!-- SpringCloud bootstrap 加载器 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -65,6 +59,18 @@
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-cache</artifactId>
+        </dependency>
+
+        <!-- 内部模块: 全局 web -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-web</artifactId>
+        </dependency>
+
+        <!-- 内部模块：全局Redis -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-redis</artifactId>
         </dependency>
 
         <!-- 系统服务 -->
