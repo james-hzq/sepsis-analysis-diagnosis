@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
-import com.hzq.jackson.JacksonUtil;
+import com.hzq.jackson.JacksonUtils;
 import com.hzq.web.cache.request.CachedBodyHttpServletRequest;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -105,7 +105,7 @@ public class ServletUtils {
             }
             // 直接使用 CachedBodyHttpServletRequest 中的缓存请求体
             byte[] cachedBody = cachedRequest.getCachedBody();
-            return JacksonUtil.parseObject(cachedBody, clazz);
+            return JacksonUtils.parseObject(cachedBody, clazz);
         } catch (Exception e) {
             log.error("反序列化请求体出错：{}", e.getMessage(), e);
             throw new RuntimeException("反序列化请求体出错", e);

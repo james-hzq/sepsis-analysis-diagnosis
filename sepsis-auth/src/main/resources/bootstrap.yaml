@@ -65,14 +65,3 @@ logging:
     org.springframework.security.oauth2.provider: DEBUG
     org.springframework.web: DEBUG
 
-
-hzq:
-  security:
-    login-page-url: http://localhost:9050/login
-    login-api-url: /login
-    consent-page-uri: /oauth2/consent
-    device-activate-uri: /activate
-    device-activated-uri: /activated
-    issuer-url: http://127.0.0.1:9200
-    white-uri-list: /login, /favicon.ico, /login/oauth2/code/github
-

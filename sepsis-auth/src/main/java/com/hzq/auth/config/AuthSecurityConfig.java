@@ -2,6 +2,7 @@ package com.hzq.auth.config;
 
 import com.hzq.auth.handler.OAuth2AuthenticationSuccessHandler;
 import com.hzq.auth.service.CustomOAuth2UserService;
+import com.hzq.auth.service.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +40,6 @@ public class AuthSecurityConfig {
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final CustomAccessTokenResponseClient customAccessTokenResponseClient;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final
 
     @Bean
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -85,7 +85,7 @@ public class AuthSecurityConfig {
                         )
                         // 配置获取用户信息服务
                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                               .userService()
+                               .userService(customOAuth2UserService())
                        )
                         // 配置成功回调
                         .successHandler(oAuth2AuthenticationSuccessHandler)
@@ -116,9 +116,8 @@ public class AuthSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
+    private OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
         return new CustomOAuth2UserService()
-                .setOAuth2UserService("github")
+                .setOAuth2UserService("github", new GithubOAuth2UserService());
     }
 }

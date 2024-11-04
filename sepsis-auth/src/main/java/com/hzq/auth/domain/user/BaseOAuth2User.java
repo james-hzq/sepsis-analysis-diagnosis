@@ -1,5 +1,6 @@
 package com.hzq.auth.domain.user;
 
+import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -12,18 +13,21 @@ import java.util.*;
  * @date 2024/11/4 17:38
  * @description 基础OAuth2用户类
  */
+@Getter
 @ToString
-public abstract class BaseOAuth2User implements OAuth2User {
+public class BaseOAuth2User implements OAuth2User {
     private final Set<GrantedAuthority> authorities;
     private final Map<String, Object> attributes;
     private final String nameAttributeKey;
+    private final String accessToken;
 
-    protected BaseOAuth2User(Collection<GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey) {
+    public BaseOAuth2User(Collection<GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, String accessToken) {
         this.authorities = (authorities != null)
                 ? Collections.unmodifiableSet(new LinkedHashSet<>(sortAuthorities(authorities)))
                 : Collections.unmodifiableSet(new LinkedHashSet<>(Collections.emptyList()));
         this.attributes = Collections.unmodifiableMap(new LinkedHashMap<>(attributes));
         this.nameAttributeKey = nameAttributeKey;
+        this.accessToken = accessToken;
     }
 
     @Override

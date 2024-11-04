@@ -1,6 +1,6 @@
 package com.hzq.auth.config;
 
-import com.hzq.jackson.JacksonUtil;
+import com.hzq.jackson.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -72,7 +72,7 @@ public final class CustomAuthorizationRequestRepository implements Authorization
         Assert.hasText(state, "authorizationRequest.state cannot be empty");
         redisCache.setCacheObject(
                 AUTHORIZATION_REQUEST_PREFIX + state,
-                JacksonUtil.toJsonString(authorizationRequest),
+                JacksonUtils.toJsonString(authorizationRequest),
                 AUTHORIZATION_REQUEST_EXPIRATION_MINUTES,
                 TimeUnit.MINUTES
         );
@@ -98,7 +98,7 @@ public final class CustomAuthorizationRequestRepository implements Authorization
 
         String redisKey = AUTHORIZATION_REQUEST_PREFIX + state;
         String oauth2AuthorizationRequestCache = redisCache.getCacheObject(redisKey);
-        OAuth2AuthorizationRequest oAuth2AuthorizationRequest = JacksonUtil.parseObject(oauth2AuthorizationRequestCache, OAuth2AuthorizationRequest.class);
+        OAuth2AuthorizationRequest oAuth2AuthorizationRequest = JacksonUtils.parseObject(oauth2AuthorizationRequestCache, OAuth2AuthorizationRequest.class);
         redisCache.deleteCacheObject(redisKey);
         return oAuth2AuthorizationRequest;
     }
