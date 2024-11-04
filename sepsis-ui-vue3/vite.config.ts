@@ -23,7 +23,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     },
     server: {
       /** 设置 host: true 才可以使用 Network 的形式，以 IP 访问项目 */
-      host: true, // host: "0.0.0.0"
+      host: "0.0.0.0", // host: "0.0.0.0"
       /** 端口号 */
       port: 9050,
       /** 是否自动打开浏览器 */
@@ -38,12 +38,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           target: "http://localhost:9100",
           ws: true,
           changeOrigin: true,
-          rewrite: (path) => path.replace("/dev-api", "")
-        },
-        "/oauth/github": {
-          target: "http://localhost:9100", // 后端处理 GitHub OAuth 请求的 API 地址
-          changeOrigin: true,
-          rewrite: (path) => path.replace( "/oauth/github","/oauth/github" )
+          rewrite: (path) => path.replace(/^\/dev-api/, ''),
         }
       },
       /** 预热常用文件，提高初始页面加载速度 */

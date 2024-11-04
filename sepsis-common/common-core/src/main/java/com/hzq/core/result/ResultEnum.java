@@ -28,8 +28,11 @@ public enum ResultEnum {
     USER_NO_ROLE(2000, "用户未拥有角色"),
     SYSTEM_CLIENT_NOT_REGISTERED(2000, "系统客户端未注册"),
     SYSTEM_CLIENT_NO_SCOPE(2000, "系统客户端没有该访问范围"),
+    ACCESS_TOKEN_GENERATE_ERROR(2000, "访问令牌生成失败"),
+    REFRESH_TOKEN_GENERATE_ERROR(2000, "刷新令牌生成失败"),
     // 自定义业务失败提示 3xxx
-    CUSTOM_ERROR(2000, "自定义异常");
+    CLIENT_REGISTRATION_INVALID(3000, "客户端ID无效"),
+    CUSTOM_ERROR(3000, "自定义异常");
 
     private final int code;
     private final String message;

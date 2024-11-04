@@ -1,5 +1,6 @@
 package com.hzq.jackson;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -71,7 +72,8 @@ public class JacksonConfig {
     /**
      * @author hua
      * @date 2024/8/11 19:57
-     * @apiNote 1. 在Spring Boot应用中手动定义并注入了一个ObjectMapper Bean，这个自定义的ObjectMapper实例会替换掉Spring Boot默认配置的ObjectMapper。
+     * @apiNote
+     * 1. 在Spring Boot应用中手动定义并注入了一个ObjectMapper Bean，这个自定义的ObjectMapper实例会替换掉Spring Boot默认配置的ObjectMapper。
      * 2. 因此，SpringBoot 提供了一个类，进行扩展和修改默认的 ObjectMapper 配置
      **/
     private void applyDefaultConfigurations(Jackson2ObjectMapperBuilder builder) {
@@ -102,6 +104,13 @@ public class JacksonConfig {
                 .deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATETIME_PATTERN)))
                 .deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)))
                 .deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT)));
+
+        // 配置默认类型信息，以解决序列化对象中嵌套对象的类型信息问题
+        builder.postConfigurer(objectMapper -> objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY)
+        );
 
         log.info("jackson default config init successfully");
     }

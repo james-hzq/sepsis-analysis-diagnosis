@@ -22,7 +22,7 @@ export function SystemLoginApi(data: Login.SystemLoginRequestData) {
 export function GithubLoginApi() {
   return request<Login.LoginResponseData>({
     url: "/oauth/github/login",
-    method: "post",
+    method: "get",
   })
 }
 

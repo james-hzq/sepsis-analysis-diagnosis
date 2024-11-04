@@ -1,5 +1,9 @@
 server:
   port: 9200
+  servlet:
+    session:
+      cookie:
+        domain: 127.0.0.1
 
 spring:
   application:
@@ -38,7 +42,7 @@ spring:
           github:
             client-id: Ov23liuVpLlEtrzsVjDc
             client-secret: 0474aa76569ead8f5f54ab84cb06bb18a6055475
-            redirect-uri: http://localhost:9100/oauth/github/callback
+            redirect-uri: http://127.0.0.1:9200/login/oauth2/code/github
             authorization-grant-type: authorization_code
             scope: user,repo
             client-name: GitHub
@@ -49,7 +53,26 @@ spring:
             user-info-uri: https://api.github.com/user
             user-name-attribute: login
 
+
 logging:
   config: classpath:logback-spring.xml
   file:
     path: ${user.dir}/logs/${spring.application.name}
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.client: DEBUG
+    org.springframework.security.oauth2.provider: DEBUG
+    org.springframework.web: DEBUG
+
+
+hzq:
+  security:
+    login-page-url: http://localhost:9050/login
+    login-api-url: /login
+    consent-page-uri: /oauth2/consent
+    device-activate-uri: /activate
+    device-activated-uri: /activated
+    issuer-url: http://127.0.0.1:9200
+    white-uri-list: /login, /favicon.ico, /login/oauth2/code/github
+

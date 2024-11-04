@@ -25,10 +25,12 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author hua
- * @className com.hzq.gateway.config GatewayResourceServerConfig
+ * @className com.hzq.gateway.config ResourceServerConfig
  * @date 2024/9/26 20:32
  * @description 资源服务访问安全配置类
  */
@@ -36,9 +38,14 @@ import java.security.interfaces.RSAPublicKey;
 @RequiredArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
-public class GatewayResourceServerConfig {
+public class ResourceServerConfig {
 
-    private final GatewayProperties gatewayProperties;
+    // 请求白名单，该集合中的路径，跳过认证，可直接进入网关过滤器
+    private static final List<String> whitesUrIs = List.of(
+            "/oauth2/**",
+            "/auth/**",
+            "/favicon.ico"
+    );
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -53,7 +60,9 @@ public class GatewayResourceServerConfig {
         serverHttpSecurity
                 // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要认证
                 .authorizeExchange(exchange -> {
-                            gatewayProperties.getWhiteUriList().forEach(s -> exchange.pathMatchers(s).permitAll());
+                            if (!whitesUrIs.isEmpty()) {
+                                exchange.pathMatchers(whitesUrIs.toArray(String[]::new)).permitAll();
+                            }
                             exchange.anyExchange().authenticated();
                         }
                 )
