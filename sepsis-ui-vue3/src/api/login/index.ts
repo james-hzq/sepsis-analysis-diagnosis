@@ -4,7 +4,7 @@ import type * as Login from "./types/login"
 /** 获取登录验证码 */
 export function getLoginCodeApi() {
   return request<Login.LoginCodeResponseData>({
-    url: "/oauth2/login/code",
+    url: "/oauth/login/code",
     method: "get"
   })
 }
@@ -12,7 +12,7 @@ export function getLoginCodeApi() {
 /** 系统登录并返回 Token */
 export function SystemLoginApi(data: Login.SystemLoginRequestData) {
   return request<Login.LoginResponseData>({
-    url: "/oauth2/system/login",
+    url: "/oauth/system/login",
     method: "post",
     data
   })
@@ -21,15 +21,15 @@ export function SystemLoginApi(data: Login.SystemLoginRequestData) {
 /** Github授权登录并返回 Token */
 export function GithubLoginApi() {
   return request<Login.LoginResponseData>({
-    url: "/oauth2/github/login",
-    method: "post",
+    url: "/oauth/github/login",
+    method: "get",
   })
 }
 
 /** 获取用户详情 */
 export function getLoginUserInfoApi() {
   return request<Login.LoginUserInfoResponseData>({
-    url: "/oauth2/login/user-info",
+    url: "/oauth/login/user-info",
     method: "get"
   })
 }

@@ -1,19 +1,20 @@
-package com.hzq.auth.filter;
+package com.hzq.auth.config;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
  * @author gc
- * @class com.hzq.auth.filter CorsWebFilter
- * @date 2024/10/21 9:42
- * @description 配 CORS 跨域
+ * @class com.hzq.auth.config CorsConfig
+ * @date 2024/11/4 9:30
+ * @description CORS 跨域配置
  */
-@Component
-public class CorsWebFilter {
+@Configuration
+public class CorsConfig {
+
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -36,5 +37,4 @@ public class CorsWebFilter {
         // 返回配置好的过滤器
         return new CorsFilter(configurationSource);
     }
-
 }

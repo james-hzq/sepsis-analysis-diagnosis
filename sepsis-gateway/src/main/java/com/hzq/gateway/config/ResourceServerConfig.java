@@ -25,6 +25,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +43,7 @@ public class ResourceServerConfig {
     // 请求白名单，该集合中的路径，跳过认证，可直接进入网关过滤器
     private static final List<String> whitesUrIs = List.of(
             "/oauth2/**",
+            "/auth/**",
             "/favicon.ico"
     );
 

@@ -32,6 +32,8 @@ public class CacheConfig {
 
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(caffeine);
+
+        log.info("caffeine config init successfully");
         return cacheManager;
     }
 }

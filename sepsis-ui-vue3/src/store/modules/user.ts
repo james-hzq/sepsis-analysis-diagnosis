@@ -27,7 +27,7 @@ export const useUserStore = defineStore("user", () => {
   /** github登录 */
   const githubLogin = async ()=> {
     const { data } = await GithubLoginApi()
-    window.location.href = data;
+    console.log("data" + data)
   }
 
   /** 获取用户详情 */

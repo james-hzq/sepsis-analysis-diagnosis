@@ -18,14 +18,12 @@ public class AuthJacksonCustomizer implements JacksonCustomizer {
     @Override
     public void customize(Jackson2ObjectMapperBuilder builder) {
         SimpleModule module = new SimpleModule();
+        module
+                // 序列化配置
+                .addSerializer(OAuth2AuthorizationResponseType.class, new ToStringSerializer())
+                // 反序列化配置
+                .addDeserializer(OAuth2AuthorizationResponseType.class, new OAuth2AuthorizationResponseTypeDeserializer());
 
-        // 序列化配置
-        module.addSerializer(OAuth2AuthorizationResponseType.class, new ToStringSerializer());
-
-        // 反序列化配置
-        module.addDeserializer(OAuth2AuthorizationResponseType.class, new OAuth2AuthorizationResponseTypeDeserializer());
-
-        builder.modules(module);
         builder.modules(module);
     }
 }
