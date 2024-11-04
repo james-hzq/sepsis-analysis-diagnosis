@@ -1,6 +1,7 @@
 package com.hzq.auth.config;
 
 import com.hzq.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.hzq.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.CorsFilter;
 
@@ -110,5 +114,11 @@ public class AuthSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
+        return new CustomOAuth2UserService()
+                .setOAuth2UserService("github")
     }
 }
