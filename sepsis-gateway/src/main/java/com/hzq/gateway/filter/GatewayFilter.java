@@ -13,7 +13,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -29,8 +28,8 @@ import java.text.ParseException;
  * @description 网关认证过滤器，设置最高优先级执行，为请求执行的第一个过滤器，执行完毕将请求传递给资源服务器安全配置
  */
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GatewayFilter implements GlobalFilter {
 
     @SneakyThrows

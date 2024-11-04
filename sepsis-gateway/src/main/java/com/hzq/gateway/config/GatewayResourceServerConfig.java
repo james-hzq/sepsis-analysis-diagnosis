@@ -25,11 +25,10 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.List;
 
 /**
  * @author hua
- * @className com.hzq.gateway.config ResourceServerConfig
+ * @className com.hzq.gateway.config GatewayResourceServerConfig
  * @date 2024/9/26 20:32
  * @description 资源服务访问安全配置类
  */
@@ -37,13 +36,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
-public class ResourceServerConfig {
+public class GatewayResourceServerConfig {
 
-    // 请求白名单，该集合中的路径，跳过认证，可直接进入网关过滤器
-    private static final List<String> whitesUrIs = List.of(
-            "/oauth/system/login",
-            "/oauth/github/login"
-    );
+    private final GatewayProperties gatewayProperties;
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -58,9 +53,7 @@ public class ResourceServerConfig {
         serverHttpSecurity
                 // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要认证
                 .authorizeExchange(exchange -> {
-                            if (!whitesUrIs.isEmpty()) {
-                                exchange.pathMatchers(whitesUrIs.toArray(String[]::new)).permitAll();
-                            }
+                            gatewayProperties.getWhiteUriList().forEach(s -> exchange.pathMatchers(s).permitAll());
                             exchange.anyExchange().authenticated();
                         }
                 )
@@ -172,7 +165,7 @@ public class ResourceServerConfig {
     public CorsConfigurationSource customCorsConfiguration() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 放行所有域名，生产环境请对此进行修改
-        corsConfiguration.addAllowedOriginPattern("http://127.0.0.1:9050");
+        corsConfiguration.addAllowedOriginPattern("*");
         // 放行的请求头
         corsConfiguration.addAllowedHeader("*");
         // 放行的请求方式，主要有：GET, POST, PUT, DELETE, OPTIONS

@@ -13,21 +13,10 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 日志 -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-log</artifactId>
-        </dependency>
-
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-cache</artifactId>
         </dependency>
 
         <!-- jackson 工具 -->
@@ -39,6 +28,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- 内部模块：全局日志 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-log</artifactId>
+        </dependency>
+
+        <!-- 内部模块：全局缓存 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-cache</artifactId>
         </dependency>
     </dependencies>
 </project>

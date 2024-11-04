@@ -2,7 +2,7 @@ package com.hzq.gateway.util;
 
 import com.hzq.core.result.Result;
 import com.hzq.core.result.ResultEnum;
-import com.hzq.jackson.JacksonUtil;
+import com.hzq.jackson.JacksonUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
@@ -51,7 +51,7 @@ public class WebFluxUtils {
         // 创建 Result 对象，封装响应的状态码和内容
         Result<?> result = new Result<>(resultEnum);
         // 将 Result 对象转换为 Json 字符串
-        String resultStr = Optional.ofNullable(JacksonUtil.toJsonString(result)).orElse("");
+        String resultStr = Optional.ofNullable(JacksonUtils.toJsonString(result)).orElse("");
         // 生成 DataBuffer
         DataBuffer buffer = response.bufferFactory().wrap(resultStr.getBytes());
         // 写入 DataBuffer 到响应中

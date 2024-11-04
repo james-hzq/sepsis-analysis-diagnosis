@@ -48,3 +48,7 @@ logging:
   config: classpath:logback-spring.xml
   file:
     path: ${user.dir}/logs/${spring.application.name}
+
+hzq:
+  gateway:
+    white-uri-list: /oauth2/**, /auth/**
