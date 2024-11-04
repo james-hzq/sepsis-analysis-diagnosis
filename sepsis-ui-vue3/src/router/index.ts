@@ -30,6 +30,13 @@ export const constantRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: "/consent",
+    component: () => import("@/views/login/Consent.vue"),
+    meta: {
+      hidden: true
+    }
+  },
+  {
     path: "/",
     component: Layouts,
     redirect: "/dashboard",
