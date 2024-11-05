@@ -9,7 +9,10 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.token.*;
@@ -17,6 +20,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 
 /**
  * @author gc
@@ -46,16 +52,14 @@ public class OAuth2JwtConfig {
     }
 
     /**
-     * @param jwkSource JSON Web Key (JWK) 数据源，用于提供 JWT 的签名和验证
+     * @param jwtEncoder JWT 编码器
      * @return org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator<?>
      * @author gc
      * @date 2024/10/15 10:27
      * @apiNote 该方法用于生成 OAuth2 Token，包括 JWT、Access Token 和 Refresh Token 的生成器的组合
      **/
     @Bean
-    public OAuth2TokenGenerator<?> tokenGenerator(JWKSource<SecurityContext> jwkSource) {
-        // 使用 Nimbus JOSE + JWT 库的 JWT 编码器，并将其传递给 JwtGenerator，用于对 JWT 进行编码。
-        NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource);
+    public OAuth2TokenGenerator<?> tokenGenerator(JwtEncoder jwtEncoder) {
         // 创建一个 JwtGenerator 实例，用于生成 JWT token,
         JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
         // 设置 JWT 的自定义器，可以在生成 JWT token 时对其进行自定义操作。
@@ -66,6 +70,18 @@ public class OAuth2JwtConfig {
         OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
         // 创建一个 OAuth2 令牌生成器的委托类，用于委托生成 JWT、Access Token 和 Refresh Token 的具体实现类。
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+    }
+
+    /**
+     * @author hua
+     * @date 2024/10/8 22:04
+     * @return org.springframework.security.oauth2.jwt.JwtEncoder
+     * @apiNote 编码（加密）JWT（JSON Web Token）
+     **/
+    @Bean
+    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+        // 使用 Nimbus JOSE + JWT 库的 JWT 编码器，并将其传递给 JwtGenerator，用于对 JWT 进行编码。
+        return new NimbusJwtEncoder(jwkSource);
     }
 
     /**
@@ -87,7 +103,8 @@ public class OAuth2JwtConfig {
      **/
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
-        return new CustomOAuth2TokenCustomizer();
+        return context -> {
+        };
     }
 
     /**

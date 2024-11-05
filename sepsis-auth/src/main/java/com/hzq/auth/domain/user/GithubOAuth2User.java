@@ -2,10 +2,10 @@ package com.hzq.auth.domain.user;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author gc
@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 public class GithubOAuth2User extends BaseOAuth2User {
 
-    public GithubOAuth2User(Collection<GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, String accessToken) {
+    public GithubOAuth2User(Collection<GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, OAuth2AccessToken accessToken) {
         super(authorities, attributes, nameAttributeKey, accessToken);
     }
 }

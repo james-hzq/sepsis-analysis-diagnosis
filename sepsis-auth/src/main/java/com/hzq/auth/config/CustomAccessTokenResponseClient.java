@@ -3,11 +3,14 @@ package com.hzq.auth.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.oauth2.client.endpoint.*;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 /**
@@ -19,6 +22,9 @@ import java.util.Arrays;
 @Slf4j
 @Component
 public class CustomAccessTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
+
+    // 设置 ACCESS_TOKEN 的过期时间
+    private static final long ACCESS_TOKEN_EXPIRES_SECONDS = 3600;
 
     // 默认使用DefaultAuthorizationCodeTokenResponseClient来获取token
     private final DefaultAuthorizationCodeTokenResponseClient defaultTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
@@ -40,6 +46,15 @@ public class CustomAccessTokenResponseClient implements OAuth2AccessTokenRespons
     public OAuth2AccessTokenResponse getTokenResponse(OAuth2AuthorizationCodeGrantRequest authorizationGrantRequest) {
         log.info("进入 CustomAccessTokenResponseClient 类, getTokenResponse 方法");
         // 使用默认的 token 响应处理
-        return defaultTokenResponseClient.getTokenResponse(authorizationGrantRequest);
+        OAuth2AccessTokenResponse tokenResponse = defaultTokenResponseClient.getTokenResponse(authorizationGrantRequest);
+        OAuth2AccessToken accessToken = tokenResponse.getAccessToken();
+
+        // 使用 Builder 创建新的 OAuth2AccessTokenResponse，目的是设置过期时间
+        return OAuth2AccessTokenResponse.withResponse(tokenResponse)
+                .tokenType(accessToken.getTokenType())
+                .expiresIn(ACCESS_TOKEN_EXPIRES_SECONDS)
+                .scopes(accessToken.getScopes())
+                .additionalParameters(tokenResponse.getAdditionalParameters())
+                .build();
     }
 }

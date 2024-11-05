@@ -70,8 +70,7 @@ public final class GithubOAuth2UserService implements OAuth2UserService<OAuth2Us
         for (String authority : token.getScopes()) {
             authorities.add(new SimpleGrantedAuthority("SCOPE_" + authority));
         }
-        log.info("生成 GithubOAuth2User");
-        return new GithubOAuth2User(authorities, userAttributes, userNameAttributeName, token.getTokenValue());
+        return new GithubOAuth2User(authorities, userAttributes, userNameAttributeName, token);
     }
 
     private ResponseEntity<Map<String, Object>> getResponse(OAuth2UserRequest userRequest, RequestEntity<?> request) {
