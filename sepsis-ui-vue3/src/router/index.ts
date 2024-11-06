@@ -30,6 +30,20 @@ export const constantRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: "/callback",
+    component: () => import("@/views/login/callback.vue"),
+    meta: {
+      hidden: true
+    }
+  },
+  {
+    path: "/error",
+    component: () => import("@/views/error/index.vue"),
+    meta: {
+      hidden: true
+    }
+  },
+  {
     path: "/",
     component: Layouts,
     redirect: "/dashboard",

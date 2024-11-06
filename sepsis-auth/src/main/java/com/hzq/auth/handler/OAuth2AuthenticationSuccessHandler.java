@@ -1,15 +1,17 @@
 package com.hzq.auth.handler;
 
-import com.hzq.auth.domain.user.BaseOAuth2User;
+import com.hzq.auth.login.user.BaseOAuth2User;
 import com.hzq.redis.cache.RedisCache;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +25,21 @@ import java.util.concurrent.TimeUnit;
  * @author gc
  * @class com.hzq.auth.handler OAuth2AuthenticationSuccessHandler
  * @date 2024/11/4 15:35
- * @description TODO
+ * @description 联合认证成功回调
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    // OAuth2联合登录成功后，重定向到登录页面，并且附带access_token，下一次请求携带access_token。
-    private static final String REDIRECT_URL = "http://localhost:9050/login?access_token=";
-    private final RedisCache redisCache;
+    // OAuth2联合登录成功后，重定向到登录页面，并且附带access_token，下一次请求携带access_token
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private static final String REDIRECT_URL = "http://localhost:9050/callback?access_token=";
+    private RedisCache redisCache;
+
+    @Autowired
+    public void setRedisCache(RedisCache redisCache) {
+        this.redisCache = redisCache;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -52,10 +59,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             // 获取 access_token 内容
             String accessTokenContext = Optional.ofNullable(accessToken.getTokenValue())
                     .orElseThrow(() -> new OAuth2AuthenticationException("access_token内容时间为空"));
+            // 重定向到前端
+            response.sendRedirect(REDIRECT_URL + accessTokenContext);
+            log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
             // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
             redisCache.setCacheObject(accessTokenContext, baseOAuth2User, secondsDifference, TimeUnit.SECONDS);
-            // 重定向到指定的 URL
-            response.sendRedirect(REDIRECT_URL + accessTokenContext);
         }
     }
 }

@@ -1,18 +1,17 @@
-package com.hzq.auth.config;
+package com.hzq.auth.config.auth;
 
+import com.hzq.auth.handler.LoginTargetAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
 /**
@@ -41,6 +40,14 @@ public class AuthServerConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable);
+
+        // 配置错误处理
+        httpSecurity.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
+                .defaultAuthenticationEntryPointFor(
+                        new LoginTargetAuthenticationEntryPoint(authSecurityProperties.getLoginPageUri()),
+                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                )
+        );
 
         return httpSecurity.build();
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -21,6 +22,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -89,13 +91,13 @@ public class JacksonConfig {
                 // 设置 java.util.Date、Calendar 序列化、反序列化的时区
                 .timeZone(TimeZone.getTimeZone("GMT+8"));
 
-        // 配置 Jackson 序列化 BigDecimal 时使用的格式
-        builder.serializerByType(BigDecimal.class, ToStringSerializer.instance);
-
-        // 配置 Jackson 序列化 long 类型为String，解决后端返回的Long类型在前端精度丢失的问题
-        builder.serializerByType(BigInteger.class, BigNumberSerializer.INSTANCE)
+        // 配置 Jackson 序列化 和 反序列化 部分特殊类型
+        builder
+                .serializerByType(BigDecimal.class, ToStringSerializer.instance)
+                .serializerByType(BigInteger.class, BigNumberSerializer.INSTANCE)
                 .serializerByType(Long.class, BigNumberSerializer.INSTANCE)
-                .serializerByType(Long.TYPE, BigNumberSerializer.INSTANCE);
+                .serializerByType(Instant.class, ToStringSerializer.instance)
+                .deserializerByType(Instant.class, InstantDeserializer.INSTANT);
 
         // 配置 Jackson 序列化 和 反序列化 LocalDateTime、LocalDate、LocalTime 时使用的格式
         builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATETIME_PATTERN)))

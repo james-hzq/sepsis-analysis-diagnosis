@@ -11,7 +11,7 @@ import java.io.IOException;
  * @author hua
  * @className com.hzq.auth.config.jackson OAuth2AuthorizationResponseTypeDeserializer
  * @date 2024/10/31 10:58
- * @description TODO
+ * @description 自定义 OAuth2AuthorizationResponse 序列化
  */
 public class OAuth2AuthorizationResponseTypeDeserializer extends StdDeserializer<OAuth2AuthorizationResponseType> {
     public OAuth2AuthorizationResponseTypeDeserializer() {

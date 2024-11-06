@@ -1,6 +1,7 @@
-package com.hzq.auth.config;
+package com.hzq.auth.config.oauth2;
 
-import com.hzq.auth.login.github.GithubLoginClient;
+import com.hzq.auth.login.client.GithubLoginClient;
+import com.hzq.auth.login.client.SystemLoginClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,16 +29,16 @@ import java.util.Set;
 
 /**
  * @author gc
- * @class com.hzq.auth.config AuthClientConfig
+ * @class com.hzq.auth.config OAuth2ClientConfig
  * @date 2024/11/4 9:55
  * @description 授权服务的客户端配置
  */
 @Configuration
 @RequiredArgsConstructor
-public class AuthClientConfig {
+public class OAuth2ClientConfig {
 
     private final GithubLoginClient githubLoginClient;
-    private final PasswordEncoder passwordEncoder;
+    private final SystemLoginClient systemLoginClient;
 
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService() {
@@ -76,7 +77,7 @@ public class AuthClientConfig {
      **/
     @Bean
     public RegisteredClientRepository systemClientRegistrationRepository() {
-        RegisteredClient systemRegisteredClient = initSepsisSystemClient();
+        RegisteredClient systemRegisteredClient = systemLoginClient.initSepsisSystemClient();
         return new InMemoryRegisteredClientRepository(List.of(systemRegisteredClient));
     }
 
@@ -92,41 +93,5 @@ public class AuthClientConfig {
     public ClientRegistrationRepository githubClientRegistrationRepository() {
         ClientRegistration githubClientRegistration = githubLoginClient.githubClientRegistration();
         return new InMemoryClientRegistrationRepository(List.of(githubClientRegistration));
-    }
-
-    private RegisteredClient initSepsisSystemClient() {
-        String id = "sepsis";
-        String clientId = "sepsis-web-client";
-        String clientSecret = passwordEncoder.encode("sepsis");
-        String clientName = "脓毒症智能分析与诊询平台";
-        Set<String> scopes = Set.of("root", "admin", "user");
-
-        return RegisteredClient
-                // 创建一个带有指定 ID的已注册客户端对象
-                .withId(id)
-                // 设置客户端ID
-                .clientId(clientId)
-                // 设置客户端密钥
-                .clientSecret(clientSecret)
-                // 设置客户端名称
-                .clientName(clientName)
-                // 设置客户端认证方法为基本身份验证
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                // 授权类型为密码授权模式
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                // 授权类型为刷新令牌授权模式
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                // 设置重定向URI
-                .redirectUri("http://127.0.0.1:9200/login/auth2/code/system")
-                // 设置登出后的重定向URI
-                .postLogoutRedirectUri("http://127.0.0.1:9200/logout")
-                // 设置客户端范围（scopes）
-                .scopes(set -> set.addAll(scopes))
-                // 设置令牌设置，包括访问令牌的存活时间为1天
-                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofDays(1)).build())
-                // 设置客户端设置，需要授权同意
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                // 构建并返回已注册的客户端对象
-                .build();
     }
 }

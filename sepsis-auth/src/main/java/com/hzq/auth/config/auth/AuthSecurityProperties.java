@@ -1,4 +1,4 @@
-package com.hzq.auth.config;
+package com.hzq.auth.config.auth;
 
 import lombok.Data;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
-package com.hzq.auth.service;
+package com.hzq.auth.login.service;
 
-import com.hzq.auth.domain.user.GithubOAuth2User;
+import com.hzq.auth.login.user.GithubOAuth2User;
 import com.hzq.web.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;

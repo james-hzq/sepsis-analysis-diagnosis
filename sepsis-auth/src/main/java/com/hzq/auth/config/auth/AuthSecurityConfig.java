@@ -1,12 +1,18 @@
-package com.hzq.auth.config;
+package com.hzq.auth.config.auth;
 
+import com.hzq.auth.config.oauth2.CustomAccessTokenResponseClient;
+import com.hzq.auth.config.oauth2.CustomAuthorizationRequestRepository;
+import com.hzq.auth.config.oauth2.CustomAuthorizationRequestResolver;
+import com.hzq.auth.handler.LoginTargetAuthenticationEntryPoint;
+import com.hzq.auth.handler.OAuth2AuthenticationFailureHandler;
 import com.hzq.auth.handler.OAuth2AuthenticationSuccessHandler;
-import com.hzq.auth.service.CustomOAuth2UserService;
-import com.hzq.auth.service.GithubOAuth2UserService;
+import com.hzq.auth.login.service.CustomOAuth2UserService;
+import com.hzq.auth.login.service.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,9 +24,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
-
-import java.time.Duration;
 
 /**
  * @author gc
@@ -42,6 +47,7 @@ public class AuthSecurityConfig {
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final CustomAccessTokenResponseClient customAccessTokenResponseClient;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Bean
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -60,6 +66,14 @@ public class AuthSecurityConfig {
                 .anyRequest().authenticated()
         );
 
+        // 配置错误处理
+        httpSecurity.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
+                .defaultAuthenticationEntryPointFor(
+                        new LoginTargetAuthenticationEntryPoint(authSecurityProperties.getLoginPageUri()),
+                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                )
+        );
+
         // 配置登录认证
         httpSecurity
                 // 添加表单登录认证
@@ -71,8 +85,6 @@ public class AuthSecurityConfig {
                         .loginPage(authSecurityProperties.getLoginPageUri())
                         // 配置 Authorization Server 的授权端点
                         .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
-//                                // 设置基础认证的 URI
-//                                .baseUri("/oauth2/authorize/")
                                 // 设置用于存储 OAuth2AuthorizationRequest 的存储库
                                 .authorizationRequestRepository(customAuthorizationRequestRepository)
                                 // 设置用于解析 OAuth2AuthorizationRequest 的解析程序
@@ -91,6 +103,8 @@ public class AuthSecurityConfig {
                        )
                         // 配置成功回调
                         .successHandler(oAuth2AuthenticationSuccessHandler)
+                        // 配置失败回调
+                        .failureHandler(oAuth2AuthenticationFailureHandler)
                 );
 
         return httpSecurity.build();

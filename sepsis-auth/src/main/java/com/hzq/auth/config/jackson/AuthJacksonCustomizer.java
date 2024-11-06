@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @author hua
  * @className com.hzq.auth.config.jackson AuthJacksonCustomizer
  * @date 2024/10/31 10:54
- * @description TODO
+ * @description 扩展 jackson 配置
  */
 @Component
 public class AuthJacksonCustomizer implements JacksonCustomizer {

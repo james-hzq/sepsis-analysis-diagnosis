@@ -1,4 +1,4 @@
-package com.hzq.auth.config;
+package com.hzq.auth.config.oauth2;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,12 +7,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author gc
- * @class com.hzq.auth.config PasswordConfig
+ * @class com.hzq.auth.config OAuth2PasswordConfig
  * @date 2024/11/4 9:22
  * @description 密码增强配置
  */
 @Configuration
-public class PasswordConfig {
+public class OAuth2PasswordConfig {
 
     /**
      * @return org.springframework.security.crypto.password.PasswordEncoder

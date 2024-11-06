@@ -1,4 +1,4 @@
-package com.hzq.auth.config;
+package com.hzq.auth.config.oauth2;
 
 import com.hzq.core.result.ResultEnum;
 import com.hzq.web.exception.SystemException;
