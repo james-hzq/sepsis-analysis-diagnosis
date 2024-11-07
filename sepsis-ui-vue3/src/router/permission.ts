@@ -21,10 +21,8 @@ router.beforeEach(async (to, _from, next) => {
 
   // 如果没有登陆
   if (!token) {
-    console.log(to.path + " 没有token")
     // 如果在免登录的白名单中，则直接进入
     if (isWhiteList(to)) {
-      console.log(to.path + " 再免登录白名单")
       return next()
     }
     // 其他没有访问权限的页面将被重定向到登录页面

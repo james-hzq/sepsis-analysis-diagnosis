@@ -14,15 +14,7 @@ export function SystemLoginApi(data: Login.SystemLoginRequestData) {
   return request<Login.LoginResponseData>({
     url: "/oauth/system/login",
     method: "post",
-    data
-  })
-}
-
-/** Github授权登录并返回 Token */
-export function GithubLoginApi() {
-  return request<Login.LoginResponseData>({
-    url: "/oauth/github/login",
-    method: "get",
+    data: data
   })
 }
 
@@ -31,5 +23,29 @@ export function getLoginUserInfoApi() {
   return request<Login.LoginUserInfoResponseData>({
     url: "/oauth/login/user-info",
     method: "get"
+  })
+}
+
+/**
+ * @author hzq
+ * @date 2024/11/7 15:31
+ * @apiNote 获取系统用户名密码登录的用户详细信息
+ **/
+export function getSystemLoginUserInfoApi() {
+  return request<Login.LoginUserInfoData>({
+    url: "/auth/system/user/info",
+    method: "get"
+  })
+}
+
+/**
+ * @author hzq
+ * @date 2024/11/7 15:29
+ * @apiNote 获取第三方登录的用户详细信息
+ **/
+export function getOAuth2LoginUserInfoApi() {
+  return request<Login.LoginUserInfoData>({
+    url: "/auth/oauth2/user/info",
+    method: 'get'
   })
 }

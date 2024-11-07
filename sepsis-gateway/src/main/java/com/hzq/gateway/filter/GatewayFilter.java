@@ -1,6 +1,5 @@
 package com.hzq.gateway.filter;
 
-import com.google.common.base.Strings;
 import com.hzq.core.constant.LoginConstants;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.gateway.util.WebFluxUtils;
@@ -14,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -72,14 +72,15 @@ public class GatewayFilter implements GlobalFilter {
      * @date 2024/9/22 18:43
      * @param request http请求
      * @return java.lang.String
-     * @apiNote 获取请求头中的 Authorization参数的 token 值
+     * @apiNote 获取请求头中的 Authorization 参数的 token 值
      **/
     private String getAuthorization(ServerHttpRequest request) {
         // 从请求头中获取 token
         String token = request.getHeaders().getFirst(LoginConstants.AUTHENTICATION);
         // 如果 token 为空，则返回空字符串。
-        if (Strings.isNullOrEmpty(token))
+        if (!StringUtils.hasText(token)) {
             return "";
+        }
         // 裁剪前缀
         if (token.startsWith(LoginConstants.TOKEN_PREFIX)) {
             token = token.replaceFirst(LoginConstants.TOKEN_PREFIX, "");
