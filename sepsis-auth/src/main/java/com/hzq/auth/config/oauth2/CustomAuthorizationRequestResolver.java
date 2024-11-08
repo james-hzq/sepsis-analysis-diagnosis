@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -94,7 +95,7 @@ public final class CustomAuthorizationRequestResolver implements OAuth2Authoriza
     private OAuth2AuthorizationRequest resolve(HttpServletRequest request, String registrationId, String redirectUriAction) {
         // 根据注册ID从客户端注册库中获取客户端注册信息
         ClientRegistration clientRegistration = Optional.ofNullable(this.clientRegistrationRepository.findByRegistrationId(registrationId))
-                .orElseThrow(() -> new SystemException(ResultEnum.CLIENT_REGISTRATION_INVALID));
+                .orElseThrow(() -> new OAuth2AuthenticationException("客户端ID无效"));
 
         // 获取OAuth2AuthorizationRequest的构建器
         OAuth2AuthorizationRequest.Builder builder = getBuilder(clientRegistration);

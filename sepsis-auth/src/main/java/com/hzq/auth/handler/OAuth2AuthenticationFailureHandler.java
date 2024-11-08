@@ -1,8 +1,10 @@
 package com.hzq.auth.handler;
 
+import com.hzq.auth.config.auth.AuthSecurityProperties;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -18,11 +20,17 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class OAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
-
+    private final AuthSecurityProperties authSecurityProperties;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info("联合认证失败，进入回调方法");
+        log.info("联合认证失败，进入回调方法: {}", exception.getMessage());
+
+        String redirectUrl = authSecurityProperties.getLoginPageUri() + "?error=" + exception.getMessage();
+
+        // 重定向到登录页面，并携带错误信息
+        response.sendRedirect(redirectUrl);
     }
 }

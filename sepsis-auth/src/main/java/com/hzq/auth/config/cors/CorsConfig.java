@@ -12,7 +12,7 @@ import org.springframework.web.filter.CorsFilter;
  * @date 2024/11/4 21:49
  * @description CORS 跨域配置
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class CorsConfig {
 
     @Bean

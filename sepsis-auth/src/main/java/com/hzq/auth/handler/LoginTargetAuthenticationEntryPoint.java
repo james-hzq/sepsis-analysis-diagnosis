@@ -21,6 +21,12 @@ import java.nio.charset.StandardCharsets;
  * @date 2024/11/6 14:27
  * @description 错误处理，重定向至登录处理
  */
+/**
+ * @author gc
+ * @class com.hzq.auth.config LoginTargetAuthenticationEntryPoint
+ * @date 2024/11/6 14:27
+ * @description 错误处理，重定向至登录处理
+ */
 @Slf4j
 public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
@@ -32,6 +38,7 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        log.error("错误是: {}", authException.getMessage());
         // 获取登录表单的地址
         String loginForm = determineUrlToUseForThisRequest(request, response, authException);
         if (!UrlUtils.isAbsoluteUrl(loginForm)) {
@@ -40,15 +47,7 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
             return;
         }
 
-        StringBuffer requestUrl = request.getRequestURL();
-        if (!ObjectUtils.isEmpty(request.getQueryString())) {
-            requestUrl.append("?").append(request.getQueryString());
-        }
-
-        // 绝对路径在重定向前添加target参数
-        String targetParameter = URLEncoder.encode(requestUrl.toString(), StandardCharsets.UTF_8);
-        String targetUrl = loginForm + "?target=" + targetParameter;
-        log.debug("重定向至前后端分离的登录页面：{}", targetUrl);
-        this.redirectStrategy.sendRedirect(request, response, targetUrl);
+        log.debug("出现错误{}，重定向至前后端分离的登录页面：{}", authException.getMessage(), loginForm);
+        this.redirectStrategy.sendRedirect(request, response, loginForm);
     }
 }

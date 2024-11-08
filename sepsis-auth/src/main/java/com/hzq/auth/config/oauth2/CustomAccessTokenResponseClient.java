@@ -1,6 +1,7 @@
 package com.hzq.auth.config.oauth2;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.oauth2.client.endpoint.*;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -18,7 +19,7 @@ import java.util.Arrays;
  * @description 配置处理访问令牌（access token）响应的客户端
  */
 @Slf4j
-@Component
+@Configuration(proxyBeanMethods = false)
 public class CustomAccessTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
 
     // 设置 ACCESS_TOKEN 的过期时间

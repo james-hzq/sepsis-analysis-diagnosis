@@ -4,6 +4,7 @@ import com.hzq.core.result.ResultEnum;
 import com.hzq.web.exception.SystemException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = Optional.ofNullable(userServiceMap.get(registrationId))
-                .orElseThrow(() -> new SystemException(ResultEnum.CLIENT_REGISTRATION_INVALID));
+                .orElseThrow(() -> new OAuth2AuthenticationException("没有该OAuth2UserService实例"));
 
         return oAuth2UserService.loadUser(userRequest);
     }

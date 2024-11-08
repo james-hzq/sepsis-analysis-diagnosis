@@ -49,7 +49,7 @@ public final class GithubOAuth2UserService implements OAuth2UserService<OAuth2Us
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         Assert.notNull(userRequest, "userRequest cannot be null");
         if (!StringUtils.hasText(userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri())) {
-            throw new SystemException("客户端注册的 UserInfoEndpoint 中缺少必需的 UserInfo Uri");
+            throw new OAuth2AuthenticationException("客户端注册的 UserInfoEndpoint 中缺少必需的 UserInfo Uri");
         }
 
         String userNameAttributeName = userRequest.getClientRegistration()
@@ -58,7 +58,7 @@ public final class GithubOAuth2UserService implements OAuth2UserService<OAuth2Us
                 .getUserNameAttributeName();
 
         if (!StringUtils.hasText(userNameAttributeName)) {
-            throw new SystemException("客户端注册的 UserInfoEndpoint 中缺少必需的“用户名”属性名称");
+            throw new OAuth2AuthenticationException("客户端注册的 UserInfoEndpoint 中缺少必需的“用户名”属性名称");
         }
 
         RequestEntity<?> request = this.requestEntityConverter.convert(userRequest);
@@ -73,13 +73,8 @@ public final class GithubOAuth2UserService implements OAuth2UserService<OAuth2Us
         return new GithubOAuth2User(authorities, userAttributes, userNameAttributeName, token);
     }
 
-    private ResponseEntity<Map<String, Object>> getResponse(OAuth2UserRequest userRequest, RequestEntity<?> request) {
-        try {
-            return this.restOperations.exchange(request, PARAMETERIZED_RESPONSE_TYPE);
-        }
-        catch (OAuth2AuthorizationException | RestClientException ex) {
-            throw new SystemException("尝试检索 UserInfo 资源时发生错误");
-        }
+    private ResponseEntity<Map<String, Object>> getResponse(OAuth2UserRequest userRequest, RequestEntity<?> request) throws OAuth2AuthenticationException{
+        return this.restOperations.exchange(request, PARAMETERIZED_RESPONSE_TYPE);
     }
 
     public void setRequestEntityConverter(Converter<OAuth2UserRequest, RequestEntity<?>> requestEntityConverter) {

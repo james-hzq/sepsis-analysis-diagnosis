@@ -1,7 +1,11 @@
 import { getConfigLayout } from "@/utils/cache/local-storage"
 import { LayoutModeEnum } from "@/constants/app-key"
 
-/** 项目配置类型 */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:54
+ * @apiNote 定义项目配置类型
+ **/
 export interface LayoutSettings {
   /** 是否显示 Settings Panel */
   showSettings: boolean
@@ -33,7 +37,11 @@ export interface LayoutSettings {
   showColorWeakness: boolean
 }
 
-/** 默认配置 */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:53
+ * @apiNote 默认项目配置
+ **/
 const defaultSettings: LayoutSettings = {
   layoutMode: LayoutModeEnum.Left,
   showSettings: true,
@@ -51,5 +59,12 @@ const defaultSettings: LayoutSettings = {
   showColorWeakness: false
 }
 
-/** 项目配置 */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:55
+ * @apiNote 到处项目配置
+ * 1. ... 是 JavaScript 中的展开运算符的一种使用方式。
+ * 2. 在这里，它的作用是将对象 defaultSettings 和 getConfigLayout() 的返回值进行浅拷贝合并，然后赋给 layoutSettings。
+ * 3. 这种做法通常用于在不修改原始对象的情况下，创建一个新的对象，其中包含了原始对象的属性以及其他对象的属性。
+ **/
 export const layoutSettings: LayoutSettings = { ...defaultSettings, ...getConfigLayout() }

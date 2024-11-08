@@ -1,4 +1,8 @@
-/** 路由配置 */
+/***
+ * @author hzq
+ * @date 2024/11/8 9:52
+ * @apiNote 路由配置
+ **/
 interface RouteSettings {
   /**
    * 是否开启动态路由功能？
@@ -19,6 +23,17 @@ interface RouteSettings {
   thirdLevelRouteCache: boolean
 }
 
+/**
+ * @author hzq
+ * @date 2024/11/8 9:57
+ * @apiNote 默认路由配置
+ * 1. export default：
+ * a) 可以用于导出一个默认的值，每个模块只能有一个默认导出。
+ * b) 在导入时，可以使用 import ... from ... 的形式来导入默认导出的值，无需使用大括号 {}。
+ * 2. export const：
+ * a) 用于导出一个具名的常量、变量或函数，可以有多个具名导出。
+ * b) 在导入时，需要使用与导出的名称相匹配的语法来导入，需要使用大括号 {}。
+ **/
 const routeSettings: RouteSettings = {
   dynamic: true,
   defaultRoles: ["user"],

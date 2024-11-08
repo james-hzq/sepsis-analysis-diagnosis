@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -30,10 +31,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-
     // OAuth2联合登录成功后，重定向到登录页面，并且附带access_token，下一次请求携带access_token
-    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-    private static final String REDIRECT_URL = "http://localhost:9050/callback?access_token=";
+    private static final String REDIRECT_BASE_URL = "http://localhost:9050/callback";
+    private static final String LOGIN_TYPE = "?login-type=";
+    private static final String ACCESS_TOKEN = "&access-token=";
+    private static final String REFRESH_TOKEN = "&refresh-token=";
     private RedisCache redisCache;
 
     @Autowired
@@ -60,7 +62,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             String accessTokenContext = Optional.ofNullable(accessToken.getTokenValue())
                     .orElseThrow(() -> new OAuth2AuthenticationException("access_token内容时间为空"));
             // 重定向到前端
-            response.sendRedirect(REDIRECT_URL + accessTokenContext);
+            String redirectUrl = REDIRECT_BASE_URL
+                    + LOGIN_TYPE + "github"
+                    + ACCESS_TOKEN + accessTokenContext
+                    + REFRESH_TOKEN;
+            response.sendRedirect(redirectUrl);
             log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
             // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
             redisCache.setCacheObject(accessTokenContext, baseOAuth2User, secondsDifference, TimeUnit.SECONDS);

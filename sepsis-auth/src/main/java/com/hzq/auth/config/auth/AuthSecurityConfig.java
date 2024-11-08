@@ -50,7 +50,7 @@ public class AuthSecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Bean
-    public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity, OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService) throws Exception {
 
         // 添加过滤器
         httpSecurity.addFilter(corsFilter);
@@ -66,7 +66,8 @@ public class AuthSecurityConfig {
                 .anyRequest().authenticated()
         );
 
-        // 配置错误处理
+        // 用于处理整个过滤链中的异常。它会在请求被拒绝或抛出异常时触发，通常用于处理请求被拒绝的情况，如未登录用户访问需要认证的资源，或认证信息失效的情况。
+        // 当请求进入过滤链，但用户没有认证信息或权限，导致 AccessDeniedException 或 AuthenticationException，则会触发 exceptionHandling 的处理器。
         httpSecurity.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
                 .defaultAuthenticationEntryPointFor(
                         new LoginTargetAuthenticationEntryPoint(authSecurityProperties.getLoginPageUri()),
@@ -99,12 +100,13 @@ public class AuthSecurityConfig {
                         )
                         // 配置获取用户信息服务
                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                               .userService(customOAuth2UserService())
+                               .userService(oAuth2UserService)
                        )
                         // 配置成功回调
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         // 配置失败回调
                         .failureHandler(oAuth2AuthenticationFailureHandler)
+                        .failureUrl("http://localhost:9050/error")
                 );
 
         return httpSecurity.build();
@@ -132,7 +134,8 @@ public class AuthSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    private OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
         return new CustomOAuth2UserService()
                 .setOAuth2UserService("github", new GithubOAuth2UserService());
     }

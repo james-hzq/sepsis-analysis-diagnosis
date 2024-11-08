@@ -7,7 +7,7 @@ import { useTagsViewStore } from "./tags-view"
 import { useSettingsStore } from "./settings"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import { resetRouter } from "@/router"
-import { SystemLoginApi, getLoginUserInfoApi } from "@/api/login"
+import { systemLoginApi, oauth2LoginUserInfoApi } from "@/api/login"
 import {type SystemLoginRequestData, type OAuth2LoginCallbackData} from "@/api/login/types/login"
 import routeSettings from "@/config/route"
 
@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", () => {
    * @apiNote 系统用户名密码登录
    **/
   const systemLogin = async (systemLoginRequestData: SystemLoginRequestData) => {
-    const { data } = await SystemLoginApi(systemLoginRequestData)
+    const { data } = await systemLoginApi(systemLoginRequestData)
     setToken(data)
     token.value = data
   }
@@ -53,16 +53,8 @@ export const useUserStore = defineStore("user", () => {
    * @date 2024/11/7 15:52
    * @apiNote 获取登录用户详情
    **/
-  const getLoginUserInfo = async () => {
-    const { data } = await getLoginUserInfoApi()
-    username.value = data.username
-    // 验证返回的 roles 是否为一个非空数组，否则塞入一个没有任何作用的默认角色，防止路由守卫逻辑进入无限循环
-    roles.value = data.roles?.length > 0 ? data.roles : routeSettings.defaultRoles
-  }
-
-  /** 获取用户详情 */
-  const getInfo = async () => {
-    const { data } = await getLoginUserInfoApi()
+  const getOAuth2LoginUserInfo = async () => {
+    const { data } = await oauth2LoginUserInfoApi()
     username.value = data.username
     // 验证返回的 roles 是否为一个非空数组，否则塞入一个没有任何作用的默认角色，防止路由守卫逻辑进入无限循环
     roles.value = data.roles?.length > 0 ? data.roles : routeSettings.defaultRoles
@@ -118,7 +110,7 @@ export const useUserStore = defineStore("user", () => {
   }
 
   // 返回 store 中的状态和方法
-  return { token, roles, username, systemLogin, oauth2Login, getLoginUserInfo,  getInfo, changeRoles, logout, resetToken }
+  return { token, roles, username, systemLogin, oauth2Login, getOAuth2LoginUserInfo, changeRoles, logout, resetToken }
 })
 
 /**

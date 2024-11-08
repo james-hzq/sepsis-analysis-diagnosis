@@ -3,17 +3,22 @@ import {
   type RouteRecordNormalized,
   type RouteRecordRaw,
   createRouter,
-  createWebHashHistory,
   createWebHistory
 } from "vue-router"
 import { cloneDeep, omit } from "lodash-es"
 
-/** 路由模式 */
-export const history =
-  import.meta.env.VITE_ROUTER_HISTORY === "hash" ?
-    createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH) : createWebHistory(import.meta.env.VITE_PUBLIC_PATH)
+/**
+ * @author hzq
+ * @date 2024/11/8 9:34
+ * @apiNote 定义路由模式
+ **/
+export const history = createWebHistory(import.meta.env.VITE_PUBLIC_PATH)
 
-/** 路由降级（把三级及其以上的路由转化为二级路由） */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:47
+ * @apiNote 路由降级（把三级及其以上的路由转化为二级路由）
+ **/
 export const flatMultiLevelRoutes = (routes: RouteRecordRaw[]) => {
   const routesMirror = cloneDeep(routes)
   routesMirror.forEach((route) => {
@@ -23,7 +28,11 @@ export const flatMultiLevelRoutes = (routes: RouteRecordRaw[]) => {
   return routesMirror
 }
 
-/** 判断路由层级是否大于 2 */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:48
+ * @apiNote 判断路由层级是否大于 2
+ **/
 const isMultipleRoute = (route: RouteRecordRaw) => {
   const children = route.children
   if (children?.length) {
@@ -33,7 +42,11 @@ const isMultipleRoute = (route: RouteRecordRaw) => {
   return false
 }
 
-/** 生成二级路由 */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:49
+ * @apiNote 生成二级路由
+ **/
 const promoteRouteLevel = (route: RouteRecordRaw) => {
   // 创建 router 实例是为了获取到当前传入的 route 的所有路由信息
   let router: Router | null = createRouter({
@@ -48,7 +61,11 @@ const promoteRouteLevel = (route: RouteRecordRaw) => {
   route.children = route.children?.map((item) => omit(item, "children") as RouteRecordRaw)
 }
 
-/** 将给定的子路由添加到指定的路由模块中 */
+/**
+ * @author hzq
+ * @date 2024/11/8 9:50
+ * @apiNote 将给定的子路由添加到指定的路由模块中
+ **/
 const addToChildren = (routes: RouteRecordNormalized[], children: RouteRecordRaw[], routeModule: RouteRecordRaw) => {
   children.forEach((child) => {
     const route = routes.find((item) => item.name === child.name)

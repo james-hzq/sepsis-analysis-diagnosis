@@ -22,7 +22,9 @@ public class AuthSecurityProperties {
     private String issuerUrl = "http://127.0.0.1:9200";
     // 授权白名单配置，跳过认证
     private List<String> whiteUriList = List.of(
+            "/login",
             "/favicon.ico",
-            "/login/oauth2/code/**"
+            "/login/oauth2/code/**",
+            "/error"
     );
 }
