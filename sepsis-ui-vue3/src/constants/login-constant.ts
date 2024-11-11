@@ -4,14 +4,14 @@
  * @apiNote 定义登录类型，导出登录常量
  **/
 export type LoginConstantsType = {
-  readonly ACCESS_TOKEN: 'access-token';
   readonly LOGIN_TYPE: 'login-type';
+  readonly ACCESS_TOKEN: 'access-token';
   readonly REFRESH_TOKEN: 'refresh-token';
 };
 
 export const LoginConstants: LoginConstantsType = {
-  ACCESS_TOKEN: 'access-token',
   LOGIN_TYPE: 'login-type',
+  ACCESS_TOKEN: 'access-token',
   REFRESH_TOKEN: 'refresh-token',
 };
 

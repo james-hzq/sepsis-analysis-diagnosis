@@ -22,7 +22,7 @@ export function systemLoginApi(data: Login.SystemLoginRequestData) {
 /** 获取用户详情 */
 export function loginUserInfoApi() {
   return request<Login.LoginUserInfoResponseData>({
-    url: "/oauth2/login/user-info",
+    url: "/auth/user/info",
     method: "get"
   })
 }

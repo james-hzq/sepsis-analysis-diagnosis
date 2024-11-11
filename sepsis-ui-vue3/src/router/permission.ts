@@ -9,6 +9,7 @@ import routeSettings from "@/config/route"
 import isWhiteList from "@/config/white-list"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
+import {loginUserInfoApi} from "@/api/login";
 
 const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })
@@ -39,7 +40,7 @@ router.beforeEach(async (to, _from, next) => {
 
   // 否则要重新获取权限角色
   try {
-    await userStore.getInfo()
+    await userStore.getLoginUserInfo()
     // 注意：角色必须是一个数组！ 例如: ["root"] 或 ["root", "admin", "user]
     const roles = userStore.roles
     // 生成可访问的 Routes

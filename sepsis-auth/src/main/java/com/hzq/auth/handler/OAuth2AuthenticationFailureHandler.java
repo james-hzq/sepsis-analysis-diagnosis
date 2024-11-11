@@ -26,11 +26,12 @@ public class OAuth2AuthenticationFailureHandler implements AuthenticationFailure
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info("联合认证失败，进入回调方法: {}", exception.getMessage());
-
-        String redirectUrl = authSecurityProperties.getLoginPageUri() + "?error=" + exception.getMessage();
-
         // 重定向到登录页面，并携带错误信息
+        String redirectUrl = authSecurityProperties.getLoginPageUri() + "?error=" + exception.getMessage();
+        log.error("联合认证失败，进入自定义错误处理类，错误信息如下：{}\n" +
+                "将请求重定向到登录页面 {}",
+                exception.getMessage(), redirectUrl
+        );
         response.sendRedirect(redirectUrl);
     }
 }

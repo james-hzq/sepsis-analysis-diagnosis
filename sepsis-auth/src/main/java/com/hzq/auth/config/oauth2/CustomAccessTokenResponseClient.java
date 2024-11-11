@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.oauth2.client.endpoint.*;
+import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
@@ -37,6 +38,7 @@ public class CustomAccessTokenResponseClient implements OAuth2AccessTokenRespons
                         messageConverter
                 )
         );
+        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         // 添加拦截器或自定义配置
         defaultTokenResponseClient.setRestOperations(restTemplate);
     }

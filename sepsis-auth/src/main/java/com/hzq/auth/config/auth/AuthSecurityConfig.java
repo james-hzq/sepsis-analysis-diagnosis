@@ -58,7 +58,8 @@ public class AuthSecurityConfig {
         // 禁用默认配置 CSRF保护 与 CORS跨域
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable);
+                .cors(AbstractHttpConfigurer::disable)
+                .sessionManagement(AbstractHttpConfigurer::disable);
 
         // 添加安全配置规则
         httpSecurity.authorizeHttpRequests(authorize -> authorize
@@ -106,7 +107,6 @@ public class AuthSecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         // 配置失败回调
                         .failureHandler(oAuth2AuthenticationFailureHandler)
-                        .failureUrl("http://localhost:9050/error")
                 );
 
         return httpSecurity.build();

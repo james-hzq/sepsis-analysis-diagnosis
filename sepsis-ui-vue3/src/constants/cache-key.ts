@@ -1,4 +1,4 @@
-const SYSTEM_NAME = "sepsis-analysis-diagnosis"
+const SYSTEM_NAME = "hzq"
 
 /***
  * @author hzq
