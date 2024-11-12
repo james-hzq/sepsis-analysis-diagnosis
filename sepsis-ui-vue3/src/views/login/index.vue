@@ -69,19 +69,6 @@ const handleGithubLogin = (registrationId: String) => {
   window.location.href = `http://localhost:9100/oauth2/authorization/${registrationId}`
 }
 
-/** 获取 access_token 并处理用户信息 */
-const handleGithubCallback = async () => {
-  const accessToken = getAccessTokenFromUrl();
-  console.log('access_token: ' + accessToken)
-};
-
-/** 从 URL 中获取 access_token */
-const getAccessTokenFromUrl = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  console.log(urlParams)
-  return urlParams.get('access_token');
-};
-
 /** 创建验证码 */
 const createCode = () => {
   // 先清空验证码的输入

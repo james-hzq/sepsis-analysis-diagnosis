@@ -2,6 +2,7 @@ package com.hzq.auth.config.oauth2;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.oauth2.client.endpoint.*;
 import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
@@ -31,13 +32,13 @@ public class CustomAccessTokenResponseClient implements OAuth2AccessTokenRespons
 
     public CustomAccessTokenResponseClient() {
         OAuth2AccessTokenResponseHttpMessageConverter messageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
-        // 你可以自定义 RestTemplate，如果需要处理自定义的响应或者拦截器
-        RestTemplate restTemplate = new RestTemplate(
-                Arrays.asList(
-                        new FormHttpMessageConverter(),
-                        messageConverter
-                )
-        );
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        int timeout = 5000;
+        requestFactory.setConnectTimeout(timeout);
+        requestFactory.setReadTimeout(timeout);
+
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        restTemplate.setMessageConverters(Arrays.asList(new FormHttpMessageConverter(), messageConverter));
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         // 添加拦截器或自定义配置
         defaultTokenResponseClient.setRestOperations(restTemplate);
