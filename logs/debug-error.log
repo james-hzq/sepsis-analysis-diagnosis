@@ -1,9 +1,0 @@
-2024-11-08 16:15:32.599 [http-nio-9200-exec-1] DEBUG org.springframework.security.web.FilterChainProxy - Securing GET /oauth2/authorization/github
-2024-11-08 16:15:32.851 [http-nio-9200-exec-1] DEBUG o.s.security.web.DefaultRedirectStrategy - Redirecting to https://github.com/login/oauth/authorize?response_type=code&client_id=Ov23liuVpLlEtrzsVjDc&scope=user,repo&state=WKy3_0NV_Mhh80_zPGU7aZozpwaiKHkOO7Iiybd8MjA%3D&redirect_uri=http://127.0.0.1:9200/login/oauth2/code/github
-2024-11-08 16:16:01.901 [http-nio-9200-exec-2] DEBUG org.springframework.security.web.FilterChainProxy - Securing GET /error?code=401d8271f3b719737031&state=WKy3_0NV_Mhh80_zPGU7aZozpwaiKHkOO7Iiybd8MjA%3D
-2024-11-08 16:16:01.902 [http-nio-9200-exec-2] DEBUG org.springframework.security.web.FilterChainProxy - Secured GET /error?code=401d8271f3b719737031&state=WKy3_0NV_Mhh80_zPGU7aZozpwaiKHkOO7Iiybd8MjA%3D
-2024-11-08 16:16:01.903 [http-nio-9200-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/error?code=401d8271f3b719737031&state=WKy3_0NV_Mhh80_zPGU7aZozpwaiKHkOO7Iiybd8MjA%3D", parameters={masked}
-2024-11-08 16:16:01.904 [http-nio-9200-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#errorHtml(HttpServletRequest, HttpServletResponse)
-2024-11-08 16:16:01.918 [http-nio-9200-exec-2] DEBUG o.s.w.servlet.view.ContentNegotiatingViewResolver - Selected 'text/html' given [text/html, text/html;q=0.8]
-2024-11-08 16:16:01.921 [http-nio-9200-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 500
-2024-11-08 16:16:01.921 [http-nio-9200-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext

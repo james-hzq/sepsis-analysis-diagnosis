@@ -32,7 +32,6 @@ import java.text.ParseException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GatewayFilter implements GlobalFilter {
 
-    @SneakyThrows
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 请求对象

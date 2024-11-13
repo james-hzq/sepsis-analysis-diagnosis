@@ -23,7 +23,7 @@ export function systemLoginApi(data: Login.SystemLoginRequestData) {
 export function loginUserInfoApi() {
   return request<Login.LoginUserInfoResponseData>({
     url: "/auth/user/info",
-    method: "get"
+    method: "post"
   })
 }
 

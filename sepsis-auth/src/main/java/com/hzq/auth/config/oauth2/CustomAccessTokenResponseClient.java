@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.http.converter.OAuth2AccessToken
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 /**
@@ -26,22 +27,27 @@ public class CustomAccessTokenResponseClient implements OAuth2AccessTokenRespons
 
     // 设置 ACCESS_TOKEN 的过期时间
     private static final long ACCESS_TOKEN_EXPIRES_SECONDS = 3600;
+    // 设置 RestTemplate 的过期时间
+    private static final Integer REST_TEMPLATE_EXPIRES_SECONDS = 5;
 
     // 默认使用DefaultAuthorizationCodeTokenResponseClient来获取token
     private final DefaultAuthorizationCodeTokenResponseClient defaultTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
 
     public CustomAccessTokenResponseClient() {
-        OAuth2AccessTokenResponseHttpMessageConverter messageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        int timeout = 5000;
-        requestFactory.setConnectTimeout(timeout);
-        requestFactory.setReadTimeout(timeout);
+        // 配置向OAuth2第三方客户端发送访问令牌和用户请求的 RestTemplate 的配置
+        RestTemplate restTemplate = new RestTemplate();
 
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(Duration.ofSeconds(REST_TEMPLATE_EXPIRES_SECONDS));
+        requestFactory.setReadTimeout(Duration.ofSeconds(REST_TEMPLATE_EXPIRES_SECONDS));
+        restTemplate.setRequestFactory(requestFactory);
+
+        OAuth2AccessTokenResponseHttpMessageConverter messageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
         restTemplate.setMessageConverters(Arrays.asList(new FormHttpMessageConverter(), messageConverter));
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
+
         // 添加拦截器或自定义配置
-        defaultTokenResponseClient.setRestOperations(restTemplate);
+        this.defaultTokenResponseClient.setRestOperations(restTemplate);
     }
 
     @Override

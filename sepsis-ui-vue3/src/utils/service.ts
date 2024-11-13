@@ -16,7 +16,9 @@ function createService() {
   const service = axios.create()
   // 请求拦截
   service.interceptors.request.use(
-    (config) => config,
+    config => {
+      return config
+    },
     // 发送失败
     (error) => {
       Promise.reject(error)
@@ -43,7 +45,7 @@ function createService() {
           return apiData
         case 401:
           // Token 过期时
-          // return logout()
+          return logout()
         default:
           // 不是正确的 code
           ElMessage.error(apiData.message || "Error")
@@ -51,6 +53,19 @@ function createService() {
       }
     },
     (error) => {
+      // 添加详细的错误日志
+      console.error('Response Error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,  // 添加响应头信息
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers,
+          baseURL: error.config?.baseURL
+        }
+      })
       // status 是 HTTP 状态码
       const status = get(error, "response.status")
       switch (status) {
@@ -59,7 +74,7 @@ function createService() {
           break
         case 401:
           // Token 过期时
-          logout()
+          // logout()
           break
         case 403:
           error.message = "拒绝访问"
@@ -102,6 +117,7 @@ function createService() {
 function createRequest(service: AxiosInstance) {
   return function <T>(config: AxiosRequestConfig): Promise<T> {
     const token = getToken()
+    console.log("token: " + token)
     const defaultConfig = {
       headers: {
         // 携带 Token
@@ -114,6 +130,8 @@ function createRequest(service: AxiosInstance) {
     }
     // 将默认配置 defaultConfig 和传入的自定义配置 config 进行合并成为 mergeConfig
     const mergeConfig = merge(defaultConfig, config)
+    // 添加请求配置日志
+    console.log('Request Config:', mergeConfig)
     return service(mergeConfig)
   }
 }

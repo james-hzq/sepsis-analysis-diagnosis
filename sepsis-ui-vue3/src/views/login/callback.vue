@@ -19,10 +19,10 @@ const handleOAuth2LoginCallback = () => {
   const accessToken = urlParams.get(LoginConstants.ACCESS_TOKEN) || "";
   const refreshToken = urlParams.get(LoginConstants.REFRESH_TOKEN) || "";
 
-  // if (!loginType) {
-  //   console.warn("Missing required OAuth parameters");
-  //   return;
-  // }
+  if (!loginType) {
+    console.warn("Missing required OAuth parameters");
+    return;
+  }
 
   const oauth2LoginResponseData: OAuth2LoginCallbackData = {
     loginType,
@@ -33,15 +33,15 @@ const handleOAuth2LoginCallback = () => {
   useUserStore()
     .oauth2Login(oauth2LoginResponseData)
     .then(() => {
-      // Then clear the URL params
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-      );
-      router.replace({path: '/'})
+      // // Then clear the URL params
+      // window.history.replaceState(
+      //   {},
+      //   document.title,
+      //   window.location.pathname
+      // );
+      router.push({path: '/'})
     }).catch(error => {
-      router.replace({path: "/"})
+      router.replace({path: "/error"})
     });
 };
 
