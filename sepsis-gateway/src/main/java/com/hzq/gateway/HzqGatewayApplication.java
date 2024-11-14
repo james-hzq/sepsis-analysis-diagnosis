@@ -3,6 +3,7 @@ package com.hzq.gateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 /**
  * @author hua
@@ -15,7 +16,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.hzq")
 public class HzqGatewayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(HzqGatewayApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(HzqGatewayApplication.class, args);
+        System.out.println(run);
         log.info("(●′ω`●) sepsis-gateway application running successfully (●′ω`●)");
     }
 }

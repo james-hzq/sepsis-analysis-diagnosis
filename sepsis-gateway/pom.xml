@@ -11,24 +11,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 系统核心工具 -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-core</artifactId>
-        </dependency>
-
-        <!-- 全局日志 -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-log</artifactId>
-        </dependency>
-
-        <!-- 全局jackson -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-jackson</artifactId>
-        </dependency>
-
         <!-- SpringCloud bootstrap 加载器 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -70,10 +52,22 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
+        <!-- 系统核心工具 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+
         <!-- 内部模块：自定义SpringBoot缓存策略 -->
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-cache</artifactId>
+        </dependency>
+
+        <!-- 内部模块：全局 Redis -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-redis</artifactId>
         </dependency>
     </dependencies>
 </project>

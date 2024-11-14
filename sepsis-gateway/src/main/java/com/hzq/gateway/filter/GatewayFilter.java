@@ -1,10 +1,9 @@
 package com.hzq.gateway.filter;
 
-import com.hzq.core.constant.LoginConstants;
+import com.hzq.gateway.constant.TokenConstants;
 import com.hzq.core.result.ResultEnum;
 import com.hzq.gateway.util.WebFluxUtils;
 import com.nimbusds.jose.JWSObject;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -60,7 +59,7 @@ public class GatewayFilter implements GlobalFilter {
 
         request = exchange.getRequest()
                 .mutate()
-                .header(LoginConstants.LOGIN_USER_INFO_HEADER, URLEncoder.encode(payload, StandardCharsets.UTF_8))
+                .header(TokenConstants.LOGIN_USER_INFO_HEADER, URLEncoder.encode(payload, StandardCharsets.UTF_8))
                 .build();
 
         exchange = exchange.mutate().request(request).build();
@@ -76,14 +75,14 @@ public class GatewayFilter implements GlobalFilter {
      **/
     private String getAuthorization(ServerHttpRequest request) {
         // 从请求头中获取 token
-        String token = request.getHeaders().getFirst(LoginConstants.AUTHENTICATION);
+        String token = request.getHeaders().getFirst(TokenConstants.AUTHENTICATION);
         // 如果 token 为空，则返回空字符串。
         if (!StringUtils.hasText(token)) {
             return "";
         }
         // 裁剪前缀
-        if (token.startsWith(LoginConstants.TOKEN_PREFIX)) {
-            token = token.replaceFirst(LoginConstants.TOKEN_PREFIX, "");
+        if (token.startsWith(TokenConstants.TOKEN_PREFIX)) {
+            token = token.replaceFirst(TokenConstants.TOKEN_PREFIX, "");
         }
         return token;
     }

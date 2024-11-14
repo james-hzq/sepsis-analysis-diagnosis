@@ -31,6 +31,7 @@ public enum ResultEnum {
     ACCESS_TOKEN_GENERATE_ERROR(2000, "访问令牌生成失败"),
     REFRESH_TOKEN_GENERATE_ERROR(2000, "刷新令牌生成失败"),
     // 自定义业务失败提示 3xxx
+    JWT_TOKEN_VERIFICATION_ERROR(3000, "JWT校验失败"),
     CLIENT_REGISTRATION_INVALID(3000, "客户端ID无效"),
     CUSTOM_ERROR(3000, "自定义异常");
 

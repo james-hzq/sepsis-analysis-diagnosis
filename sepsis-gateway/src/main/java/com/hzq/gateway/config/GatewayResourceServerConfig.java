@@ -39,11 +39,13 @@ import java.util.List;
 @EnableWebFluxSecurity
 public class GatewayResourceServerConfig {
 
-    // 请求白名单，该集合中的路径，跳过认证，可直接进入网关过滤器
+    // 请求白名单，该集合中的路径，跳过认证和授权，可直接进入网关过滤器
     private static final List<String> whitesUrIs = List.of(
-//            "/oauth2/**"
+            "/oauth2/**",
             "/auth/**"
     );
+
+    private final AuthorizationManager authorizationManager;
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -60,18 +62,18 @@ public class GatewayResourceServerConfig {
                 .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
                         .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(customJwtConverter()))
                 )
-                // 配置认证和授权失败的处理器
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticationEntryPoint())
-                        .accessDeniedHandler(customAccessDeniedHandler())
-                )
                 // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要认证
                 .authorizeExchange(exchange -> {
                             if (!whitesUrIs.isEmpty()) {
                                 exchange.pathMatchers(whitesUrIs.toArray(String[]::new)).permitAll();
                             }
-                            exchange.anyExchange().authenticated();
+                            exchange.anyExchange().authenticated().anyExchange().access(authorizationManager);
                         }
+                )
+                // 配置认证和授权失败的处理器
+                .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
+                        .authenticationEntryPoint(customAuthenticationEntryPoint())
+                        .accessDeniedHandler(customAccessDeniedHandler())
                 )
                 // 禁用 CSRF
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
@@ -109,19 +111,6 @@ public class GatewayResourceServerConfig {
     }
 
     /**
-     * @return ReactiveJwtDecoder
-     * @author hua
-     * @date 2024/10/04
-     * @apiNote 配置 Reactive JWT 解码器
-     **/
-    @Bean
-    public ReactiveJwtDecoder reactiveJwtDecoder() throws Exception {
-        return NimbusReactiveJwtDecoder
-                .withPublicKey((RSAPublicKey) RSAUtils.getPublicKey(RSAUtils.PUBLIC_KEY_CONTEXT))
-                .build();
-    }
-
-    /**
      * @return org.springframework.security.web.server.ServerAuthenticationEntryPoint
      * @author hua
      * @date 2024/9/23 0:46
@@ -135,7 +124,7 @@ public class GatewayResourceServerConfig {
     @Bean
     public ServerAuthenticationEntryPoint customAuthenticationEntryPoint() {
         return (exchange, denied) -> Mono.defer(() -> {
-            log.error("Token validation error on request {}: {}", exchange.getRequest().getURI(), denied.getMessage());
+            log.error("token validation error on request {}: {}", exchange.getRequest().getURI(), denied.getMessage());
             return Mono.just(exchange.getResponse());
         }).flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.TOKEN_INVALID_OR_EXPIRED));
     }
@@ -154,7 +143,7 @@ public class GatewayResourceServerConfig {
     @Bean
     public ServerAccessDeniedHandler customAccessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(() -> {
-            log.error("Access denied on request {}: {}", exchange.getRequest().getURI(), denied.getMessage());
+            log.error("access denied on request {}: {}", exchange.getRequest().getURI(), denied.getMessage());
             return Mono.just(exchange.getResponse());
         }).flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.ACCESS_UNAUTHORIZED));
     }
