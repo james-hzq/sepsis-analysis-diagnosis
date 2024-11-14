@@ -1,5 +1,6 @@
 package com.hzq.gateway.constant;
 
+import lombok.Getter;
 import org.springframework.util.StringUtils;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.util.StringUtils;
  * @date 2024/11/14 15:10
  * @description Token类型枚举
  */
+@Getter
 public enum TokenType {
     SYSTEM_LOGIN_JWT_TOKEN("JWT:"),
     OAUTH2_LOGIN_ACCESS_TOKEN("ACCESS-TOKEN:"),
@@ -17,10 +19,6 @@ public enum TokenType {
 
     TokenType(String prefix) {
         this.prefix = prefix;
-    }
-
-    public String getPrefix() {
-        return prefix;
     }
 
     public static TokenType getTokenTypeFromAuthorizationHeader(String authorizationToken) {

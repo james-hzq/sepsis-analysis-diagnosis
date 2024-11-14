@@ -1,30 +1,25 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.result.ResultEnum;
-import com.hzq.core.util.RSAUtils;
+import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.gateway.util.WebFluxUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.*;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.WebFilter;
 import reactor.core.publisher.Mono;
 
-import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
 /**
@@ -41,11 +36,12 @@ public class GatewayResourceServerConfig {
 
     // 请求白名单，该集合中的路径，跳过认证和授权，可直接进入网关过滤器
     private static final List<String> whitesUrIs = List.of(
-            "/oauth2/**",
-            "/auth/**"
+            "/oauth2/**"
     );
 
+    private final ReactiveJwtDecoder reactiveJwtDecoder;
     private final AuthorizationManager authorizationManager;
+    private final AuthenticationConverter authenticationConverter;
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -58,16 +54,13 @@ public class GatewayResourceServerConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
         // 配置访问限制, 通过 URL 模式限制请求的访问
         serverHttpSecurity
-                // 配置 OAuth 2.0 资源服务器保护支持
-                .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
-                        .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(customJwtConverter()))
-                )
-                // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要认证
+                .addFilterAt(authenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要鉴权
                 .authorizeExchange(exchange -> {
                             if (!whitesUrIs.isEmpty()) {
                                 exchange.pathMatchers(whitesUrIs.toArray(String[]::new)).permitAll();
                             }
-                            exchange.anyExchange().authenticated().anyExchange().access(authorizationManager);
+                            exchange.anyExchange().access(authorizationManager);
                         }
                 )
                 // 配置认证和授权失败的处理器
@@ -88,26 +81,21 @@ public class GatewayResourceServerConfig {
         return serverHttpSecurity.build();
     }
 
+
     /**
      * @author hua
-     * @date 2024/9/26 21:39
-     * @apiNote 自定义权限管理器，默认转换器 JwtGrantedAuthoritiesConverter
-     * 1. ServerHttpSecurity 没有将 jwt 中 authorities 的负载部分当做 Authentication。需要把 jwt 的 Claim 中的 authorities 加入
+     * @date 2024/11/14 22:58
+     * @return org.springframework.web.server.WebFilter
+     * @apiNote 配置认证过滤器
      **/
-    @Bean
-    public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> customJwtConverter() {
-        // 创建 JwtGrantedAuthoritiesConverter，用于将 JWT 中的权限声明转换为 Spring Security 的 GrantedAuthority
-        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // 设置权限前缀，Spring Security 通常会为角色加上 "ROLE_" 前缀，这里手动指定前缀
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        // 指定 JWT 中用于存储权限声明的 Claim 名称，默认为 "authorities"
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-        // 创建 JwtAuthenticationConverter，用于将 JWT 转换为 Spring Security 的 Authentication 对象
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        // 将自定义的权限转换器设置到 JwtAuthenticationConverter 中
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        // 使用 ReactiveJwtAuthenticationConverterAdapter 包装 JwtAuthenticationConverter，使其适应响应式编程模型
-        return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
+    private WebFilter authenticationFilter() {
+        return (exchange, chain) -> authenticationConverter.convert(exchange)
+                .flatMap(authentication -> chain.filter(exchange))
+                        .onErrorResume(TokenAuthenticationException.class, ex -> {
+                            log.error("Token authentication error: {}", ex.getMessage());
+                            // This will allow Spring Security's exception handling to catch the error and call your authenticationEntryPoint
+                            return Mono.error(ex);
+                        });
     }
 
     /**

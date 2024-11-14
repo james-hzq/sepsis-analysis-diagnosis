@@ -13,6 +13,14 @@ import reactor.core.publisher.Mono;
 public interface TokenAuthenticationStrategy {
 
     /**
+     * @author hua
+     * @date 2024/11/15 0:12
+     * @return com.hzq.gateway.constant.TokenType
+     * @apiNote 获取当前认证策略锁认证的令牌类型
+     **/
+    TokenType getTokenType();
+
+    /**
      * @param token token 字符串
      * @return reactor.core.publisher.Mono<org.springframework.security.core.Authentication>
      * @author hzq
