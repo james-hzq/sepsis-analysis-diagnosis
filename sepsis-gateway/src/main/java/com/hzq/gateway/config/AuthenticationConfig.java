@@ -1,7 +1,6 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.util.RSAUtils;
-import com.hzq.gateway.exception.GlobalErrorWebExceptionHandler;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -29,13 +28,6 @@ import java.security.interfaces.RSAPublicKey;
  */
 @Configuration
 public class AuthenticationConfig {
-
-    @Bean
-    public WebExceptionHandler customErrorWebExceptionHandler(ErrorAttributes errorAttributes, ApplicationContext applicationContext) {
-        WebProperties.Resources resources = new WebProperties.Resources();
-        ErrorProperties errorProperties = new ErrorProperties();
-        return new GlobalErrorWebExceptionHandler(errorAttributes, resources, errorProperties, applicationContext);
-    }
 
     /**
      * @return ReactiveJwtDecoder

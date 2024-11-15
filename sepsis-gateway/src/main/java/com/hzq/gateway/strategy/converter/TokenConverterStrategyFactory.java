@@ -1,4 +1,4 @@
-package com.hzq.gateway.strategy;
+package com.hzq.gateway.strategy.converter;
 
 import com.google.common.collect.ImmutableMap;
 import com.hzq.gateway.constant.TokenType;
@@ -10,25 +10,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author hua
- * @className com.hzq.gateway.strategy TokenAuthenticationStrategyFactory
+ * @className com.hzq.gateway.strategy TokenConverterStrategyFactory
  * @date 2024/11/15 0:01
  * @description Token认证策略工厂
  */
 @Component
-public class TokenAuthenticationStrategyFactory {
+public class TokenConverterStrategyFactory {
 
-    private final Map<TokenType, TokenAuthenticationStrategy> tokenStrategies;
+    private final Map<TokenType, TokenConverterStrategy> tokenStrategies;
 
     @Autowired
-    public TokenAuthenticationStrategyFactory(List<TokenAuthenticationStrategy> strategies) {
+    public TokenConverterStrategyFactory(List<TokenConverterStrategy> strategies) {
         this.tokenStrategies = strategies.stream()
                 .collect(
                         ImmutableMap.toImmutableMap(
-                                TokenAuthenticationStrategy::getTokenType,
+                                TokenConverterStrategy::getTokenType,
                                 Function.identity()
                         )
                 );
@@ -38,11 +37,11 @@ public class TokenAuthenticationStrategyFactory {
      * @author hua
      * @date 2024/11/15 0:09
      * @param tokenType token 令牌类型
-     * @return com.hzq.gateway.strategy.TokenAuthenticationStrategy
+     * @return com.hzq.gateway.strategy.authentication.TokenAuthenticationStrategy
      * @apiNote 根据 token 令牌类型获取对应处理策略
      **/
-    public TokenAuthenticationStrategy getStrategy(TokenType tokenType) {
+    public TokenConverterStrategy getStrategy(TokenType tokenType) {
         return Optional.ofNullable(tokenStrategies.get(tokenType))
-                .orElseThrow(() -> new TokenAuthenticationException("No strategy found for token type: " + tokenType));
+                .orElseThrow(() -> new TokenAuthenticationException("No strategy found for token type: " + tokenType.getPrefix()));
     }
 }

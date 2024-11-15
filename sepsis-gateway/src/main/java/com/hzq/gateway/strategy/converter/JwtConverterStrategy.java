@@ -1,4 +1,4 @@
-package com.hzq.gateway.strategy;
+package com.hzq.gateway.strategy.converter;
 
 import com.hzq.gateway.constant.TokenType;
 import com.hzq.redis.cache.RedisCache;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationStrategy implements TokenAuthenticationStrategy {
+public final class JwtConverterStrategy implements TokenConverterStrategy {
 
     private final RedisCache redisCache;
 
@@ -27,7 +27,7 @@ public class JwtAuthenticationStrategy implements TokenAuthenticationStrategy {
     }
 
     @Override
-    public Mono<Authentication> authenticate(String token) {
+    public Mono<Authentication> convert(String token) {
         String realToken = trimTokenPrefix(getTokenType(), token);
         // TODO JWT验签
         return null;

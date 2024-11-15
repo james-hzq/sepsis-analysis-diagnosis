@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.PathContainer;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -19,13 +18,13 @@ import java.util.List;
 
 /**
  * @author gc
- * @class com.hzq.gateway.config AuthorizationManager
+ * @class com.hzq.gateway.config CustomAuthorizationManager
  * @date 2024/11/14 13:46
  * @description 鉴权管理器，用于判断是否有资源的访问权限
  */
 @Slf4j
 @Component
-public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
+public class CustomAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private static final List<String> whitePathList = Lists.newArrayList(
 

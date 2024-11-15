@@ -1,7 +1,5 @@
 package com.hzq.auth.config.oauth2;
 
-import com.hzq.core.result.ResultEnum;
-import com.hzq.web.exception.SystemException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;

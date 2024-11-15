@@ -1,4 +1,4 @@
-package com.hzq.gateway.strategy;
+package com.hzq.gateway.strategy.converter;
 
 import com.hzq.gateway.constant.TokenType;
 import com.hzq.redis.cache.RedisCache;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @RequiredArgsConstructor
-public class AccessTokenAuthenticationStrategy implements TokenAuthenticationStrategy {
+public final class AccessTokenConverterStrategy implements TokenConverterStrategy {
 
     private final RedisCache redisCache;
 
@@ -25,9 +25,9 @@ public class AccessTokenAuthenticationStrategy implements TokenAuthenticationStr
     }
 
     @Override
-    public Mono<Authentication> authenticate(String token) {
+    public Mono<Authentication> convert(String token) {
         String realToken = trimTokenPrefix(getTokenType(), token);
-        // TODO ACCESS_TOKEN 验签
+        redisCache.getCacheObject(realToken);
         return null;
     }
 }

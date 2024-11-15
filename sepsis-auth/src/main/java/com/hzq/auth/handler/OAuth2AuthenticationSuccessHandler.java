@@ -79,7 +79,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 response.sendRedirect(redirectUrl);
                 log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
                 // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
-                redisCache.setCacheObject(accessTokenContext, baseOAuth2User, secondsDifference, TimeUnit.SECONDS);
+                redisCache.setCacheObject(accessTokenContext, oAuth2AuthenticationToken, secondsDifference, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
 

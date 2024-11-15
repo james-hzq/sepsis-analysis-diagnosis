@@ -1,7 +1,7 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.result.ResultEnum;
-import com.hzq.gateway.exception.TokenAuthenticationException;
+import com.hzq.gateway.filter.CustomSecurityContextWebFilter;
 import com.hzq.gateway.util.WebFluxUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
+import org.springframework.security.web.server.context.ReactorContextWebFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.server.WebFilter;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -34,14 +33,12 @@ import java.util.List;
 @EnableWebFluxSecurity
 public class GatewayResourceServerConfig {
 
-    // 请求白名单，该集合中的路径，跳过认证和授权，可直接进入网关过滤器
-    private static final List<String> whitesUrIs = List.of(
-            "/oauth2/**"
-    );
+    private final GatewaySecurityProperties gatewaySecurityProperties;
+    private final CustomSecurityContextRepository customSecurityContextRepository;
+    private final CustomAuthorizationManager customAuthorizationManager;
+    private final CustomAuthenticationManager customAuthenticationManager;
 
-    private final ReactiveJwtDecoder reactiveJwtDecoder;
-    private final AuthorizationManager authorizationManager;
-    private final AuthenticationConverter authenticationConverter;
+    private final CustomSecurityContextWebFilter customSecurityContextWebFilter;
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -52,15 +49,19 @@ public class GatewayResourceServerConfig {
      **/
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
-        // 配置访问限制, 通过 URL 模式限制请求的访问
         serverHttpSecurity
-                .addFilterAt(authenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-                // 白名单内的请求路径跳过认证，可直接放行至网关过滤器，其余的需要鉴权
+                .addFilterBefore(customSecurityContextWebFilter, SecurityWebFiltersOrder.REACTOR_CONTEXT)
+                // 配置 SecurityContextRepository  来处理token提取
+                .securityContextRepository(customSecurityContextRepository)
+                // 配置认证管理器（解析，校验Token）
+                .authenticationManager(customAuthenticationManager)
+                // 白名单内的请求路径可直接放行至网关过滤器，其余的需要鉴权
                 .authorizeExchange(exchange -> {
-                            if (!whitesUrIs.isEmpty()) {
-                                exchange.pathMatchers(whitesUrIs.toArray(String[]::new)).permitAll();
+                            List<String> whiteUriList = gatewaySecurityProperties.getWhiteUriList();
+                            if (!whiteUriList.isEmpty()) {
+                                exchange.pathMatchers(whiteUriList.toArray(String[]::new)).permitAll();
                             }
-                            exchange.anyExchange().access(authorizationManager);
+                            exchange.anyExchange().access(customAuthorizationManager);
                         }
                 )
                 // 配置认证和授权失败的处理器
@@ -79,23 +80,6 @@ public class GatewayResourceServerConfig {
 
         log.info("sepsis resource server config init successfully");
         return serverHttpSecurity.build();
-    }
-
-
-    /**
-     * @author hua
-     * @date 2024/11/14 22:58
-     * @return org.springframework.web.server.WebFilter
-     * @apiNote 配置认证过滤器
-     **/
-    private WebFilter authenticationFilter() {
-        return (exchange, chain) -> authenticationConverter.convert(exchange)
-                .flatMap(authentication -> chain.filter(exchange))
-                        .onErrorResume(TokenAuthenticationException.class, ex -> {
-                            log.error("Token authentication error: {}", ex.getMessage());
-                            // This will allow Spring Security's exception handling to catch the error and call your authenticationEntryPoint
-                            return Mono.error(ex);
-                        });
     }
 
     /**

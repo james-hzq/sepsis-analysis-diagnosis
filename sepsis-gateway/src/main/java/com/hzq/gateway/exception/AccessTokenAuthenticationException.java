@@ -13,7 +13,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public final class AccessTokenAuthenticationException extends TokenAuthenticationException{
+public final class AccessTokenAuthenticationException extends TokenAuthenticationException {
 
     public AccessTokenAuthenticationException(String message) {
         super(message);
