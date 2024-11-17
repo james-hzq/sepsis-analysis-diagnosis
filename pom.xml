@@ -186,6 +186,13 @@
                 <version>${hzq.version}</version>
             </dependency>
 
+            <!-- 内部模块：全局安全策略 -->
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>common-security</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.hzq</groupId>
                 <artifactId>sepsis-system-api</artifactId>

@@ -76,5 +76,11 @@
             <groupId>com.hzq</groupId>
             <artifactId>common-redis</artifactId>
         </dependency>
+
+        <!-- 内部模块：全局安全策略 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-security</artifactId>
+        </dependency>
     </dependencies>
 </project>

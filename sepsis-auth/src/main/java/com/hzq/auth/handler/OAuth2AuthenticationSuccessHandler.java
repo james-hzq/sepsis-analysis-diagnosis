@@ -1,7 +1,10 @@
 package com.hzq.auth.handler;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.hzq.auth.login.user.BaseOAuth2User;
 import com.hzq.redis.cache.RedisCache;
+import com.hzq.security.authentication.AccessTokenAuthentication;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,6 +74,23 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 // 获取 access_token 内容
                 String accessTokenContext = Optional.ofNullable(accessToken.getTokenValue())
                         .orElseThrow(() -> new OAuth2AuthenticationException("access_token内容时间为空"));
+                // 生成存入 redis 的认证对象信息
+                Map<String, Object> userInfoMap = new HashMap<>() {{
+                    put("loginType", oAuth2AuthenticationToken.getAuthorizedClientRegistrationId());
+                    put("username", baseOAuth2User.getName());
+                    put("avatar", Optional.ofNullable(baseOAuth2User.getAttribute("avatar_url")).orElse(""));
+                }};
+                Set<String> authorities = new HashSet<>(){{
+                    add("user");
+                }};
+                AccessTokenAuthentication accessTokenAuthentication = new AccessTokenAuthentication.Builder()
+                        .setAccessToken(accessTokenContext)
+                        .setIssuedAt(issuedAt)
+                        .setExpiresAt(expiresAt)
+                        .setPrincipal(baseOAuth2User.getName())
+                        .setAuthorities(authorities)
+                        .setDetails(userInfoMap)
+                        .build();
                 // 重定向到前端
                 String redirectUrl = REDIRECT_BASE_URL
                         + LOGIN_TYPE + "github"
@@ -79,7 +99,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 response.sendRedirect(redirectUrl);
                 log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
                 // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
-                redisCache.setCacheObject(accessTokenContext, oAuth2AuthenticationToken, secondsDifference, TimeUnit.SECONDS);
+                redisCache.setCacheObject(accessTokenContext, accessTokenAuthentication, secondsDifference, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
 

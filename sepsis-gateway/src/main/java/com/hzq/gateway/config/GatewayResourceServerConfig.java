@@ -1,7 +1,7 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.result.ResultEnum;
-import com.hzq.gateway.filter.CustomSecurityContextWebFilter;
+import com.hzq.gateway.filter.CustomAuthenticationWebFilter;
 import com.hzq.gateway.util.WebFluxUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
-import org.springframework.security.web.server.context.ReactorContextWebFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -34,11 +33,8 @@ import java.util.List;
 public class GatewayResourceServerConfig {
 
     private final GatewaySecurityProperties gatewaySecurityProperties;
-    private final CustomSecurityContextRepository customSecurityContextRepository;
+    private final CustomAuthenticationWebFilter customAuthenticationWebFilter;
     private final CustomAuthorizationManager customAuthorizationManager;
-    private final CustomAuthenticationManager customAuthenticationManager;
-
-    private final CustomSecurityContextWebFilter customSecurityContextWebFilter;
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -50,11 +46,8 @@ public class GatewayResourceServerConfig {
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
         serverHttpSecurity
-                .addFilterBefore(customSecurityContextWebFilter, SecurityWebFiltersOrder.REACTOR_CONTEXT)
-                // 配置 SecurityContextRepository  来处理token提取
-                .securityContextRepository(customSecurityContextRepository)
-                // 配置认证管理器（解析，校验Token）
-                .authenticationManager(customAuthenticationManager)
+                // 自定义认证过滤器
+                .addFilterBefore(customAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 // 白名单内的请求路径可直接放行至网关过滤器，其余的需要鉴权
                 .authorizeExchange(exchange -> {
                             List<String> whiteUriList = gatewaySecurityProperties.getWhiteUriList();
@@ -73,6 +66,8 @@ public class GatewayResourceServerConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 // 自定义 CORS 跨域
                 .cors(corsSpec -> corsSpec.configurationSource(customCorsConfiguration()))
+                // 禁用 httpBasic 身份验证
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 // 禁用默认登录页面
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 // 禁用默认登出页面

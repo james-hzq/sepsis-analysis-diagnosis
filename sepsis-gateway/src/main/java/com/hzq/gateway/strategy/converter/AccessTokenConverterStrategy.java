@@ -1,11 +1,15 @@
 package com.hzq.gateway.strategy.converter;
 
 import com.hzq.gateway.constant.TokenType;
+import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.redis.cache.RedisCache;
+import com.hzq.security.authentication.AccessTokenAuthentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 /**
  * @author gc
@@ -27,7 +31,8 @@ public final class AccessTokenConverterStrategy implements TokenConverterStrateg
     @Override
     public Mono<Authentication> convert(String token) {
         String realToken = trimTokenPrefix(getTokenType(), token);
-        redisCache.getCacheObject(realToken);
-        return null;
+        AccessTokenAuthentication accessTokenAuthentication = Optional.ofNullable((AccessTokenAuthentication) redisCache.getCacheObject(realToken))
+                .orElseThrow(() -> new TokenAuthenticationException("token 无效"));
+        return Mono.just(accessTokenAuthentication);
     }
 }

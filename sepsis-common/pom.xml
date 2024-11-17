@@ -17,6 +17,7 @@
         <module>common-log</module>
         <module>common-redis</module>
         <module>common-web</module>
+        <module>common-security</module>
     </modules>
 
     <dependencies>
