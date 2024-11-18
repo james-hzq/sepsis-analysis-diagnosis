@@ -1,4 +1,4 @@
-package com.hzq.jackson;
+package com.hzq.jackson.config;
 
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 

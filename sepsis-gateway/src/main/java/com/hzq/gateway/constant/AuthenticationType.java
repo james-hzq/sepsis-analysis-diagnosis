@@ -1,9 +1,9 @@
 package com.hzq.gateway.constant;
 
+import com.hzq.security.authentication.AccessTokenAuthentication;
 import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 /**
  * @author gc
@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
  */
 @Getter
 public enum AuthenticationType {
-    OAUTH2_ACCESS_TOKEN_AUTHENTICATION(OAuth2AuthenticationToken.class),
+    OAUTH2_ACCESS_TOKEN_AUTHENTICATION(AccessTokenAuthentication.class),
     SYSTEM_USERNAME_PASSWORD_AUTHENTICATION(UsernamePasswordAuthenticationToken.class);
 
     private final Class<? extends Authentication> clazz;

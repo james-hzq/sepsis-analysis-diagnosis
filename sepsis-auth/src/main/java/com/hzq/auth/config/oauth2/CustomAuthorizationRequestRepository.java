@@ -1,6 +1,6 @@
 package com.hzq.auth.config.oauth2;
 
-import com.hzq.jackson.JacksonUtils;
+import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

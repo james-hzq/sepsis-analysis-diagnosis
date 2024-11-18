@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
-import com.hzq.jackson.JacksonUtils;
+import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.web.cache.request.CachedBodyHttpServletRequest;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;

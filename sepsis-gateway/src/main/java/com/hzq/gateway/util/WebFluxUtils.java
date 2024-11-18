@@ -2,7 +2,7 @@ package com.hzq.gateway.util;
 
 import com.hzq.core.result.Result;
 import com.hzq.core.result.ResultEnum;
-import com.hzq.jackson.JacksonUtils;
+import com.hzq.jackson.util.JacksonUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;

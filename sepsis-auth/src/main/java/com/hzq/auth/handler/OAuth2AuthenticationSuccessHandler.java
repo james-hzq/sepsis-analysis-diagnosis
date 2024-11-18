@@ -32,9 +32,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final String REDIRECT_IN_PROGRESS_ATTR = "oauth2_redirect_in_progress";
     // OAuth2联合登录成功后，重定向到登录页面，并且附带access_token，下一次请求携带access_token
     private static final String REDIRECT_BASE_URL = "http://localhost:9050/callback";
+    private static final String TOKEN_TYPE_PREFIX = "ACCESS-TOKEN:";
     private static final String LOGIN_TYPE = "?login-type=";
     private static final String ACCESS_TOKEN = "&access-token=";
     private static final String REFRESH_TOKEN = "&refresh-token=";
@@ -47,65 +47,47 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
-        // Check if redirect is already in progress using request attribute
-        if (request.getAttribute(REDIRECT_IN_PROGRESS_ATTR) != null) {
-            log.warn("Redirect already in progress for this request");
-            return;
-        }
-
-        // Mark redirect as in progress
-        request.setAttribute(REDIRECT_IN_PROGRESS_ATTR, Boolean.TRUE);
-
-        try {
-            if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
-                // 将认证主体转换为 BaseOAuth2User，如果需要用到其子类，需要给出标识单独判断
-                BaseOAuth2User baseOAuth2User = (BaseOAuth2User) Optional.ofNullable(oAuth2AuthenticationToken.getPrincipal())
-                        .orElseThrow(() -> new OAuth2AuthenticationException("认证对象主体为空"));
-                // 获取 access_token
-                OAuth2AccessToken accessToken = Optional.ofNullable(baseOAuth2User.getAccessToken())
-                        .orElseThrow(() -> new OAuth2AuthenticationException("access_token未能成功生成"));
-                // 获取时间差
-                Instant issuedAt = Optional.ofNullable(accessToken.getIssuedAt())
-                        .orElseThrow(() -> new OAuth2AuthenticationException("access_token签发时间为空"));
-                Instant expiresAt = Optional.ofNullable(accessToken.getExpiresAt())
-                        .orElseThrow(() -> new OAuth2AuthenticationException("access_token过期时间为空"));
-                Integer secondsDifference = (int) Duration.between(issuedAt, expiresAt).getSeconds();
-                // 获取 access_token 内容
-                String accessTokenContext = Optional.ofNullable(accessToken.getTokenValue())
-                        .orElseThrow(() -> new OAuth2AuthenticationException("access_token内容时间为空"));
-                // 生成存入 redis 的认证对象信息
-                Map<String, Object> userInfoMap = new HashMap<>() {{
-                    put("loginType", oAuth2AuthenticationToken.getAuthorizedClientRegistrationId());
-                    put("username", baseOAuth2User.getName());
-                    put("avatar", Optional.ofNullable(baseOAuth2User.getAttribute("avatar_url")).orElse(""));
-                }};
-                Set<String> authorities = new HashSet<>(){{
-                    add("user");
-                }};
-                AccessTokenAuthentication accessTokenAuthentication = new AccessTokenAuthentication.Builder()
-                        .setAccessToken(accessTokenContext)
-                        .setIssuedAt(issuedAt)
-                        .setExpiresAt(expiresAt)
-                        .setPrincipal(baseOAuth2User.getName())
-                        .setAuthorities(authorities)
-                        .setDetails(userInfoMap)
-                        .build();
-                // 重定向到前端
-                String redirectUrl = REDIRECT_BASE_URL
-                        + LOGIN_TYPE + "github"
-                        + ACCESS_TOKEN + accessTokenContext
-                        + REFRESH_TOKEN;
-                response.sendRedirect(redirectUrl);
-                log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
-                // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
-                redisCache.setCacheObject(accessTokenContext, accessTokenAuthentication, secondsDifference, TimeUnit.SECONDS);
-            }
-        } catch (Exception e) {
-
-        } finally {
-            // Clear the redirect flag
-            request.removeAttribute(REDIRECT_IN_PROGRESS_ATTR);
+        if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+            // 将认证主体转换为 BaseOAuth2User，如果需要用到其子类，需要给出标识单独判断
+            BaseOAuth2User baseOAuth2User = (BaseOAuth2User) Optional.ofNullable(oAuth2AuthenticationToken.getPrincipal())
+                    .orElseThrow(() -> new OAuth2AuthenticationException("认证对象主体为空"));
+            // 获取 access_token
+            OAuth2AccessToken accessToken = Optional.ofNullable(baseOAuth2User.getAccessToken())
+                    .orElseThrow(() -> new OAuth2AuthenticationException("access_token未能成功生成"));
+            // 获取时间差
+            Instant issuedAt = Optional.ofNullable(accessToken.getIssuedAt())
+                    .orElseThrow(() -> new OAuth2AuthenticationException("access_token签发时间为空"));
+            Instant expiresAt = Optional.ofNullable(accessToken.getExpiresAt())
+                    .orElseThrow(() -> new OAuth2AuthenticationException("access_token过期时间为空"));
+            Integer secondsDifference = (int) Duration.between(issuedAt, expiresAt).getSeconds();
+            // 获取 access_token 内容
+            String accessTokenContext = Optional.ofNullable(accessToken.getTokenValue())
+                    .orElseThrow(() -> new OAuth2AuthenticationException("access_token内容时间为空"));
+            // 生成存入 redis 的认证对象信息
+            Map<String, Object> details = ImmutableMap.<String, Object>builder()
+                    .put("loginType", oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())
+                    .put("username", baseOAuth2User.getName())
+                    .put("avatar", Optional.ofNullable(baseOAuth2User.getAttribute("avatar_url")).orElse(""))
+                    .build();
+            Set<String> roles = ImmutableSet.<String>builder()
+                    .add("user")
+                    .build();
+            AccessTokenAuthentication accessTokenAuthentication = new AccessTokenAuthentication()
+                    .setAccessToken(accessTokenContext)
+                    .setIssuedAt(issuedAt)
+                    .setExpiresAt(expiresAt)
+                    .setPrincipal(baseOAuth2User.getName())
+                    .setRoles(roles)
+                    .setDetails(details);
+            // 重定向到前端
+            String redirectUrl = REDIRECT_BASE_URL
+                    + LOGIN_TYPE + "github"
+                    + ACCESS_TOKEN + TOKEN_TYPE_PREFIX + accessTokenContext
+                    + REFRESH_TOKEN;
+            response.sendRedirect(redirectUrl);
+            log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
+            // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
+            redisCache.setCacheObject(accessTokenContext, accessTokenAuthentication, secondsDifference, TimeUnit.SECONDS);
         }
     }
 }

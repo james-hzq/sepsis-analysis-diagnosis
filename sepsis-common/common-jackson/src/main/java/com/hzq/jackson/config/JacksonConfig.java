@@ -1,9 +1,10 @@
-package com.hzq.jackson;
+package com.hzq.jackson.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.hzq.jackson.custom.BigNumberAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -94,8 +96,8 @@ public class JacksonConfig {
         // 配置 Jackson 序列化 和 反序列化 部分特殊类型
         builder
                 .serializerByType(BigDecimal.class, ToStringSerializer.instance)
-                .serializerByType(BigInteger.class, BigNumberSerializer.INSTANCE)
-                .serializerByType(Long.class, BigNumberSerializer.INSTANCE)
+                .serializerByType(BigInteger.class, BigNumberAdapter.INSTANCE)
+                .serializerByType(Long.class, BigNumberAdapter.INSTANCE)
                 .serializerByType(Instant.class, ToStringSerializer.instance)
                 .deserializerByType(Instant.class, InstantDeserializer.INSTANT);
 
@@ -106,6 +108,9 @@ public class JacksonConfig {
                 .deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATETIME_PATTERN)))
                 .deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)))
                 .deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT)));
+
+        // 添加对 guava 集合的序列化支持
+        builder.modules(new GuavaModule());
 
         // 配置默认类型信息，以解决序列化对象中嵌套对象的类型信息问题
         builder.postConfigurer(objectMapper -> objectMapper.activateDefaultTyping(

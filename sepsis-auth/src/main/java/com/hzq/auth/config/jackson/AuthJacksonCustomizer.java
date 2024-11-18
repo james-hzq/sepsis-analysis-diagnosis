@@ -2,7 +2,7 @@ package com.hzq.auth.config.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.hzq.jackson.JacksonCustomizer;
+import com.hzq.jackson.config.JacksonCustomizer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponseType;
 import org.springframework.stereotype.Component;

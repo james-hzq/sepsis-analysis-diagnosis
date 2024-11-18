@@ -1,8 +1,9 @@
 package com.hzq.security.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
  * @date 2024/11/17 18:46
  * @description 用于 AccessToken 的身份认证和鉴权
  */
-@Setter
 @Getter
 @ToString
 public class AccessTokenAuthentication implements Authentication {
@@ -32,7 +32,7 @@ public class AccessTokenAuthentication implements Authentication {
     // 是否认证成功
     private boolean isAuthenticated;
     // 权限信息
-    private Set<String> authorities;
+    private Set<String> roles;
     // 存储有关身份验证请求的其他详细信息，这里
     private Map<String, Object> details;
     // 身份验证的主体的身份，即用户名
@@ -41,74 +41,48 @@ public class AccessTokenAuthentication implements Authentication {
     public AccessTokenAuthentication() {
     }
 
-    private AccessTokenAuthentication(Builder builder) {
-        this.accessToken = builder.accessToken;
-        this.issuedAt = builder.issuedAt;
-        this.expiresAt = builder.expiresAt;
-        this.isAuthenticated = builder.isAuthenticated;
-        this.authorities = builder.authorities;
-        this.details = builder.details;
-        this.principal = builder.principal;
+    public AccessTokenAuthentication setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+        return this;
     }
 
-    public static class Builder {
-        private String accessToken;
-        private Instant issuedAt;
-        private Instant expiresAt;
-        private boolean isAuthenticated;
-        private Set<String> authorities;
-        private Map<String, Object> details;
-        private Object principal;
+    public AccessTokenAuthentication setIssuedAt(Instant issuedAt) {
+        this.issuedAt = issuedAt;
+        return this;
+    }
 
-        public Builder setAccessToken(String accessToken) {
-            this.accessToken = accessToken;
-            return this;
-        }
+    public AccessTokenAuthentication setExpiresAt(Instant expiresAt) {
+        this.expiresAt = expiresAt;
+        return this;
+    }
 
-        public Builder setIssuedAt(Instant issuedAt) {
-            this.issuedAt = issuedAt;
-            return this;
-        }
+    public AccessTokenAuthentication setRoles(Set<String> roles) {
+        this.roles = ImmutableSet.copyOf(roles);
+        return this;
+    }
 
-        public Builder setExpiresAt(Instant expiresAt) {
-            this.expiresAt = expiresAt;
-            return this;
-        }
+    public AccessTokenAuthentication setDetails(Map<String, Object> details) {
+        this.details = ImmutableMap.copyOf(details);
+        return this;
+    }
 
-        public Builder setIsAuthenticated(boolean isAuthenticated) {
-            this.isAuthenticated = isAuthenticated;
-            return this;
-        }
-
-        public Builder setAuthorities(Set<String> authorities) {
-            this.authorities = new HashSet<>(authorities);
-            return this;
-        }
-
-        public Builder setDetails(Map<String, Object> details) {
-            this.details = new HashMap<>(details);
-            return this;
-        }
-
-        public Builder setPrincipal(Object principal) {
-            this.principal = principal;
-            return this;
-        }
-
-        public AccessTokenAuthentication build() {
-            return new AccessTokenAuthentication(this);
-        }
+    public AccessTokenAuthentication setPrincipal(Object principal) {
+        this.principal = principal;
+        return this;
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 在需要时将String转换为SimpleGrantedAuthority
-        return authorities.stream()
+        return roles.stream()
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toSet(),
-                        ImmutableSet::copyOf
-                ));
+                .collect(
+                        Collectors.collectingAndThen(
+                                Collectors.toSet(),
+                                ImmutableSet::copyOf
+                        )
+                );
     }
 
     @Override

@@ -18,10 +18,27 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- 全局 log -->
         <dependency>
             <groupId>com.hzq</groupId>
             <artifactId>common-log</artifactId>
+        </dependency>
+
+        <!-- 系统核心工具 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+
+        <!-- 全局 jackson -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-jackson</artifactId>
         </dependency>
     </dependencies>
 </project>

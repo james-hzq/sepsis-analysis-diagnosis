@@ -7,11 +7,13 @@ import com.hzq.gateway.constant.TokenType;
 import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.gateway.strategy.authentication.TokenAuthenticationStrategyFactory;
 import com.hzq.gateway.strategy.converter.TokenConverterStrategyFactory;
-import jakarta.validation.constraints.NotNull;
+import com.hzq.security.constant.SecurityConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -22,6 +24,8 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author hua
@@ -70,9 +74,10 @@ public class CustomAuthenticationWebFilter implements WebFilter {
     }
 
     @Override
-    public @NotNull Mono<Void> filter(@NotNull ServerWebExchange exchange, @NotNull WebFilterChain chain) {
+    @NonNull
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         return this.requiresAuthenticationMatcher.matches(exchange)
-                // 如果路径匹配上了白名单路径，那么进行 token 转换和认证，否则直接走过滤器链
+                // 如果路径匹配上了白名单路径，那么进行 token 转换和认证，并将认证成功的信息加到请求头，否则直接走过滤器链
                 .flatMap(matchResult -> matchResult.isMatch() ?
                         convert(exchange)
                                 .flatMap(this::authenticate)
@@ -84,6 +89,7 @@ public class CustomAuthenticationWebFilter implements WebFilter {
                     return Mono.error(e);
                 });
     }
+
 
     /**
      * @author hua

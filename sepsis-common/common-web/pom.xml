@@ -12,22 +12,10 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- 系统核心工具 -->
+        <!-- 内部模块：全局权限校验 -->
         <dependency>
             <groupId>com.hzq</groupId>
-            <artifactId>common-core</artifactId>
-        </dependency>
-
-        <!-- 全局日志 -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-log</artifactId>
-        </dependency>
-
-        <!-- 全局jackson -->
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-jackson</artifactId>
+            <artifactId>common-security</artifactId>
         </dependency>
 
         <!-- Springboot web -->

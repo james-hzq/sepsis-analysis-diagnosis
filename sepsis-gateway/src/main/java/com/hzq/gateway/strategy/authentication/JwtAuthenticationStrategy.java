@@ -1,7 +1,10 @@
 package com.hzq.gateway.strategy.authentication;
 
 import com.hzq.gateway.constant.AuthenticationType;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
@@ -10,6 +13,9 @@ import reactor.core.publisher.Mono;
  * @date 2024/11/15 12:14
  * @description TODO
  */
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtAuthenticationStrategy implements TokenAuthenticationStrategy {
 
     @Override

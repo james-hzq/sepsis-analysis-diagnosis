@@ -51,26 +51,6 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
 
     private Mono<AuthorizationDecision> checkAuthorities(Authentication authentication, String path) {
         return Mono.defer(() -> {
-//            List<String> authorities = authentication.getAuthorities().stream()
-//                    .map(GrantedAuthority::getAuthority)
-//                    .collect(Collectors.toList());
-//
-//            String resourceKey = "RESOURCE:" + path;
-//            Set<String> requiredAuthorities = (Set<String>) redisTemplate.opsForValue().get(resourceKey);
-//
-//            if (requiredAuthorities == null || requiredAuthorities.isEmpty()) {
-//                log.warn("No required authorities found for path: {}", path);
-//                throw new AccessDeniedException("No required authorities found for path: " + path);
-//            }
-//
-//            boolean hasPermission = authorities.stream()
-//                    .anyMatch(requiredAuthorities::contains);
-//
-//            if (!hasPermission) {
-//                log.warn("Insufficient permissions for path: {}. User authorities: {}, Required authorities: {}",
-//                        path, authorities, requiredAuthorities);
-//                throw new AccessDeniedException("Insufficient permissions for accessing path: " + path);
-//            }
 
             return Mono.just(new AuthorizationDecision(false));
         });

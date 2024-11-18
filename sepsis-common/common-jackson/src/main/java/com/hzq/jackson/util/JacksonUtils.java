@@ -1,4 +1,4 @@
-package com.hzq.jackson;
+package com.hzq.jackson.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

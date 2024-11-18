@@ -33,12 +33,13 @@ public class OAuth2AuthenticationFailureHandler implements AuthenticationFailure
 
         if (exception instanceof OAuth2AuthenticationException oAuth2AuthenticationException) {
             OAuth2Error error = oAuth2AuthenticationException.getError();
-            log.error("联合认证失败，进入自定义错误处理类\n错误代码如下：{}\n错误信息如下：{}\n将请求重定向到登录页面 {}\n",
+            log.error(
+                    "联合认证失败，进入自定义错误处理类\n错误代码如下：{}\n错误信息如下：{}\n将请求重定向到登录页面 {}\n",
                     error.getErrorCode(), error.getDescription(), redirectUrl
             );
         } else {
-            log.error("联合认证失败，进入自定义错误处理类，错误信息如下：{}\n" +
-                            "将请求重定向到登录页面 {}",
+            log.error(
+                    "联合认证失败，进入自定义错误处理类\n错误信息如下：{}\n将请求重定向到登录页面 {}",
                     exception.getMessage(), redirectUrl
             );
         }
