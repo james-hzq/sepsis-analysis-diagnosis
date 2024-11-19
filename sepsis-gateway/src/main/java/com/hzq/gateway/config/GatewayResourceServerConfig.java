@@ -34,7 +34,6 @@ public class GatewayResourceServerConfig {
 
     private final GatewaySecurityProperties gatewaySecurityProperties;
     private final CustomAuthenticationWebFilter customAuthenticationWebFilter;
-    private final CustomAuthorizationManager customAuthorizationManager;
 
     /**
      * @param serverHttpSecurity ServerHttpSecurity 类似于 HttpSecurity 但适用于 WebFlux。
@@ -54,7 +53,6 @@ public class GatewayResourceServerConfig {
                             if (!whiteUriList.isEmpty()) {
                                 exchange.pathMatchers(whiteUriList.toArray(String[]::new)).permitAll();
                             }
-                            exchange.anyExchange().access(customAuthorizationManager);
                         }
                 )
                 // 配置认证和授权失败的处理器

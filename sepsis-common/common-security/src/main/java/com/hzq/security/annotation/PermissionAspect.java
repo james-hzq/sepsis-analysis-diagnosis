@@ -14,6 +14,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 /**
@@ -71,7 +72,8 @@ public class PermissionAspect {
     @Around(value = "pointCut()")
     public Result<?> checkPermissions(ProceedingJoinPoint joinPoint) throws Throwable {
         // 获取权限字符串，即校验条件
-        String condition = getRoles(joinPoint);
+        RequiresPermissions requiresPermissions = getAnnotation(joinPoint);
+        String condition = requiresPermissions.value();
         // 使用 SpEL 表达式解析器解析权限验证条件
         Expression expression = EXPRESSION_PARSER.parseExpression(condition);
         // 获取 Spring 容器中的 PermissionService Bean
@@ -89,14 +91,12 @@ public class PermissionAspect {
      * @date 2024/11/18 17:44
      * @apiNote 获取注解上的权限字符串
      **/
-    private static String getRoles(ProceedingJoinPoint joinPoint) {
+    private static RequiresPermissions getAnnotation(ProceedingJoinPoint joinPoint) {
         // 获取方法签名
         MethodSignature methodSignature = Optional.ofNullable(joinPoint.getSignature() instanceof MethodSignature ? ((MethodSignature) joinPoint.getSignature()) : null)
                 .orElseThrow(() -> new IllegalArgumentException("JoinPoint must be a method execution"));
 
         // 获取方法上的 @RequiresPermissions 注解
-        RequiresPermissions annotation = methodSignature.getMethod().getAnnotation(RequiresPermissions.class);
-        // 获取注解的值，即权限验证的条件
-        return annotation.value();
+        return methodSignature.getMethod().getAnnotation(RequiresPermissions.class);
     }
 }

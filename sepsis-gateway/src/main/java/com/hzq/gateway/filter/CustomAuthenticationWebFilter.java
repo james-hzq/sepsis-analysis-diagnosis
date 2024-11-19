@@ -7,13 +7,11 @@ import com.hzq.gateway.constant.TokenType;
 import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.gateway.strategy.authentication.TokenAuthenticationStrategyFactory;
 import com.hzq.gateway.strategy.converter.TokenConverterStrategyFactory;
-import com.hzq.security.constant.SecurityConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -70,7 +68,7 @@ public class CustomAuthenticationWebFilter implements WebFilter {
                 .stream()
                 .anyMatch(pattern -> matcher.match(pattern, path));
 
-        return isWhitelisted ? ServerWebExchangeMatcher.MatchResult.notMatch() : ServerWebExchangeMatcher.MatchResult.match();
+        return isWhitelisted ? ServerWebExchangeMatcher.MatchResult.match() : ServerWebExchangeMatcher.MatchResult.notMatch();
     }
 
     @Override
@@ -78,12 +76,14 @@ public class CustomAuthenticationWebFilter implements WebFilter {
     public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         return this.requiresAuthenticationMatcher.matches(exchange)
                 // 如果路径匹配上了白名单路径，那么进行 token 转换和认证，并将认证成功的信息加到请求头，否则直接走过滤器链
-                .flatMap(matchResult -> matchResult.isMatch() ?
-                        convert(exchange)
-                                .flatMap(this::authenticate)
-                                .then(chain.filter(exchange)) :
-                        chain.filter(exchange)
-                )
+                .flatMap(matchResult -> {
+                    // 如果在白名单内，直接跳过认证逻辑
+                    return matchResult.isMatch() ?
+                            chain.filter(exchange) :
+                            convert(exchange)
+                                    .flatMap(this::authenticate)
+                                    .then(chain.filter(exchange));
+                })
                 .onErrorResume(AuthenticationException.class, e -> {
                     log.error("Authentication failed: {}", e.getMessage());
                     return Mono.error(e);

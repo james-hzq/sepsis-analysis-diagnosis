@@ -8,5 +8,21 @@ package com.hzq.security.service;
  */
 public interface PermissionService {
 
-    boolean hasRoles(String permission);
+    /**
+     * @param roles 角色
+     * @return boolean
+     * @author hzq
+     * @date 2024/11/19 14:33
+     * @apiNote 含有 角色1 && 角色2 .......
+     **/
+    boolean hasRolesAnd(String roles);
+
+    /**
+     * @param roles 角色
+     * @return boolean
+     * @author hzq
+     * @date 2024/11/19 14:33
+     * @apiNote 含有 角色1 || 角色2 .......
+     **/
+    boolean hasRolesOr(String roles);
 }

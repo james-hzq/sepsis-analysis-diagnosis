@@ -25,6 +25,7 @@ public class AuthSecurityProperties {
             "/login",
             "/favicon.ico",
             "/login/oauth2/code/**",
+            "/auth/**",
             "/error"
     );
 }

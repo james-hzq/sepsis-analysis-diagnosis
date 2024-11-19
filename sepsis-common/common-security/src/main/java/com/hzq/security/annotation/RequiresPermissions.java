@@ -13,6 +13,5 @@ import java.lang.annotation.*;
 @Inherited
 public @interface RequiresPermissions {
 
-    // 必须具备的角色
-    String value();
+    String value() default "user";
 }
