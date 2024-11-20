@@ -36,7 +36,7 @@ public class AccessTokenAuthenticationStrategy implements TokenAuthenticationStr
                 .flatMap(this::validateToken)
                 .doOnSuccess(auth -> {
                     auth.setAuthenticated(true);
-                    SecurityUtils.setAuthentication(authentication);
+                    SecurityUtils.setAuthentication(auth);
                 })
                 .doOnError(error -> log.error("Token认证失败: {}", error.getMessage()))
                 .then();

@@ -33,7 +33,7 @@ public class AccessTokenAuthentication implements Authentication {
     private boolean isAuthenticated;
     // 权限信息
     private Set<String> roles;
-    // 存储有关身份验证请求的其他详细信息，这里
+    // 存储有关身份验证请求的其他详细信息
     private Map<String, Object> details;
     // 身份验证的主体的身份，即用户名
     private Object principal;

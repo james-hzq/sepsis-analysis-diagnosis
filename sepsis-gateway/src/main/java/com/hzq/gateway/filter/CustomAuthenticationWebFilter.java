@@ -7,6 +7,7 @@ import com.hzq.gateway.constant.TokenType;
 import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.gateway.strategy.authentication.TokenAuthenticationStrategyFactory;
 import com.hzq.gateway.strategy.converter.TokenConverterStrategyFactory;
+import com.hzq.security.constant.SecurityConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.NonNull;
@@ -134,7 +135,7 @@ public class CustomAuthenticationWebFilter implements WebFilter {
      **/
     private String getAuthorization(ServerHttpRequest request) {
         // 从请求头中获取 token
-        String token = request.getHeaders().getFirst(TokenConstants.AUTHENTICATION);
+        String token = request.getHeaders().getFirst(SecurityConstants.REQUEST_HEAD_AUTHENTICATION);
         // 如果 token 为空，则返回空字符串。
         if (!StringUtils.hasText(token)) {
             return null;

@@ -1,13 +1,11 @@
 package com.hzq.auth.controller;
 
-import com.hzq.auth.login.user.LoginUserInfo;
+import com.hzq.auth.oidc.user.LoginUserInfo;
 import com.hzq.core.result.Result;
 import com.hzq.redis.cache.RedisCache;
-import com.hzq.security.annotation.RequiresPermissions;
-import com.hzq.security.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +22,8 @@ public class AuthController {
 
     private final RedisCache redisCache;
 
+    @GetMapping("/user/info")
     public Result<LoginUserInfo> getLoginUserInfo(HttpServletRequest request) {
-        Authentication authentication = SecurityUtils.getAuthentication();
+        return Result.success();
     }
 }

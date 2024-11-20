@@ -30,6 +30,7 @@ public class GatewayFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         log.info("请求 {} 进入全局过滤器，进行路由转发", request.getURI());
 
+        // exchange.getRequest().mutate() 会创建一个新的 ServerHttpRequest.Builder，这个构造器会继承现有请求的所有属性，包括请求头。
         ServerHttpRequest mutatedRequest = Optional.ofNullable(SecurityUtils.getAuthentication())
                 .map(authentication -> exchange.getRequest()
                         .mutate()

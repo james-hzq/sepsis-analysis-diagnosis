@@ -1,6 +1,6 @@
-package com.hzq.auth.login.service;
+package com.hzq.auth.oidc.service;
 
-import com.hzq.auth.login.user.GithubOAuth2User;
+import com.hzq.auth.oidc.user.GithubOAuth2User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
@@ -59,18 +59,18 @@ public final class GithubOAuth2UserService implements OAuth2UserService<OAuth2Us
         }
 
         RequestEntity<?> request = this.requestEntityConverter.convert(userRequest);
-        ResponseEntity<Map<String, Object>> response = getResponse(userRequest, request);
+        ResponseEntity<Map<String, Object>> response = getResponse(request);
         Map<String, Object> userAttributes = response.getBody();
         Set<GrantedAuthority> authorities = new LinkedHashSet<>();
         authorities.add(new OAuth2UserAuthority(userAttributes));
         OAuth2AccessToken token = userRequest.getAccessToken();
         for (String authority : token.getScopes()) {
-            authorities.add(new SimpleGrantedAuthority("SCOPE_" + authority));
+            authorities.add(new SimpleGrantedAuthority(authority));
         }
         return new GithubOAuth2User(authorities, userAttributes, userNameAttributeName, token);
     }
 
-    private ResponseEntity<Map<String, Object>> getResponse(OAuth2UserRequest userRequest, RequestEntity<?> request) throws OAuth2AuthenticationException{
+    private ResponseEntity<Map<String, Object>> getResponse(RequestEntity<?> request) throws OAuth2AuthenticationException{
         return this.restOperations.exchange(request, PARAMETERIZED_RESPONSE_TYPE);
     }
 

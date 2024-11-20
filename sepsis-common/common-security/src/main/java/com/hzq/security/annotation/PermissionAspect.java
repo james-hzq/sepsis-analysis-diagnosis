@@ -2,7 +2,7 @@ package com.hzq.security.annotation;
 
 import com.hzq.core.result.Result;
 import com.hzq.core.result.ResultEnum;
-import com.hzq.security.service.PermissionService;
+import com.hzq.security.service.IPermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,7 +14,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 /**
@@ -77,9 +76,9 @@ public class PermissionAspect {
         // 使用 SpEL 表达式解析器解析权限验证条件
         Expression expression = EXPRESSION_PARSER.parseExpression(condition);
         // 获取 Spring 容器中的 PermissionService Bean
-        PermissionService permissionService = applicationContext.getBean(PermissionService.class);
+        IPermissionService IPermissionService = applicationContext.getBean(IPermissionService.class);
         // 执行权限验证条件
-        return Boolean.TRUE.equals(expression.getValue(permissionService, Boolean.class)) ?
+        return Boolean.TRUE.equals(expression.getValue(IPermissionService, Boolean.class)) ?
                 (Result<?>) joinPoint.proceed() :
                 Result.error(ResultEnum.ACCESS_FORBIDDEN);
     }

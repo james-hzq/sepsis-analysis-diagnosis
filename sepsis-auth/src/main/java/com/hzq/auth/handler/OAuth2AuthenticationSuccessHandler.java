@@ -2,7 +2,8 @@ package com.hzq.auth.handler;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.hzq.auth.login.user.BaseOAuth2User;
+import com.hzq.auth.oidc.user.BaseOAuth2User;
+import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
 import com.hzq.security.authentication.AccessTokenAuthentication;
 import jakarta.servlet.http.HttpServletRequest;
@@ -87,7 +88,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             response.sendRedirect(redirectUrl);
             log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息 存储");
             // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
-            redisCache.setCacheObject(accessTokenContext, accessTokenAuthentication, secondsDifference, TimeUnit.SECONDS);
+            redisCache.setCacheObject(accessTokenContext, JacksonUtils.toJsonString(accessTokenAuthentication), secondsDifference, TimeUnit.SECONDS);
         }
     }
 }

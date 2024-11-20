@@ -1,4 +1,4 @@
-package com.hzq.auth.login.user;
+package com.hzq.auth.oidc.user;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
