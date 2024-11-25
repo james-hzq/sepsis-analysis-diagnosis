@@ -2,17 +2,20 @@ package com.hzq.gateway.filter;
 
 import com.hzq.gateway.config.GatewaySecurityProperties;
 import com.hzq.gateway.constant.AuthenticationType;
-import com.hzq.gateway.constant.TokenConstants;
 import com.hzq.gateway.constant.TokenType;
 import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.gateway.strategy.authentication.TokenAuthenticationStrategyFactory;
 import com.hzq.gateway.strategy.converter.TokenConverterStrategyFactory;
 import com.hzq.security.constant.SecurityConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Subscription;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -23,8 +26,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 /**
  * @author hua
@@ -34,23 +36,27 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class CustomAuthenticationWebFilter implements WebFilter {
+public class CustomAuthenticationWebFilter extends AuthenticationWebFilter {
 
     private final GatewaySecurityProperties gatewaySecurityProperties;
     private final TokenConverterStrategyFactory tokenConverterStrategyFactory;
     private final TokenAuthenticationStrategyFactory tokenAuthenticationStrategyFactory;
     private final ServerWebExchangeMatcher requiresAuthenticationMatcher;
+    private final ReactiveAuthenticationManager authenticationManager;
     private final AntPathMatcher matcher = new AntPathMatcher();
 
     public CustomAuthenticationWebFilter(
             GatewaySecurityProperties gatewaySecurityProperties,
             TokenConverterStrategyFactory tokenConverterStrategyFactory,
-            TokenAuthenticationStrategyFactory tokenAuthenticationStrategyFactory
+            TokenAuthenticationStrategyFactory tokenAuthenticationStrategyFactory,
+            ReactiveAuthenticationManager authenticationManager
     ) {
+        super(authenticationManager);
         this.gatewaySecurityProperties = gatewaySecurityProperties;
         this.tokenConverterStrategyFactory = tokenConverterStrategyFactory;
         this.tokenAuthenticationStrategyFactory = tokenAuthenticationStrategyFactory;
         this.requiresAuthenticationMatcher = this::matchesRequest;
+        this.authenticationManager = authenticationManager;
     }
 
     /**
@@ -76,6 +82,7 @@ public class CustomAuthenticationWebFilter implements WebFilter {
     @NonNull
     public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         return this.requiresAuthenticationMatcher.matches(exchange)
+                .doOnSubscribe(subscription -> log.info("请求 {} 进入自定义认证过滤器", exchange.getRequest().getURI()))
                 // 如果路径匹配上了白名单路径，那么进行 token 转换和认证，并将认证成功的信息加到请求头，否则直接走过滤器链
                 .flatMap(matchResult -> {
                     // 如果在白名单内，直接跳过认证逻辑
@@ -123,7 +130,7 @@ public class CustomAuthenticationWebFilter implements WebFilter {
         AuthenticationType authenticationType = Optional.ofNullable(AuthenticationType.getAuthenticationType(authentication))
                 .orElseThrow(() -> new TokenAuthenticationException("authenticationType is null or empty"));
         // 根据 token 认证策略认证 Authentication 对象
-        return this.tokenAuthenticationStrategyFactory.getStrategy(authenticationType).authenticate(authentication);
+       return this.tokenAuthenticationStrategyFactory.getStrategy(authenticationType).authenticate(authentication).then();
     }
 
     /**
@@ -141,8 +148,8 @@ public class CustomAuthenticationWebFilter implements WebFilter {
             return null;
         }
         // 裁剪前缀
-        if (token.startsWith(TokenConstants.TOKEN_PREFIX)) {
-            token = token.replaceFirst(TokenConstants.TOKEN_PREFIX, "");
+        if (token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            token = token.replaceFirst(SecurityConstants.TOKEN_PREFIX, "");
         }
         return token;
     }

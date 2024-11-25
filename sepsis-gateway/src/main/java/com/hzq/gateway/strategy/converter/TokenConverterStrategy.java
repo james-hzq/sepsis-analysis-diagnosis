@@ -28,16 +28,4 @@ public interface TokenConverterStrategy {
      * @apiNote 将 token 字符串转换为转换为认证对象
      **/
     Mono<Authentication> convert(String token);
-
-    /**
-     * @param tokenType token类型
-     * @param token 字符串
-     * @return java.lang.String
-     * @author hzq
-     * @date 2024/11/14 17:05
-     * @apiNote 根据 tokenType 为 token 字符串裁剪前缀
-     **/
-    default String trimTokenPrefix(TokenType tokenType, String token) {
-        return token.substring(tokenType.getPrefix().length());
-    }
 }

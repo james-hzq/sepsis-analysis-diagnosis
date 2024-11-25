@@ -19,8 +19,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
@@ -43,7 +45,7 @@ public class AuthSecurityConfig {
     private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
     private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
     private final ClientRegistrationRepository clientRegistrationRepository;
-    private final OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService;
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
     private final CustomAccessTokenResponseClient customAccessTokenResponseClient;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
@@ -100,7 +102,7 @@ public class AuthSecurityConfig {
                         )
                         // 配置获取用户信息服务
                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                               .oidcUserService(oidcUserService)
+                               .userService(oAuth2UserService)
                        )
                         // 配置成功回调
                         .successHandler(oAuth2AuthenticationSuccessHandler)

@@ -24,7 +24,7 @@ public class JwtAuthenticationStrategy implements TokenAuthenticationStrategy {
     }
 
     @Override
-    public Mono<Void> authenticate(Authentication authentication) {
+    public Mono<Authentication> authenticate(Authentication authentication) {
         return null;
     }
 }

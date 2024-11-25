@@ -42,7 +42,7 @@ spring:
           github:
             client-id: Ov23liuVpLlEtrzsVjDc
             client-secret: 0474aa76569ead8f5f54ab84cb06bb18a6055475
-            client-authentication-method: client_secret_post
+            client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
             redirect-uri: http://127.0.0.1:9200/login/oauth2/code/github
             scope: user,repo

@@ -9,7 +9,6 @@ import routeSettings from "@/config/route"
 import isWhiteList from "@/config/white-list"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
-import {loginUserInfoApi} from "@/api/login";
 
 const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })

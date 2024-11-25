@@ -1,4 +1,4 @@
-package com.hzq.auth.oidc.client;
+package com.hzq.auth.login.client;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

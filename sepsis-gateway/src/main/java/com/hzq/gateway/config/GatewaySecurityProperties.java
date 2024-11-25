@@ -18,7 +18,6 @@ public class GatewaySecurityProperties {
     // 授权白名单配置，跳过 认证 和 鉴权
     private List<String> whiteUriList = List.of(
             "/oauth2/**",
-            "/auth/user/info",
             "/favicon.ico"
     );
 }

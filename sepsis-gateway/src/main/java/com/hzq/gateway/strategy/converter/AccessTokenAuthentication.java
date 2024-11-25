@@ -1,26 +1,28 @@
-package com.hzq.security.authentication;
+package com.hzq.gateway.strategy.converter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author hua
- * @className com.hzq.gateway.strategy.token AccessTokenAuthentication
- * @date 2024/11/17 18:46
- * @description 用于 AccessToken 的身份认证和鉴权
+ * @author gc
+ * @class com.hzq.gateway.strategy.converter AccessTokenAuthentication
+ * @date 2024/11/25 10:15
+ * @description 用于表示 oauth2 access_token 网关统一认证的对象
  */
+@Setter
 @Getter
-@ToString
 public class AccessTokenAuthentication implements Authentication {
 
     // token 值

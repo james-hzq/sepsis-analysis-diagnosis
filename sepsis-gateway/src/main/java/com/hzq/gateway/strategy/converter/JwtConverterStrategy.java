@@ -28,7 +28,6 @@ public final class JwtConverterStrategy implements TokenConverterStrategy {
 
     @Override
     public Mono<Authentication> convert(String token) {
-        String realToken = trimTokenPrefix(getTokenType(), token);
         // TODO JWT验签
         return null;
     }

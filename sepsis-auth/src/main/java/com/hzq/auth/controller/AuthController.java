@@ -1,13 +1,22 @@
 package com.hzq.auth.controller;
 
-import com.hzq.auth.oidc.user.LoginUserInfo;
 import com.hzq.core.result.Result;
+import com.hzq.core.result.ResultEnum;
+import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
+import com.hzq.security.authentication.LoginUserInfo;
+import com.hzq.security.constant.SecurityConstants;
+import com.hzq.web.exception.SystemException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Security;
+import java.util.Optional;
 
 /**
  * @author gc
@@ -22,8 +31,21 @@ public class AuthController {
 
     private final RedisCache redisCache;
 
-    @GetMapping("/user/info")
+    @PostMapping("/user/info")
     public Result<LoginUserInfo> getLoginUserInfo(HttpServletRequest request) {
-        return Result.success();
+        String redisKey = Optional.ofNullable(getRedisUserInfoKey(request))
+                .orElseThrow(() -> new SystemException(ResultEnum.ACCESS_UNAUTHORIZED));
+        LoginUserInfo loginUserInfo = JacksonUtils.parseObject((String) redisCache.getCacheObject(redisKey), LoginUserInfo.class);
+        return Result.success(loginUserInfo);
+    }
+
+    private String getRedisUserInfoKey(HttpServletRequest request) {
+        String token = request.getHeader(SecurityConstants.REQUEST_HEAD_AUTHENTICATION);
+        // 如果 token 为空，则返回空字符串。
+        if (!StringUtils.hasText(token) || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            return null;
+        }
+        // 裁剪前缀
+        return token.replaceFirst(SecurityConstants.TOKEN_PREFIX, "");
     }
 }

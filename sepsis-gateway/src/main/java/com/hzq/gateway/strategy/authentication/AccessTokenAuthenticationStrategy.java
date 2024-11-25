@@ -2,16 +2,20 @@ package com.hzq.gateway.strategy.authentication;
 
 import com.hzq.gateway.constant.AuthenticationType;
 import com.hzq.gateway.exception.TokenAuthenticationException;
-import com.hzq.security.authentication.AccessTokenAuthentication;
+import com.hzq.gateway.strategy.converter.AccessTokenAuthentication;
 import com.hzq.security.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 import java.time.Instant;
+import java.util.function.Function;
 
 /**
  * @author gc
@@ -30,26 +34,29 @@ public class AccessTokenAuthenticationStrategy implements TokenAuthenticationStr
     }
 
     @Override
-    public Mono<Void> authenticate(Authentication authentication) {
+    public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.just(authentication)
-                .cast(AccessTokenAuthentication.class)
-                .flatMap(this::validateToken)
-                .doOnSuccess(auth -> {
-                    auth.setAuthenticated(true);
-                    SecurityUtils.setAuthentication(auth);
+                .flatMap(this::validateToken) // 验证 token 并返回认证信息
+                .map(auth -> {
+                    auth.setAuthenticated(true); // 标记认证成功
+                    return auth;
                 })
-                .doOnError(error -> log.error("Token认证失败: {}", error.getMessage()))
-                .then();
+                .flatMap(auth ->
+                        Mono.just(auth)
+                                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))
+                )
+                .doOnSuccess(auth -> log.info("Authentication complete: {}", auth));
     }
 
-    private Mono<AccessTokenAuthentication> validateToken(AccessTokenAuthentication accessTokenAuthentication) {
+    private Mono<Authentication> validateToken(Authentication authentication) {
+        AccessTokenAuthentication accessTokenAuthentication = (AccessTokenAuthentication) authentication;
         Instant now = Instant.now();
         Instant issuedAt = accessTokenAuthentication.getIssuedAt();
         Instant expiresAt = accessTokenAuthentication.getExpiresAt();
 
         // 空值检查
         if (issuedAt == null || expiresAt == null) {
-            return Mono.error(new TokenAuthenticationException("Token时间戳无效"));
+            return Mono.error(new TokenAuthenticationException("access_token 时间戳无效"));
         }
 
         // 检查是否完全过期

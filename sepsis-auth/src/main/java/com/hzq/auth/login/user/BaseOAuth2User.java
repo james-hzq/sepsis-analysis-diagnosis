@@ -1,4 +1,4 @@
-package com.hzq.auth.oidc.user;
+package com.hzq.auth.login.user;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -17,13 +17,17 @@ import java.util.*;
 @Getter
 @ToString
 public class BaseOAuth2User implements OAuth2User {
+    // 授权服务器可访问第三方客户端的权限
     private final Set<GrantedAuthority> authorities;
+    // 用户详细信息
     private final Map<String, Object> attributes;
+    // 用户名
     private final String nameAttributeKey;
+    // token
     private final OAuth2AccessToken accessToken;
 
     public BaseOAuth2User(Collection<GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, OAuth2AccessToken accessToken) {
-        this.authorities = (authorities != null)
+        this.authorities = authorities != null
                 ? Collections.unmodifiableSet(new LinkedHashSet<>(sortAuthorities(authorities)))
                 : Collections.unmodifiableSet(new LinkedHashSet<>(Collections.emptyList()));
         this.attributes = Collections.unmodifiableMap(new LinkedHashMap<>(attributes));

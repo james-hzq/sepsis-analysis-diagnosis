@@ -27,5 +27,5 @@ public interface TokenAuthenticationStrategy {
      * @date 2024/11/15 11:43
      * @apiNote 校验认证对象（验签）
      **/
-    Mono<Void> authenticate(Authentication authentication);
+    Mono<Authentication> authenticate(Authentication authentication);
 }

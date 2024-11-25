@@ -2,12 +2,9 @@ package com.hzq.security.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Collections;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -67,12 +64,6 @@ public class SecurityUtils {
      * @date 2024/11/18 15:52
      * @apiNote 获取当前的 Authentication 对象的角色（适用于同步环境）
      **/
-    public static Set<String> getRoles(Authentication authentication) {
-        return AuthorityUtils.authorityListToSet(authentication.getAuthorities())
-                .stream()
-                .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
-    }
-
     public static String getRoleStr(Authentication authentication) {
         return authentication.getAuthorities()
                 .stream()

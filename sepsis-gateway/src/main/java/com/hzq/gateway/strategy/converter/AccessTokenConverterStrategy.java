@@ -3,7 +3,7 @@ package com.hzq.gateway.strategy.converter;
 import com.hzq.gateway.constant.TokenType;
 import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
-import com.hzq.security.authentication.AccessTokenAuthentication;
+import com.hzq.security.authentication.LoginUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -28,8 +28,16 @@ public final class AccessTokenConverterStrategy implements TokenConverterStrateg
 
     @Override
     public Mono<Authentication> convert(String token) {
-        String realToken = trimTokenPrefix(getTokenType(), token);
-        AccessTokenAuthentication accessTokenAuthentication = JacksonUtils.parseObject((String) redisCache.getCacheObject(realToken), AccessTokenAuthentication.class);
-        return Mono.just(accessTokenAuthentication);
+        // 从 redis 中获取用户信息
+        LoginUserInfo loginUserInfo = JacksonUtils.parseObject((String) redisCache.getCacheObject(token), LoginUserInfo.class);
+        // 使用用户信息生成 authentication 认证对象，用于后续认证
+        Authentication authentication = new AccessTokenAuthentication()
+                .setAccessToken(loginUserInfo.getToken())
+                .setPrincipal(loginUserInfo.getUsername())
+                .setRoles(loginUserInfo.getRoles())
+                .setIssuedAt(loginUserInfo.getIssuedAt())
+                .setExpiresAt(loginUserInfo.getExpiresAt());
+
+        return Mono.just(authentication);
     }
 }

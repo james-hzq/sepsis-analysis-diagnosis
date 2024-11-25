@@ -1,15 +1,20 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.result.ResultEnum;
+import com.hzq.gateway.constant.AuthenticationType;
+import com.hzq.gateway.exception.TokenAuthenticationException;
 import com.hzq.gateway.filter.CustomAuthenticationWebFilter;
 import com.hzq.gateway.util.WebFluxUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
@@ -19,6 +24,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author hua
@@ -46,13 +52,14 @@ public class GatewayResourceServerConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
         serverHttpSecurity
                 // 自定义认证过滤器
-                .addFilterBefore(customAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(customAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 // 白名单内的请求路径可直接放行至网关过滤器，其余的需要鉴权
                 .authorizeExchange(exchange -> {
                             List<String> whiteUriList = gatewaySecurityProperties.getWhiteUriList();
                             if (!whiteUriList.isEmpty()) {
                                 exchange.pathMatchers(whiteUriList.toArray(String[]::new)).permitAll();
                             }
+                            exchange.anyExchange().authenticated();
                         }
                 )
                 // 配置认证和授权失败的处理器

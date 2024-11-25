@@ -7,11 +7,19 @@ package com.hzq.security.constant;
  * @description 用于安全的常量
  */
 public class SecurityConstants {
-    // 请求头常量
+    /** 请求头常量 */
+    // 用户名
     public static final String REQUEST_HEAD_USERNAME = "X-USER-NAME";
+    // 角色
     public static final String REQUEST_HEAD_ROLES = "X-USER-ROLES";
+    // token
     public static final String REQUEST_HEAD_AUTHENTICATION = "Authorization";
 
+    /** Token 常量 */
+    // 所有token前缀
     public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String LOGIN_USER_INFO_HEADER = "login_user_info";
+    // ACCESS_TOKEN 前缀
+    public static final String ACCESS_TOKEN_PREFIX = "ACCESS-TOKEN:";
+    // JWT 前者最
+    public static final String JWT_PREFIX = "JWT:";
 }

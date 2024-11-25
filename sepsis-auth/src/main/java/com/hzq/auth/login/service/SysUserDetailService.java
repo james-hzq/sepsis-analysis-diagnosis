@@ -1,4 +1,4 @@
-package com.hzq.auth.oidc.service;
+package com.hzq.auth.login.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

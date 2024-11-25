@@ -78,9 +78,9 @@ public class PermissionAspect {
         // 获取 Spring 容器中的 PermissionService Bean
         IPermissionService IPermissionService = applicationContext.getBean(IPermissionService.class);
         // 执行权限验证条件
-        return Boolean.TRUE.equals(expression.getValue(IPermissionService, Boolean.class)) ?
-                (Result<?>) joinPoint.proceed() :
-                Result.error(ResultEnum.ACCESS_FORBIDDEN);
+        return Boolean.TRUE.equals(expression.getValue(IPermissionService, Boolean.class))
+                ? (Result<?>) joinPoint.proceed()
+                : Result.error(ResultEnum.ACCESS_FORBIDDEN);
     }
 
     /**
@@ -92,8 +92,11 @@ public class PermissionAspect {
      **/
     private static RequiresPermissions getAnnotation(ProceedingJoinPoint joinPoint) {
         // 获取方法签名
-        MethodSignature methodSignature = Optional.ofNullable(joinPoint.getSignature() instanceof MethodSignature ? ((MethodSignature) joinPoint.getSignature()) : null)
-                .orElseThrow(() -> new IllegalArgumentException("JoinPoint must be a method execution"));
+        MethodSignature methodSignature = Optional.ofNullable(
+                joinPoint.getSignature() instanceof MethodSignature
+                        ? ((MethodSignature) joinPoint.getSignature())
+                        : null
+                ).orElseThrow(() -> new IllegalArgumentException("JoinPoint must be a method execution"));
 
         // 获取方法上的 @RequiresPermissions 注解
         return methodSignature.getMethod().getAnnotation(RequiresPermissions.class);

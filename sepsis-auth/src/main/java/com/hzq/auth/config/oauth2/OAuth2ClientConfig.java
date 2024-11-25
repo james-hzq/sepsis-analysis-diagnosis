@@ -1,20 +1,20 @@
 package com.hzq.auth.config.oauth2;
 
-import com.hzq.auth.oidc.client.GithubLoginClient;
-import com.hzq.auth.oidc.client.SystemLoginClient;
-import com.hzq.auth.oidc.service.CustomOidcUserService;
-import com.hzq.auth.oidc.service.GithubOidcUserService;
+import com.hzq.auth.login.client.GithubLoginClient;
+import com.hzq.auth.login.client.SystemLoginClient;
+import com.hzq.auth.login.service.CustomOAuth2UserService;
+import com.hzq.auth.login.service.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
@@ -39,9 +39,9 @@ public class OAuth2ClientConfig {
     private final SystemLoginClient systemLoginClient;
 
     @Bean
-    public OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService() {
-        return new CustomOidcUserService()
-                .setOidcUserService("github", new GithubOidcUserService());
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> customOidcUserService() {
+        return new CustomOAuth2UserService()
+                .setOidcUserService("github", new GithubOAuth2UserService());
     }
 
     @Bean
