@@ -15,9 +15,9 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = "com.hzq")
 public class HzqGatewayApplication {
+
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(HzqGatewayApplication.class, args);
-        System.out.println(run);
+        SpringApplication.run(HzqGatewayApplication.class, args);
         log.info("(●′ω`●) sepsis-gateway application running successfully (●′ω`●)");
     }
 }

@@ -1,4 +1,4 @@
-package com.hzq.gateway.strategy.converter;
+package com.hzq.gateway.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 
 /**
  * @author gc
- * @class com.hzq.gateway.strategy.converter AccessTokenAuthentication
+ * @class com.hzq.gateway.user AccessTokenAuthentication
  * @date 2024/11/25 10:15
  * @description 用于表示 oauth2 access_token 网关统一认证的对象
  */
 @Setter
 @Getter
-public class AccessTokenAuthentication implements Authentication {
+public final class AccessTokenAuthentication implements Authentication {
 
     // token 值
     private String accessToken;

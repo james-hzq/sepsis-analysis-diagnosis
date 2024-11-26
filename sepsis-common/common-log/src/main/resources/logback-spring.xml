@@ -162,7 +162,6 @@
 
     <springProfile name="pro">
         <root level="info">
-            <!-- 生产环境最好不配置console写文件 -->
             <appender-ref ref="DEBUG_FILE"/>
             <appender-ref ref="INFO_FILE"/>
             <appender-ref ref="WARN_FILE"/>

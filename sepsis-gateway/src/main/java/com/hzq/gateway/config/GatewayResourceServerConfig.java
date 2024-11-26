@@ -1,20 +1,15 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.result.ResultEnum;
-import com.hzq.gateway.constant.AuthenticationType;
-import com.hzq.gateway.exception.TokenAuthenticationException;
-import com.hzq.gateway.filter.CustomAuthenticationWebFilter;
+import com.hzq.gateway.authentication.CustomAuthenticationWebFilter;
 import com.hzq.gateway.util.WebFluxUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
@@ -24,13 +19,12 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author hua
  * @className com.hzq.gateway.config ResourceServerConfig
  * @date 2024/9/26 20:32
- * @description 资源服务访问安全配置类
+ * @description 网关资源服务访问安全配置类
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -52,8 +46,8 @@ public class GatewayResourceServerConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity serverHttpSecurity) {
         serverHttpSecurity
                 // 自定义认证过滤器
-                .addFilterAt(customAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-                // 白名单内的请求路径可直接放行至网关过滤器，其余的需要鉴权
+                .addFilterBefore(customAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                // 白名单内的请求路径可直接放行至网关过滤器
                 .authorizeExchange(exchange -> {
                             List<String> whiteUriList = gatewaySecurityProperties.getWhiteUriList();
                             if (!whiteUriList.isEmpty()) {
@@ -86,12 +80,7 @@ public class GatewayResourceServerConfig {
      * @return org.springframework.security.web.server.ServerAuthenticationEntryPoint
      * @author hua
      * @date 2024/9/23 0:46
-     * @apiNote 处理 token无效 或者 已过期 自定义响应
-     * 1. 这里使用 ServerAuthenticationEntryPoint 而不是 AuthenticationEntryPoint
-     * a) AuthenticationEntryPoint 适用于传统的 Spring Security（基于 Servlet 的应用），例如 Spring MVC 应用。
-     * 处理请求的方式是基于阻塞式的 Servlet API (HttpServletRequest, HttpServletResponse)
-     * b) ServerAuthenticationEntryPoint 适用于基于 Spring WebFlux 的应用（响应式应用），如 Spring WebFlux 的项目。
-     * 处理请求的方式是基于非阻塞的 WebFlux API (ServerWebExchange)
+     * @apiNote 处理统一错误，认证错误
      **/
     @Bean
     public ServerAuthenticationEntryPoint customAuthenticationEntryPoint() {
@@ -105,19 +94,14 @@ public class GatewayResourceServerConfig {
      * @return org.springframework.security.web.server.authorization.ServerAccessDeniedHandler
      * @author hua
      * @date 2024/9/26 20:53
-     * @apiNote 处理用户未被授权 自定义响应
-     * 1. 这里使用 ServerAccessDeniedHandler 而不是 AccessDeniedHandler
-     * a) AccessDeniedHandler 适用于传统的 Spring Security（基于 Servlet 的应用），例如 Spring MVC 应用。
-     * 处理请求的方式是基于阻塞式的 Servlet API (HttpServletRequest, HttpServletResponse)
-     * b) ServerAccessDeniedHandler 适用于基于 Spring WebFlux 的应用（响应式应用），如 Spring WebFlux 的项目。
-     * 处理请求的方式是基于非阻塞的 WebFlux API (ServerWebExchange)
+     * @apiNote 处理用户未被授权自定义响应
      **/
     @Bean
     public ServerAccessDeniedHandler customAccessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(() -> {
             log.error("access denied on request {}: {}", exchange.getRequest().getURI(), denied.getMessage());
             return Mono.just(exchange.getResponse());
-        }).flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.ACCESS_UNAUTHORIZED));
+        }).flatMap(response -> WebFluxUtils.writeResponse(response, ResultEnum.ACCESS_FORBIDDEN));
     }
 
     /**

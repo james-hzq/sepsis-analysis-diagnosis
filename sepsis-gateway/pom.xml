@@ -59,6 +59,12 @@
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
+        <!-- 内部模块: 全局日志 -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>common-log</artifactId>
+        </dependency>
+
         <!-- 系统核心工具 -->
         <dependency>
             <groupId>com.hzq</groupId>

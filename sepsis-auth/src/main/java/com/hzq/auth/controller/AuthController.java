@@ -10,12 +10,10 @@ import com.hzq.web.exception.SystemException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Security;
 import java.util.Optional;
 
 /**
@@ -34,7 +32,7 @@ public class AuthController {
     @PostMapping("/user/info")
     public Result<LoginUserInfo> getLoginUserInfo(HttpServletRequest request) {
         String redisKey = Optional.ofNullable(getRedisUserInfoKey(request))
-                .orElseThrow(() -> new SystemException(ResultEnum.ACCESS_UNAUTHORIZED));
+                .orElseThrow(() -> new SystemException(ResultEnum.TOKEN_INVALID_OR_EXPIRED));
         LoginUserInfo loginUserInfo = JacksonUtils.parseObject((String) redisCache.getCacheObject(redisKey), LoginUserInfo.class);
         return Result.success(loginUserInfo);
     }

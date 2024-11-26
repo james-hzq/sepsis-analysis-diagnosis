@@ -1,13 +1,18 @@
 package com.hzq.gateway.strategy.converter;
 
+import com.hzq.gateway.user.AccessTokenAuthentication;
 import com.hzq.gateway.constant.TokenType;
+import com.hzq.gateway.exception.AccessTokenAuthenticationException;
 import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
 import com.hzq.security.authentication.LoginUserInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 /**
  * @author gc
@@ -15,6 +20,7 @@ import reactor.core.publisher.Mono;
  * @date 2024/11/14 17:10
  * @description access_token 验证的策略
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public final class AccessTokenConverterStrategy implements TokenConverterStrategy {
@@ -28,16 +34,23 @@ public final class AccessTokenConverterStrategy implements TokenConverterStrateg
 
     @Override
     public Mono<Authentication> convert(String token) {
-        // 从 redis 中获取用户信息
-        LoginUserInfo loginUserInfo = JacksonUtils.parseObject((String) redisCache.getCacheObject(token), LoginUserInfo.class);
-        // 使用用户信息生成 authentication 认证对象，用于后续认证
-        Authentication authentication = new AccessTokenAuthentication()
-                .setAccessToken(loginUserInfo.getToken())
-                .setPrincipal(loginUserInfo.getUsername())
-                .setRoles(loginUserInfo.getRoles())
-                .setIssuedAt(loginUserInfo.getIssuedAt())
-                .setExpiresAt(loginUserInfo.getExpiresAt());
+        // Mono.defer 是一个懒加载的工厂方法，只有在 Mono 被订阅时，defer 内部的逻辑才会被执行。
+        return Mono.defer(() -> {
+            // redisCache.getCacheObject(token) 的调用是延迟到订阅时才发生。
+            String loginInfoStr = Optional.ofNullable((String) redisCache.getCacheObject(token))
+                    .orElseThrow(() -> new AccessTokenAuthenticationException("The token is invalid or has expired"));
 
-        return Mono.just(authentication);
+            return Mono.just(loginInfoStr)
+                    // 将 JSON 字符串解析为 LoginUserInfo
+                    .map(infoStr -> JacksonUtils.parseObject(infoStr, LoginUserInfo.class))
+                    // 使用 LoginUserInfo 构建 Authentication 对象
+                    .map(loginUserInfo -> new AccessTokenAuthentication()
+                            .setAccessToken(loginUserInfo.getToken())
+                            .setPrincipal(loginUserInfo.getUsername())
+                            .setRoles(loginUserInfo.getRoles())
+                            .setIssuedAt(loginUserInfo.getIssuedAt())
+                            .setExpiresAt(loginUserInfo.getExpiresAt())
+                    );
+        });
     }
 }

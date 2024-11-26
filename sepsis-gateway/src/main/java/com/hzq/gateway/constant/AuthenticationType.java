@@ -1,6 +1,6 @@
 package com.hzq.gateway.constant;
 
-import com.hzq.gateway.strategy.converter.AccessTokenAuthentication;
+import com.hzq.gateway.user.AccessTokenAuthentication;
 import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

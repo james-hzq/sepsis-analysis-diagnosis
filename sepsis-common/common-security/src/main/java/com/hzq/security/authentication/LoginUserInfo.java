@@ -9,6 +9,9 @@ import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -27,8 +30,6 @@ public class LoginUserInfo {
     // 用户名
     private String username;
     // 用户拥有角色
-    // 使用JsonDeserialize注解指定如何反序列化Set
-    @JsonDeserialize(as = ImmutableSet.class)
     private Set<String> roles;
     // 用户授权成功时间
     private Instant issuedAt;
@@ -49,8 +50,8 @@ public class LoginUserInfo {
 
     public LoginUserInfo setRoles(Set<String> roles) {
         this.roles = CollectionUtils.isEmpty(roles)
-                ? ImmutableSet.<String>builder().build()
-                : ImmutableSet.copyOf(roles);
+                ? Collections.unmodifiableSet(new HashSet<>())
+                : Collections.unmodifiableSet(roles);
         return this;
     }
 
