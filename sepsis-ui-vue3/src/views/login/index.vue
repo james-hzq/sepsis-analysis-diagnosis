@@ -79,7 +79,7 @@ const handleGithubLogin = (registrationId: String) => {
     <div class="login-card">
       <!-- 标题 -->
       <div class="title">
-        <img src="@/assets/layouts/1.png" />
+        <img src="@/assets/layouts/login-title.png" />
       </div>
       <!-- 登录 -->
       <div class="content">
