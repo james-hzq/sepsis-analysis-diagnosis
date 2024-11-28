@@ -9,7 +9,7 @@ import java.io.Serial;
  * @author hua
  * @className com.hua.common.exception SystemError
  * @date 2024/8/24 12:14
- * @description TODO
+ * @description 自定义系统业务异常
  */
 @Getter
 public class SystemException extends RuntimeException {

@@ -24,5 +24,4 @@ public class SysUserDTO {
     private Character status;
     private Character delFlag;
     private Set<String> roles;
-    private Set<String> perms;
 }

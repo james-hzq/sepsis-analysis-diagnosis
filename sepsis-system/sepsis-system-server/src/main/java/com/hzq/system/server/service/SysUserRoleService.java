@@ -1,7 +1,7 @@
 package com.hzq.system.server.service;
 
 import com.hzq.system.server.dao.SysUserRoleDao;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,12 +10,13 @@ import java.util.List;
  * @author hua
  * @className com.hzq.system.server.service SysUserRoleService
  * @date 2024/10/1 16:02
- * @description TODO
+ * @description 用户角色关联业务类
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class SysUserRoleService {
-    private SysUserRoleDao sysUserRoleDao;
+
+    private final SysUserRoleDao sysUserRoleDao;
 
     public List<Long> selectRolesByUserId(Long userId) {
         return sysUserRoleDao.findRoleIdsByUserId(userId);

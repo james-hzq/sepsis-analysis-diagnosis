@@ -1,7 +1,6 @@
 package com.hzq.system.server.domain.vo;
 
 import com.hzq.system.server.domain.entity.SysUser;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -2,7 +2,6 @@ package com.hzq.system.server.domain.dto;
 
 import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

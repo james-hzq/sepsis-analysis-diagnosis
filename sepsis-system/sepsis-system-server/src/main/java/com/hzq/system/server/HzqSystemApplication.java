@@ -15,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.hzq")
 @SpringBootApplication
 public class HzqSystemApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(HzqSystemApplication.class, args);
         log.info("(●′ω`●) sepsis-system application running successfully (●′ω`●)");

@@ -33,7 +33,7 @@ import java.util.List;
  */
 @Configuration
 @RequiredArgsConstructor
-public class OAuth2ClientConfig {
+public class CustomOAuth2Client {
 
     private final GithubLoginClient githubLoginClient;
     private final SystemLoginClient systemLoginClient;

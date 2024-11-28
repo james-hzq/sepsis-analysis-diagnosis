@@ -1,4 +1,4 @@
-package com.hzq.auth.controller;
+package com.hzq.auth.login.controller;
 
 import com.hzq.core.result.Result;
 import com.hzq.core.result.ResultEnum;
@@ -20,7 +20,7 @@ import java.util.Optional;
  * @author gc
  * @class com.hzq.auth.controller AuthController
  * @date 2024/11/19 14:48
- * @description TODO
+ * @description 授权服务器白名单请求处理器
  */
 @RestController
 @RequestMapping("/auth")

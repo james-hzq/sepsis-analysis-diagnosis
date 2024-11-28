@@ -1,5 +1,7 @@
 package com.hzq.security.annotation;
 
+import org.intellij.lang.annotations.Language;
+
 import java.lang.annotation.*;
 
 /**
@@ -13,5 +15,6 @@ import java.lang.annotation.*;
 @Inherited
 public @interface RequiresPermissions {
 
+    @Language("SpEL")
     String value() default "user";
 }

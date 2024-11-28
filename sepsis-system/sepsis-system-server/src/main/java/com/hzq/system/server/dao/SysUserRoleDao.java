@@ -11,7 +11,7 @@ import java.util.List;
  * @author hua
  * @interfaceName com.hzq.system.server.dao SysUserRoleDao
  * @date 2024/10/1 16:01
- * @description TODO
+ * @description 用户角色关联 DAO 层
  */
 public interface SysUserRoleDao extends JpaRepository<SysUserRole, SysUserRole.SysUserRoleId> {
     

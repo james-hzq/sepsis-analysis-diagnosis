@@ -7,12 +7,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author gc
- * @class com.hzq.auth.config OAuth2PasswordConfig
+ * @class com.hzq.auth.config CustomAuthPassword
  * @date 2024/11/4 9:22
  * @description 密码增强配置
  */
 @Configuration
-public class OAuth2PasswordConfig {
+public class CustomAuthPassword {
 
     /**
      * @return org.springframework.security.crypto.password.PasswordEncoder

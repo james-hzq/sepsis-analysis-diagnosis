@@ -1,20 +1,16 @@
 package com.hzq.system.server.dao;
 
 import com.hzq.system.server.domain.entity.SysUser;
-import com.hzq.system.server.domain.vo.SysUserVO;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 /**
  * @author hua
  * @interfaceName com.hzq.system.server.dao SysUserDao
  * @date 2024/9/26 14:44
- * @description TODO
+ * @description 系统用户 DAO 层
  */
 public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysUser> {
 

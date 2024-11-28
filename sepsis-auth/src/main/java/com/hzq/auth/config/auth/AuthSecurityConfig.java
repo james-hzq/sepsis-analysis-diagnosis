@@ -6,24 +6,26 @@ import com.hzq.auth.config.oauth2.CustomAuthorizationRequestResolver;
 import com.hzq.auth.handler.LoginTargetAuthenticationEntryPoint;
 import com.hzq.auth.handler.OAuth2AuthenticationFailureHandler;
 import com.hzq.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.hzq.auth.login.service.SysUserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
@@ -40,20 +42,33 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class AuthSecurityConfig {
 
+    // 授权安全配置
     private final AuthSecurityProperties authSecurityProperties;
+    // CORS 过滤器
     private final CorsFilter corsFilter;
-    private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
-    private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
+    // 密码增强器
+    private final PasswordEncoder passwordEncoder;
+    // 系统用户服务
+    private final SysUserDetailService sysUserDetailService;
+    // 客户端注册的存储库
     private final ClientRegistrationRepository clientRegistrationRepository;
-    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
+    // OAuth2AuthorizationRequest 存储库
+    private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
+    //OAuth2AuthorizationRequest 解析程序
+    private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
+    // 处理访问令牌（access token）响应的客户端。
     private final CustomAccessTokenResponseClient customAccessTokenResponseClient;
+    // 获取用户信息服务
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
+    // OAuth2 授权成功回调
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    // OAuth2 授权失败回调
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Bean
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        // 添加过滤器
+        // 添加 CORS 过滤器
         httpSecurity.addFilter(corsFilter);
 
         // 禁用默认配置 CSRF保护 与 CORS跨域
@@ -82,10 +97,14 @@ public class AuthSecurityConfig {
                 // 添加表单登录认证
                 .formLogin(formLogin -> formLogin
                         .loginPage(authSecurityProperties.getLoginPageUri())
+                        .loginProcessingUrl(authSecurityProperties.getSystemLoginPath())
+                        .successHandler()
                 )
                 // 添加联合登录认证
                 .oauth2Login(oauth2Login -> oauth2Login
                         .loginPage(authSecurityProperties.getLoginPageUri())
+                        // 设置客户端注册的存储库
+                        .clientRegistrationRepository(clientRegistrationRepository)
                         // 配置 Authorization Server 的授权端点
                         .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
                                 // 设置用于存储 OAuth2AuthorizationRequest 的存储库
@@ -93,8 +112,6 @@ public class AuthSecurityConfig {
                                 // 设置用于解析 OAuth2AuthorizationRequest 的解析程序
                                 .authorizationRequestResolver(customAuthorizationRequestResolver)
                         )
-                        // 设置客户端注册的存储库
-                        .clientRegistrationRepository(clientRegistrationRepository)
                         // 令牌端点配置，用于处理访问令牌（access token）的请求和响应
                         .tokenEndpoint(tokenEndpointConfig -> tokenEndpointConfig
                                 // 配置处理访问令牌（access token）响应的客户端。
@@ -113,22 +130,19 @@ public class AuthSecurityConfig {
         return httpSecurity.build();
     }
 
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(sysUserDetailService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
+
     /**
      * @return org.springframework.security.authentication.AuthenticationManager
      * @author gc
      * @date 2024/10/18 14:15
      * @apiNote 返回自定义的 AuthenticationManager 认证方式
-     * 1. AuthenticationManager
-     * a) AuthenticationManager 是一个顶级接口，提供 authenticate()方法，接收 Authentication 身份认证对象，用来处理身份验证请求。
-     * b) AuthenticationManager 的认证方法成功后一个Authentication对象，如果发生异常将会抛出 AuthenticationException
-     * 2. ProviderManager
-     * a) ProviderManager 是 AuthenticationManager 的一个实现类，有一个成员变量，List<AuthenticationProvider> providers。
-     * b) ProviderManager 主要是对 AuthenticationProvider 链进行管理，
-     * 3. AuthenticationProvider
-     * a) AuthenticationProvider 通常按照认证请求链顺序去执行，若返回非null响应表示程序验证通过，不再尝试验证其它的provider。
-     *    如果后续提供的身份验证程序成功地对请求进行身份认证，则忽略先前的身份验证异常及null响应，并将使用成功的身份验证。
-     *    如果没有provider提供一个非null响应，或者有一个新的抛出AuthenticationException，那么最后的AuthenticationException将会抛出。
-     * b) AuthenticationProvider 接口提供了一个supports方法，用来验证是否支持某种身份验证方式，实现扩展
      **/
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

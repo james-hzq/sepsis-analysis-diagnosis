@@ -1,9 +1,8 @@
 package com.hzq.system.server.controller;
 
-import com.hzq.core.result.Result;
 import com.hzq.system.server.service.SysRoleService;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +17,12 @@ import java.util.Set;
  * @date 2024/10/1 15:59
  * @description 系统角色请求处理器
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/role")
 public class SysRoleController {
-    private SysRoleService sysRoleService;
+
+    private final SysRoleService sysRoleService;
 
     /**
      * @param roleIds 角色唯一标识集合
@@ -32,7 +32,9 @@ public class SysRoleController {
      * @apiNote 根据角色唯一标识集合查询角色Key的集合
      **/
     @GetMapping("/roleKeys/{roleIds}")
-    public Result<Set<String>> selectRoleKeys(@PathVariable("roleIds") @NotNull(message = "roleIds不得为空") List<Long> roleIds) {
-        return Result.success(sysRoleService.selectRoleKeys(roleIds));
+    public Set<String> selectRoleKeys(
+            @PathVariable("roleIds") @NotNull(message = "roleIds不得为null") List<Long> roleIds
+    ) {
+        return sysRoleService.selectRoleKeys(roleIds);
     }
 }

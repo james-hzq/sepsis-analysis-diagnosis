@@ -18,14 +18,19 @@ public class AuthSecurityProperties {
     // 登录页面地址
     private String loginPageUri = "http://localhost:9050/login";
 
+    // 系统登录处理接口路径
+    private String systemLoginPath = "/auth/system/login";
+
     // token签发地址：如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
     private String issuerUrl = "http://127.0.0.1:9200";
+
     // 授权白名单配置，跳过认证
     private List<String> whiteUriList = List.of(
             "/login",
             "/favicon.ico",
             "/login/oauth2/code/**",
-            "/auth/**",
+            "/auth/user/info",
+            "/auth/system/login",
             "/error"
     );
 }

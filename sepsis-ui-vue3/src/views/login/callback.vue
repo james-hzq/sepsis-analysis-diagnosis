@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import LoginConstants from '@/constants/login-constant';
-import {onMounted, ref} from 'vue';
 import {useRouter} from "vue-router";
 import {useUserStore} from "@/store/modules/user"
 import {OAuth2LoginCallbackData} from "@/api/login/types/login";
@@ -33,12 +32,6 @@ const handleOAuth2LoginCallback = () => {
   useUserStore()
     .oauth2Login(oauth2LoginResponseData)
     .then(() => {
-      // // Then clear the URL params
-      // window.history.replaceState(
-      //   {},
-      //   document.title,
-      //   window.location.pathname
-      // );
       router.push({path: '/'})
     }).catch(error => {
       router.replace({path: "/error"})
@@ -51,7 +44,7 @@ handleOAuth2LoginCallback();
 
 <template>
   <div class="callback">
-    <h2>正在处理 OAuth2 登录...</h2>
+    <h2>正在处理 OAuth2 第三方授权登录......</h2>
   </div>
 </template>
 

@@ -42,6 +42,7 @@
         <guava.version>33.3.1-jre</guava.version>
         <jackson.version>2.18.1</jackson.version>
         <junit.version>5.10.3</junit.version>
+        <jetbrains-annotations.veresion>26.0.1</jetbrains-annotations.veresion>
         <lombok.version>1.18.34</lombok.version>
     </properties>
 
@@ -50,6 +51,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+
+        <!-- jetbrains 扩展功能注解支持（仅开发阶段，不影响运行时） -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
 
         <!-- lombok 工具 -->
@@ -162,6 +169,14 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- jetbrains 扩展功能注解支持（仅开发阶段，不影响运行时） -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${jetbrains-annotations.veresion}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- 内部模块：自定义SpringBoot缓存策略 -->

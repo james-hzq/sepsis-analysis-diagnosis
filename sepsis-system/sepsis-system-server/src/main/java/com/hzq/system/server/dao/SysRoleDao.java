@@ -7,15 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author hua
  * @interfaceName com.hzq.system.server.dao SysRoleDao
  * @date 2024/10/1 15:57
- * @description 角色DAO
+ * @description 系统角色 DAO 层
  */
 public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificationExecutor<SysRole> {
 
-    @Query(value = "select r from SysRole r where r.roleId in :roleIds")
-    List<SysRole> findSysRolesByRoleIds(@Param("roleIds") List<Long> roleIds);
+    @Query(value = "select distinct r.roleKey from SysRole r where r.roleId in :roleIds")
+    Set<String> findRoleKeysByRoleIds(@Param("roleIds") List<Long> roleIds);
 }

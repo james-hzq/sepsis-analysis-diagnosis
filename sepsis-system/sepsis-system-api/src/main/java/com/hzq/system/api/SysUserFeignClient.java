@@ -1,12 +1,9 @@
 package com.hzq.system.api;
 
-import com.hzq.core.result.Result;
 import com.hzq.system.dto.SysUserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
 
 /**
  * @author gc
@@ -18,5 +15,5 @@ import java.util.List;
 public interface SysUserFeignClient {
 
     @GetMapping("/username/{username}")
-    Result<SysUserDTO> selectByUsername(@PathVariable("username") String username);
+    SysUserDTO selectByUsername(@PathVariable("username") String username);
 }

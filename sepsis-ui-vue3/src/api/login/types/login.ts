@@ -8,8 +8,6 @@ export interface SystemLoginRequestData {
   username: string
   // 密码
   password: string
-  // 验证码
-  code: string
 }
 
 /**

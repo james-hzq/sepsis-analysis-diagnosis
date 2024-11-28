@@ -7,7 +7,7 @@ import { useTagsViewStore } from "./tags-view"
 import { useSettingsStore } from "./settings"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import { resetRouter } from "@/router"
-import {systemLoginApi, oauth2LoginUserInfoApi, loginUserInfoApi} from "@/api/login"
+import {systemLoginApi, loginUserInfoApi} from "@/api/login"
 import {type SystemLoginRequestData, type OAuth2LoginCallbackData} from "@/api/login/types/login"
 import routeSettings from "@/config/route"
 
