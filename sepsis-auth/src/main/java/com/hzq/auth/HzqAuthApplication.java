@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = "com.hzq")
 public class HzqAuthApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(HzqAuthApplication.class, args);
         log.info("(●′ω`●) sepsis-auth application running successfully (●′ω`●)");

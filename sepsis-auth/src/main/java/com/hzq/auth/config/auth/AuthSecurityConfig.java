@@ -3,9 +3,7 @@ package com.hzq.auth.config.auth;
 import com.hzq.auth.config.oauth2.CustomAccessTokenResponseClient;
 import com.hzq.auth.config.oauth2.CustomAuthorizationRequestRepository;
 import com.hzq.auth.config.oauth2.CustomAuthorizationRequestResolver;
-import com.hzq.auth.handler.LoginTargetAuthenticationEntryPoint;
-import com.hzq.auth.handler.OAuth2AuthenticationFailureHandler;
-import com.hzq.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.hzq.auth.handler.*;
 import com.hzq.auth.login.service.SysUserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +62,10 @@ public class AuthSecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     // OAuth2 授权失败回调
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    // 系统用户登录成功回调
+    private final SystemAuthenticationSuccessHandler systemAuthenticationSuccessHandler;
+    // 系统用户登录失败回调
+    private final SystemAuthenticationFailureHandler systemAuthenticationFailureHandler;
 
     @Bean
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -98,7 +100,8 @@ public class AuthSecurityConfig {
                 .formLogin(formLogin -> formLogin
                         .loginPage(authSecurityProperties.getLoginPageUri())
                         .loginProcessingUrl(authSecurityProperties.getSystemLoginPath())
-                        .successHandler()
+                        .successHandler(systemAuthenticationSuccessHandler)
+                        .failureHandler(systemAuthenticationFailureHandler)
                 )
                 // 添加联合登录认证
                 .oauth2Login(oauth2Login -> oauth2Login

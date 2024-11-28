@@ -24,6 +24,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
+
     private final AuthSecurityProperties authSecurityProperties;
 
     @Override

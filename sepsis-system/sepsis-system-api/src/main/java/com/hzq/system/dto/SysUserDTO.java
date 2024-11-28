@@ -23,5 +23,4 @@ public class SysUserDTO {
     private String avatar;
     private Character status;
     private Character delFlag;
-    private Set<String> roles;
 }

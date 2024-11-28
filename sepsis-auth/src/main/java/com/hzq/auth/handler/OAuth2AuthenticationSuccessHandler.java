@@ -6,6 +6,7 @@ import com.hzq.redis.cache.RedisCache;
 import com.hzq.security.authentication.LoginUserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     // OAuth2联合登录成功后，重定向到登录页面，并且附带access_token，下一次请求携带access_token
@@ -38,12 +40,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private static final String ACCESS_TOKEN = "&access-token=";
     private static final String REFRESH_TOKEN = "&refresh-token=";
     private static final Set<String> roles = Set.of("user");
-    private RedisCache redisCache;
-
-    @Autowired
-    public void setRedisCache(RedisCache redisCache) {
-        this.redisCache = redisCache;
-    }
+    private final RedisCache redisCache;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -81,7 +78,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                     + ACCESS_TOKEN + redisKey
                     + REFRESH_TOKEN;
             response.sendRedirect(redirectUrl);
-            log.info("联合认证成功，进入回调方法，并且重定向 URL 成功，下面进行 Redis 用户信息存储");
+            log.info("The oauth2 login are successfully logged in, and the redis user information is stored below.");
             // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
             redisCache.setCacheObject(redisKey, JacksonUtils.toJsonString(loginUserInfo), secondsDifference, TimeUnit.SECONDS);
         }

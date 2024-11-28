@@ -38,6 +38,7 @@ public class SysUserController {
     public SysUserDTO selectSysUserByUsername(
             @PathVariable("username") @NotBlank(message = "查询用户名不得为空") String username
     ) {
+        System.out.println(username);
         return sysUserService.selectSysUserByUsername(username);
     }
 

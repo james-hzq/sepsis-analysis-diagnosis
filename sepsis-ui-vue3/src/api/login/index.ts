@@ -6,7 +6,10 @@ export function systemLoginApi(data: Login.SystemLoginRequestData) {
   return request<Login.LoginResponseData>({
     url: "/auth/system/login",
     method: "post",
-    data: data
+    params: {
+      username: data.username,
+      password: data.password
+    }
   })
 }
 
