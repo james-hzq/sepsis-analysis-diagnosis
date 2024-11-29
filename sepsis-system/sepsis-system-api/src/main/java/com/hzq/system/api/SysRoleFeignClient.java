@@ -16,6 +16,6 @@ import java.util.Set;
 @FeignClient(contextId = "sys-role", name = "sepsis-system", path = "/system/role")
 public interface SysRoleFeignClient {
 
-    @GetMapping("/roleKeys/{roleIds}")
+    @GetMapping("/role-keys/{roleIds}")
     Set<String> selectRoleKeys(@PathVariable("roleIds") List<Long> roleIds);
 }

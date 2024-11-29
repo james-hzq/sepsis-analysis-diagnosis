@@ -1,4 +1,4 @@
-package com.hzq.web.datasource;
+package com.hzq.web.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;

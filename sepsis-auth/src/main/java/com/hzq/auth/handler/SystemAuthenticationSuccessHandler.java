@@ -10,10 +10,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author gc
@@ -27,7 +32,9 @@ import java.io.IOException;
 public class SystemAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final String TOKEN_TYPE_PREFIX = "JWT:";
+    private static final Integer JWT_EXPIRE_SECONDS = 7200;
 
+    private final JwtEncoder jwtEncoder;
     private final RedisCache redisCache;
 
     @Override
@@ -40,6 +47,22 @@ public class SystemAuthenticationSuccessHandler implements AuthenticationSuccess
                     .setLoginType(sysUserDetail.getLoginType())
                     .setUsername(sysUserDetail.getUsername())
                     .setRoles(sysUserDetail.getRoles());
+
+            // 创建时间和过期时间
+            Instant issuedAt = Instant.now();
+            Instant expiresAt = issuedAt.plus(JWT_EXPIRE_SECONDS, ChronoUnit.SECONDS);
+
+            // 构建 JWT Claims
+            JwtClaimsSet claims = JwtClaimsSet.builder()
+                    .subject(loginUserInfo.getUsername())
+                    .claim("loginType", loginUserInfo.getLoginType())
+                    .claim("roles", loginUserInfo.getRoles())
+                    .issuedAt(issuedAt)
+                    .expiresAt(expiresAt)
+                    .build();
+
+            // 使用 JwtEncoder 生成 JWT
+            String jwtToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
             String redisKey = TOKEN_TYPE_PREFIX;
 
             log.info("The system login are successfully logged in, and the redis user information is stored below.");

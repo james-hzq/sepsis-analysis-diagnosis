@@ -12,6 +12,8 @@ public class SecurityConstants {
     public static final String REQUEST_HEAD_USERNAME = "X-USER-NAME";
     // 角色
     public static final String REQUEST_HEAD_ROLES = "X-USER-ROLES";
+    // feign 内部调用访问令牌
+    public static final String REQUEST_HEAD_INTERNAL_TOKEN = "X-INTERNAL-TOKEN";
     // token
     public static final String REQUEST_HEAD_AUTHENTICATION = "Authorization";
 

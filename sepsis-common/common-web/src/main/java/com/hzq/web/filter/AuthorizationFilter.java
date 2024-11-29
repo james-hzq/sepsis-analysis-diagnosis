@@ -26,7 +26,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("请求 {} 进入鉴权过滤器", request.getRequestURI());
         // 获取鉴权信息
         String username = ServletUtils.getParameter(SecurityConstants.REQUEST_HEAD_USERNAME);
         String roles = ServletUtils.getParameter(SecurityConstants.REQUEST_HEAD_ROLES);

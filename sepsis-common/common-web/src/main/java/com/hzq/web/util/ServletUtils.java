@@ -5,7 +5,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.hzq.jackson.util.JacksonUtils;
-import com.hzq.web.cache.request.CachedBodyHttpServletRequest;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -88,28 +87,6 @@ public class ServletUtils {
             params.put(entry.getKey(), Joiner.on(",").join(entry.getValue()));
         }
         return params;
-    }
-
-    /**
-     * @param request 请求对象
-     * @param clazz 请求体解析后的类型
-     * @return T
-     * @author gc
-     * @date 2024/10/16 11:12
-     * @apiNote 从传入请求的请求体内反序列化为Java对象
-     **/
-    public static <T> T getRequestBody(HttpServletRequest request, Class<T> clazz) {
-        try {
-            if (!(request instanceof CachedBodyHttpServletRequest cachedRequest)) {
-                throw new IllegalArgumentException("请求对象必须是 CachedBodyHttpServletRequest 的实例");
-            }
-            // 直接使用 CachedBodyHttpServletRequest 中的缓存请求体
-            byte[] cachedBody = cachedRequest.getCachedBody();
-            return JacksonUtils.parseObject(cachedBody, clazz);
-        } catch (Exception e) {
-            log.error("反序列化请求体出错：{}", e.getMessage(), e);
-            throw new RuntimeException("反序列化请求体出错", e);
-        }
     }
 
     /**

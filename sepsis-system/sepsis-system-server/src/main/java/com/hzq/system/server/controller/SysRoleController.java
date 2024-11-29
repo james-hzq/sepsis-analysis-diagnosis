@@ -31,7 +31,7 @@ public class SysRoleController {
      * @date 2024/10/8 16:36
      * @apiNote 根据角色唯一标识集合查询角色Key的集合
      **/
-    @GetMapping("/roleKeys/{roleIds}")
+    @GetMapping("/role-keys/{roleIds}")
     public Set<String> selectRoleKeys(
             @PathVariable("roleIds") @NotNull(message = "roleIds不得为null") List<Long> roleIds
     ) {
