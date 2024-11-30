@@ -47,27 +47,14 @@ export type LoginUserInfoResponseData = ApiResponseData<LoginUserInfoData>
 
 /**
  * @author hzq
- * @date 2024/11/7 15:21
- * @apiNote OAuth2授权登录回调响应数据
- **/
-export type OAuth2LoginResponseData = ApiResponseData<OAuth2LoginCallbackData>
-
-/**
- * @author hzq
- * @date 2024/11/7 15:24
- * @apiNote 系统用户名密码登录验证码回调响应数据（返回验证码）
- **/
-export type SystemLoginCodeResponseData = ApiResponseData<string>
-
-/**
- * @author hzq
  * @date 2024/11/7 15:22
  * @apiNote 系统用户名密码登录回调响应数据（返回JWT）
  **/
 export type SystemLoginResponseData = ApiResponseData<string>
 
-/** 登录获取验证码响应数据 */
-export type LoginCodeResponseData = ApiResponseData<string>
-
-/** 登录获取token响应数据 */
-export type LoginResponseData = ApiResponseData<string>
+/**
+ * @author hua
+ * @date 2024/11/30 20:43
+ * @apiNote 登出响应数据
+ **/
+export type LogoutResponseData = ApiResponseData<any>

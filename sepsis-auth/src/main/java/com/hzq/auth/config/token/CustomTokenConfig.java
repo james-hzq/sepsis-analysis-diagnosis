@@ -1,4 +1,4 @@
-package com.hzq.auth.config.oauth2;
+package com.hzq.auth.config.token;
 
 import com.hzq.core.util.RSAUtils;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -11,11 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.token.*;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 import java.security.interfaces.RSAPublicKey;
 
@@ -26,7 +24,7 @@ import java.security.interfaces.RSAPublicKey;
  * @description OAuth2 JWT 配置类
  */
 @Configuration
-public class OAuth2JwtConfig {
+public class CustomTokenConfig {
 
     /**
      * @return com.nimbusds.jose.jwk.source.JWKSource<com.nimbusds.jose.proc.SecurityContext>
@@ -81,13 +79,16 @@ public class OAuth2JwtConfig {
 
     /**
      * @author hua
-     * @date 2024/10/8 22:04
-     * @return org.springframework.security.oauth2.jwt.JwtEncoder
-     * @apiNote 解码（验证）JWT（JSON Web Token）
+     * @date 2024/11/30 15:52
+     * @return org.springframework.security.oauth2.jwt.JwtDecoder
+     * @apiNote 编码（解析）JWT（JSON Web Token）
      **/
     @Bean
-    public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
-        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+    @SneakyThrows
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder
+                .withPublicKey((RSAPublicKey) RSAUtils.getPublicKey(RSAUtils.PUBLIC_KEY_CONTEXT))
+                .build();
     }
 
     /**
@@ -100,23 +101,5 @@ public class OAuth2JwtConfig {
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
         return context -> {
         };
-    }
-
-    /**
-     * 自定义jwt解析器，设置解析出来的权限信息的前缀与在jwt中的key
-     *
-     * @return jwt解析器 JwtAuthenticationConverter
-     */
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // 设置解析权限信息的前缀，设置为空是去掉前缀
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
-        // 设置权限信息在jwt claims中的key
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
     }
 }

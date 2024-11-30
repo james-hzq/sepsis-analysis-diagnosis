@@ -1,7 +1,7 @@
 package com.hzq.gateway.strategy.authentication;
 
 import com.hzq.gateway.constant.AuthenticationType;
-import com.hzq.gateway.exception.TokenAuthenticationException;
+import com.hzq.gateway.exception.AccessTokenAuthenticationException;
 import com.hzq.gateway.user.AccessTokenAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.time.Instant;
  * @author gc
  * @class com.hzq.gateway.strategy.authentication AccessTokenAuthenticationStrategy
  * @date 2024/11/15 11:44
- * @description TODO
+ * @description Access Token 认证策略
  */
 @Slf4j
 @Component
@@ -32,18 +32,8 @@ public class AccessTokenAuthenticationStrategy implements TokenAuthenticationStr
         return Mono.defer(() -> {
             AccessTokenAuthentication accessTokenAuthentication = (AccessTokenAuthentication) authentication;
 
-            Instant now = Instant.now();
-            Instant issuedAt = accessTokenAuthentication.getIssuedAt();
-            Instant expiresAt = accessTokenAuthentication.getExpiresAt();
-
-            // 验证令牌时间戳
-            if (issuedAt == null || expiresAt == null) {
-                return Mono.error(new TokenAuthenticationException("access_token Invalid timestamp"));
-            }
-
-            // 检查令牌是否过期
-            if (now.isAfter(expiresAt)) {
-                return Mono.error(new TokenAuthenticationException("access_token has expired"));
+            if (isTokenNotValid(accessTokenAuthentication.getIssuedAt(), accessTokenAuthentication.getExpiresAt())) {
+                return Mono.error(new AccessTokenAuthenticationException("access_token is invalid"));
             }
 
             // 设置认证状态并返回

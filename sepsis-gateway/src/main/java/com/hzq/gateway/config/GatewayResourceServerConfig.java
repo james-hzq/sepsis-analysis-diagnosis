@@ -1,6 +1,7 @@
 package com.hzq.gateway.config;
 
 import com.hzq.core.result.ResultEnum;
+import com.hzq.core.util.RSAUtils;
 import com.hzq.gateway.authentication.CustomAuthenticationWebFilter;
 import com.hzq.gateway.util.WebFluxUtils;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
@@ -18,6 +21,7 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
+import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
 /**

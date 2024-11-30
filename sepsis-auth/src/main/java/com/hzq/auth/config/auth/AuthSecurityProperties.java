@@ -26,10 +26,9 @@ public class AuthSecurityProperties {
 
     // 授权白名单配置，跳过认证
     private List<String> whiteUriList = List.of(
-            "/login",
             "/favicon.ico",
             "/login/oauth2/code/**",
-            "/auth/user/info",
+            "/auth/user/**",
             "/auth/system/login",
             "/error"
     );

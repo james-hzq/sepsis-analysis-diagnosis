@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class CustomAccessTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
 
     // 设置 ACCESS_TOKEN 的过期时间
-    private static final long ACCESS_TOKEN_EXPIRES_SECONDS = 7200;
+    private static final long ACCESS_TOKEN_EXPIRES_SECONDS = 10800;
     // 设置 RestTemplate 的过期时间
     private static final Integer REST_TEMPLATE_EXPIRES_SECONDS = 5;
 

@@ -35,8 +35,6 @@ public class LoginUserInfo {
     private Instant issuedAt;
     // 用户授权失效时间
     private Instant expiresAt;
-    // token值
-    private String token;
 
     public LoginUserInfo setLoginType(String loginType) {
         this.loginType = loginType;
@@ -62,11 +60,6 @@ public class LoginUserInfo {
 
     public LoginUserInfo setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
-        return this;
-    }
-
-    public LoginUserInfo setToken(String token) {
-        this.token = token;
         return this;
     }
 }

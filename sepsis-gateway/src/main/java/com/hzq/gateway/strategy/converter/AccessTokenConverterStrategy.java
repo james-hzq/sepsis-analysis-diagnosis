@@ -41,11 +41,8 @@ public final class AccessTokenConverterStrategy implements TokenConverterStrateg
                     .orElseThrow(() -> new AccessTokenAuthenticationException("The token is invalid or has expired"));
 
             return Mono.just(loginInfoStr)
-                    // 将 JSON 字符串解析为 LoginUserInfo
                     .map(infoStr -> JacksonUtils.parseObject(infoStr, LoginUserInfo.class))
-                    // 使用 LoginUserInfo 构建 Authentication 对象
                     .map(loginUserInfo -> new AccessTokenAuthentication()
-                            .setAccessToken(loginUserInfo.getToken())
                             .setPrincipal(loginUserInfo.getUsername())
                             .setRoles(loginUserInfo.getRoles())
                             .setIssuedAt(loginUserInfo.getIssuedAt())

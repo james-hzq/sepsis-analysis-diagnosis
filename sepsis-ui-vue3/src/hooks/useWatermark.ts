@@ -11,8 +11,8 @@ type DefaultConfig = typeof defaultConfig
 
 /** 默认配置 */
 const defaultConfig = {
-  /** 防御（默认开启，能防御水印被删除或隐藏，但可能会有性能损耗） */
-  defense: true,
+  /** 防御（默认关闭，能防御水印被删除或隐藏，但可能会有性能损耗） */
+  defense: false,
   /** 文本颜色 */
   color: "#c0c4cc",
   /** 文本透明度 */

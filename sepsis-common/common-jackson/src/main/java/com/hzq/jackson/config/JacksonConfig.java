@@ -109,13 +109,6 @@ public class JacksonConfig {
                 .deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)))
                 .deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT)));
 
-        // 配置默认类型信息，以解决序列化对象中嵌套对象的类型信息问题
-        builder.postConfigurer(objectMapper -> objectMapper.activateDefaultTyping(
-                objectMapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL,
-                JsonTypeInfo.As.PROPERTY)
-        );
-
         // 添加 jackson 对 guava 类型的支持
         builder.modules(new GuavaModule());
 

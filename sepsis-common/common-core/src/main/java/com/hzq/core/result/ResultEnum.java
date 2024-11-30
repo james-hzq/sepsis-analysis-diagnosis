@@ -28,6 +28,10 @@ public enum ResultEnum {
     // 自定义业务警告提示 2xxx
 
     // 自定义业务失败提示 3xxx
+    USERNAME_OR_PASSWORD_ERROR(3000, "用户名或密码错误"),
+    USER_UNAVAILABLE(3000, "用户被禁用"),
+    USER_PASSWORD_EXPIRED(3000, "密码超过有效期，请修改密码"),
+    UNKNOWN_ERROR(3000, "未知错误，请反馈给系统管理员"),
     CUSTOM_ERROR(3000, "自定义异常");
 
     private final int code;

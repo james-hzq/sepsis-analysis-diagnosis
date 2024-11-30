@@ -1,5 +1,6 @@
 package com.hzq.auth.handler;
 
+import com.hzq.auth.login.info.TokenType;
 import com.hzq.auth.login.user.BaseOAuth2User;
 import com.hzq.jackson.util.JacksonUtils;
 import com.hzq.redis.cache.RedisCache;
@@ -35,7 +36,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     // OAuth2联合登录成功后，重定向到登录页面，并且附带access_token，下一次请求携带access_token
     private static final String REDIRECT_BASE_URL = "http://localhost:9050/callback";
-    private static final String TOKEN_TYPE_PREFIX = "ACCESS-TOKEN:";
+    private static final String TOKEN_TYPE_PREFIX = TokenType.OAUTH2_LOGIN_ACCESS_TOKEN.getPrefix();
     private static final String LOGIN_TYPE = "?login-type=";
     private static final String ACCESS_TOKEN = "&access-token=";
     private static final String REFRESH_TOKEN = "&refresh-token=";
@@ -67,8 +68,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                     .setUsername(baseOAuth2User.getName())
                     .setRoles(roles)
                     .setIssuedAt(issuedAt)
-                    .setExpiresAt(expiresAt)
-                    .setToken(accessTokenContext);
+                    .setExpiresAt(expiresAt);
 
             String redisKey = TOKEN_TYPE_PREFIX + accessTokenContext;
 
@@ -78,6 +78,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                     + ACCESS_TOKEN + redisKey
                     + REFRESH_TOKEN;
             response.sendRedirect(redirectUrl);
+
             log.info("The oauth2 login are successfully logged in, and the redis user information is stored below.");
             // 将 access_token 和 access_token 授权的第三方用户信息存入 Redis，Key - access_token，Value - 用户信息
             redisCache.setCacheObject(redisKey, JacksonUtils.toJsonString(loginUserInfo), secondsDifference, TimeUnit.SECONDS);

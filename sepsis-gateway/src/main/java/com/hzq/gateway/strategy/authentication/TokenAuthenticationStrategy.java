@@ -4,6 +4,8 @@ import com.hzq.gateway.constant.AuthenticationType;
 import org.springframework.security.core.Authentication;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
+
 /**
  * @author gc
  * @class com.hzq.gateway.strategy TokenAuthenticationStrategy
@@ -28,4 +30,31 @@ public interface TokenAuthenticationStrategy {
      * @apiNote 校验认证对象（验签）
      **/
     Mono<Authentication> authenticate(Authentication authentication);
+
+    /**
+     * @author hua
+     * @date 2024/11/30 17:27
+     * @param issuedAt 颁发时间
+     * @param expiresAt 过期时间
+     * @return boolean
+     * @apiNote 验证 TOKEN 是否过期
+     **/
+    default boolean isTokenValid(Instant issuedAt, Instant expiresAt) {
+        if (issuedAt == null || expiresAt == null) {
+            return false;
+        }
+        return Instant.now().isBefore(expiresAt);
+    }
+
+    /**
+     * @author hua
+     * @date 2024/11/30 21:04
+     * @param issuedAt 颁发时间
+     * @param expiresAt 过期时间
+     * @return boolean
+     * @apiNote 验证 TOKEN 是否未过期
+     **/
+    default boolean isTokenNotValid(Instant issuedAt, Instant expiresAt) {
+        return !isTokenValid(issuedAt, expiresAt);
+    }
 }
