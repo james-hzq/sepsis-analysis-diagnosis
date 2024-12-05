@@ -1,13 +1,12 @@
 package com.hzq.web.base;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -21,20 +20,40 @@ import java.util.Date;
 @ToString
 @EqualsAndHashCode
 public class BaseEntity {
+
     /**
      * 创建者
      */
+    @Column(name="create_by", length = 30, nullable = false, columnDefinition="varchar(30) comment '创建者'")
     private String createBy;
+
     /**
      * 创建时间
      */
+    @Column(name="create_time", nullable = false, columnDefinition="DATETIME comment '创建时间'")
     private Date createTime;
+
     /**
      * 更新者
      */
+    @Column(name="update_by", length = 30, nullable = false, columnDefinition="varchar(30) comment '更新者'")
     private String updateBy;
+
     /**
      * 更新时间
      */
+    @Column(name="update_time", nullable = false, columnDefinition="DATETIME comment '更新时间'")
     private Date updateTime;
+
+    public void create(String currUsername) {
+        Date date = new Date();
+        this.createTime = date;
+        this.updateTime = date;
+        this.createBy = this.updateBy = currUsername;
+    }
+
+    public void update(String currUsername) {
+        this.updateTime = new Date();
+        this.updateBy = currUsername;
+    }
 }

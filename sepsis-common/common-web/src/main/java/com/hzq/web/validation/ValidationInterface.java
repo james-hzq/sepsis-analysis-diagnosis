@@ -10,13 +10,13 @@ public interface ValidationInterface {
     /**
      * 新增分组
      */
-    interface add {
+    interface create {
     }
 
     /**
-     * 删除分组
+     * 查询分组
      */
-    interface delete {
+    interface read {
     }
 
     /**
@@ -26,8 +26,8 @@ public interface ValidationInterface {
     }
 
     /**
-     * 查询分组
+     * 删除分组
      */
-    interface select {
+    interface delete {
     }
 }

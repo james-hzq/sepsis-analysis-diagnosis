@@ -1,11 +1,198 @@
 <script setup lang="ts">
+import {onMounted, reactive, ref} from "vue";
+import {type UserTableData, type UserTableRequestData} from "@/api/system/user/types/user";
+import {userTableApi} from "@/api/system/user";
+import {FormInstance} from "element-plus";
+import {List, User, Message, Key} from "@element-plus/icons-vue";
 
+// 用户表格查询表单元素的引用
+const userTableFormRef = ref<FormInstance | null>(null)
+
+// 用户表格查询表单数据
+const userTableFormData: UserTableRequestData = reactive({
+  userId: "",
+  username: "",
+  email: "",
+  status: "",
+  createTime: "",
+  page: 1,
+  total: 10
+})
+
+// 用户表格数据
+const userTableData = ref<UserTableData[]>([])
+
+// 用户表格页码
+const userTablePage = ref<number>(1)
+
+// 用户表格单页总条数
+const userTableTotal = ref<number>(10)
+
+// 用户角色选择器
+const userRolesOptions = ['root', 'admin', 'user']
+
+// 用户状态选择器
+const userStatusOptions = [
+  {value: '0', label: '正常'},
+  {value: '1', label: '停用'}
+]
+
+/**
+ * 展示用户信息
+ */
+const getUserTable = () => {
+  userTableApi(userTableFormData).then(res => {
+    userTableData.value = res.data
+  })
+}
+
+/**
+ * 修改单个用户
+ */
+const handleEdit = () => {
+
+}
+
+/**
+ * 删除单个用户
+ */
+const handleDelete = () => {
+
+}
+
+getUserTable();
 </script>
 
 <template>
+  <div class="app-container">
+    <div class="user-search-form">
+      <el-form ref="userTableFormRef" :model="userTableFormData">
+        <el-form-item prop="userId">
+          <el-input v-model.trim="userTableFormData.userId" placeholder="查询用户编号" clearable tabindex="1"
+                    :prefix-icon="List" size="large"/>
+        </el-form-item>
+        <el-form-item prop="username">
+          <el-input v-model.trim="userTableFormData.username" placeholder="查询用户名称" clearable tabindex="2"
+                    :prefix-icon="User" size="large"/>
+        </el-form-item>
+        <el-form-item prop="email">
+          <el-input v-model.trim="userTableFormData.email" placeholder="查询绑定邮箱" clearable tabindex="3"
+                    :prefix-icon="Message" size="large"/>
+        </el-form-item>
+        <el-form-item prop="status">
+          <el-select v-model="userTableFormData.status" placeholder="查询用户状态" clearable tabindex="4" size="large">
+            <template #prefix>
+              <el-icon>
+                <Key/>
+              </el-icon>
+            </template>
+            <el-option v-for="item in userStatusOptions" :key="item.value" :label="item.label" :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="createTime">
+          <el-date-picker v-model="userTableFormData.createTime" type="daterange" range-separator="至"
+                          start-placeholder="起始日期" end-placeholder="终止日期" size="large"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="Search" @click="handleSearch()" size="large">搜索</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
+    <div class="user-table">
+      <el-table :data="userTableData" border stripe>
+        <el-table-column type="selection" width="40" align="center"/>
+        <el-table-column label="编号" key="userId" prop="userId" width="60" align="center"/>
+        <el-table-column label="用户名称" key="username" prop="username" width="160" align="center"/>
+        <el-table-column label="绑定邮箱" key="email" prop="email" align="center"/>
+        <el-table-column label="所属角色" key="roles" prop="roles" width="245" align="center">
+          <template #default="{row}">
+            <el-checkbox-group disabled class="table-checkbox" v-model="row.roles" size="default">
+              <el-checkbox v-for="role in userRolesOptions" :key="role" :label="role" :value="role">
+                {{ role }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户状态" key="status" prop="status" width="120" align="center">
+          <template #default="{row}">
+            <el-button type="primary" plain disabled size="default">{{
+                row.status === '0' ? '正常' : '停用'
+              }}
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" key="createTime" prop="createTime" width="160" align="center"/>
+        <el-table-column label="创建人" key="createBy" prop="createBy" width="160" align="center"/>
+        <el-table-column label="更新时间" key="updateTime" prop="updateTime" width="160" align="center"/>
+        <el-table-column label="更新人" key="updateBy" prop="updateBy" width="160" align="center"/>
+        <el-table-column label="操作" width="150" align="center">
+          <template #default="{row}">
+            <div class="table-operation">
+              <el-button size="default" type="text" icon="Edit" @click="handleEdit()">修改</el-button>
+              <el-button size="default" type="text" icon="Delete" @click="handleDelete()">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
+.user-table {
+  width: 100%;
+  margin-bottom: 20px;
 
+  .table-operation {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.user-search-form {
+  .el-form {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .el-form-item {
+    flex-grow: 1;
+    min-width: 240px;
+  }
+
+  .el-button {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.table-checkbox {
+  // 复选框的边框和背景区域
+  :deep(.el-checkbox__inner) {
+    border-color: #606266 !important;
+  }
+
+  // 修改复选框标签
+  :deep(.el-checkbox__label) {
+    color: #606266 !important;
+  }
+
+  // 选中状态的父容器
+  :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
+    background-color: #409EFF;
+    // 里面的对钩
+    &::after {
+      border-color: whitesmoke;
+    }
+  }
+
+  // 聚焦状态
+  :deep(.el-checkbox__input.is-focus .el-checkbox__inner) {
+    border-color: #606266 !important;
+  }
+}
 </style>

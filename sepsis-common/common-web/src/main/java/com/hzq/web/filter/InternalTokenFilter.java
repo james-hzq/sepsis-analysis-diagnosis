@@ -1,7 +1,7 @@
 package com.hzq.web.filter;
 
 import com.hzq.security.constant.SecurityConstants;
-import com.hzq.web.config.WebSecurityProperties;
+import com.hzq.web.util.SecurityUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,8 @@ public class InternalTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
-        if (isInternalPath(request.getPathInfo())) {
+
+        if (isInternalPath(request.getRequestURI())) {
             String internalToken = request.getHeader(SecurityConstants.REQUEST_HEAD_INTERNAL_TOKEN);
             if (StringUtils.hasText(internalToken) && "hzq".equals(internalToken)) {
                 filterChain.doFilter(request, response);
@@ -42,7 +43,7 @@ public class InternalTokenFilter extends OncePerRequestFilter {
 
     private boolean isInternalPath(String path) {
         // 判断该路径是否在白名单内
-        return !WebSecurityProperties.internalPath.isEmpty() && WebSecurityProperties.internalPath
+        return !SecurityUtils.internalPath.isEmpty() && SecurityUtils.internalPath
                 .stream()
                 .anyMatch(whitePath -> antPathMatcher.match(whitePath, path));
     }

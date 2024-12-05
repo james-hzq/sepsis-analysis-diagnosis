@@ -2,7 +2,7 @@
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/modules/user"
-import { type FormInstance, type FormRules } from "element-plus"
+import {ElMessage, type FormInstance, type FormRules} from "element-plus"
 import { User, Lock } from "@element-plus/icons-vue"
 import { type SystemLoginRequestData } from "@/api/login/types/login"
 import Owl from "./components/Owl.vue"
@@ -16,9 +16,6 @@ const loginFormRef = ref<FormInstance | null>(null)
 
 // 系统登录按钮 Loading
 const systemLoginLoading = ref(false)
-
-// 系统注册登录按钮 Loading
-const systemRegisterLoading = ref(false)
 
 // 登录表单数据
 const loginFormData: SystemLoginRequestData = reactive({
@@ -68,7 +65,7 @@ const handleSystemLogin = () => {
  * @apiNote 系统用户注册逻辑
  **/
 const handleSystemRegister = () => {
-
+  ElMessage.warning("注册通道暂时不对外开放，若注册账户，请联系管理员，在平台内部注册")
 }
 
 /**

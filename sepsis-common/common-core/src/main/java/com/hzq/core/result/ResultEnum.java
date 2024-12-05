@@ -31,7 +31,9 @@ public enum ResultEnum {
     USERNAME_OR_PASSWORD_ERROR(3000, "用户名或密码错误"),
     USER_UNAVAILABLE(3000, "用户被禁用"),
     USER_PASSWORD_EXPIRED(3000, "密码超过有效期，请修改密码"),
-    UNKNOWN_ERROR(3000, "未知错误，请反馈给系统管理员"),
+    USERNAME_EXISTED(3000, "用户名已存在"),
+    DEFAULT_ROLE_NOT_EXIST(3000, "系统默认角色不存在, 请反馈给管理员"),
+    UNKNOWN_ERROR(3000, "未知错误, 请反馈给系统管理员"),
     CUSTOM_ERROR(3000, "自定义异常");
 
     private final int code;

@@ -1,19 +1,26 @@
 package com.hzq.system.server.service;
 
 import com.google.common.base.Strings;
-import com.hzq.system.dto.SysUserDTO;
+import com.hzq.core.result.ResultEnum;
+import com.hzq.security.constant.RoleEnum;
+import com.hzq.system.dto.SysUserRoleDTO;
+import com.hzq.system.server.dao.SysRoleDao;
 import com.hzq.system.server.dao.SysUserDao;
+import com.hzq.system.server.dao.SysUserRoleDao;
 import com.hzq.system.server.domain.dto.SysUserForm;
 import com.hzq.system.server.domain.entity.SysUser;
-import com.hzq.system.server.domain.vo.SysUserVO;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
+import com.hzq.system.server.domain.entity.SysUserRole;
+import com.hzq.system.server.domain.entity.SysUserRolePK;
+import com.hzq.system.server.domain.vo.SysUserRoleVO;
+import com.hzq.web.exception.SystemException;
+import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author hua
@@ -23,41 +30,97 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Service
-public class SysUserService extends SysBaseService {
+public class SysUserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final SysUserDao sysUserDao;
+    private final SysRoleDao sysRoleDao;
+    private final SysUserRoleDao sysUserRoleDao;
 
-    public SysUserDTO selectSysUserByUsername(String username) {
-        SysUser sysUser = sysUserDao.findSysUserByUsername(username);
-        return sysUser == null ? null : new SysUserDTO()
-                .setUserId(sysUser.getUserId())
-                .setUsername(sysUser.getUsername())
-                .setPassword(sysUser.getPassword())
-                .setEmail(sysUser.getEmail())
-                .setAvatar(sysUser.getAvatar())
-                .setStatus(sysUser.getStatus())
-                .setDelFlag(sysUser.getDelFlag());
+    /**
+     * @author hua
+     * @date 2024/12/5 16:17
+     * @param username 用户名
+     * @return com.hzq.system.dto.SysUserRoleDTO
+     * @apiNote 根据用户名查询用户角色信息
+     **/
+    public SysUserRoleDTO selectSysUserWithRolesByUsername(String username) {
+        return Optional.ofNullable(sysUserDao.findSysUserByUsername(username))
+                .map(sysUser -> {
+                    List<Long> roleIds = sysUserRoleDao.findRoleIdsRolesByUserId(sysUser.getUserId());
+                    if (CollectionUtils.isEmpty(roleIds)) return null;
+
+                    Set<String> roles = sysRoleDao.findRoleKeysByRoleIds(roleIds);
+                    if (CollectionUtils.isEmpty(roles)) return null;
+
+                    return new SysUserRoleDTO()
+                            .setUserId(sysUser.getUserId())
+                            .setUsername(sysUser.getUsername())
+                            .setPassword(sysUser.getPassword())
+                            .setEmail(sysUser.getEmail())
+                            .setAvatar(sysUser.getAvatar())
+                            .setStatus(sysUser.getStatus())
+                            .setDelFlag(sysUser.getDelFlag())
+                            .setRoles(roles);
+                })
+                .orElse(null);
     }
 
-    public List<SysUserVO> list(SysUserForm sysUserForm) {
-        Specification<SysUser> specification = (root, query, cb) -> {
-            //用于添加所有查询条件
-            List<Predicate> predicateList = new ArrayList<>();
-            if (!Strings.isNullOrEmpty(sysUserForm.getUsername()))
-                predicateList.add(cb.equal(root.get("username").as(String.class), sysUserForm.getUsername()));
-            selectCommonCondition(root, cb, predicateList, sysUserForm.getStatus(), sysUserForm.getStartTime(), sysUserForm.getEndTime());
-            // 设置查询条件
-            Predicate and = cb.and(predicateList.toArray(new Predicate[0]));
-            query.where(and);
-            //设置排序
-            List<Order> orders = new ArrayList<>();
-            orders.add(cb.asc(root.get("userId")));
-            // 进行查询构建
-            return query.orderBy(orders).getRestriction();
-        };
-        List<SysUser> sysUserList = sysUserDao.findAll(specification);
-        List<SysUserVO> sysUserVOList = new ArrayList<>();
-        sysUserList.forEach(sysUser -> sysUserVOList.add(new SysUserVO(sysUser)));
-        return sysUserVOList;
+    /**
+     * @author hua
+     * @date 2024/12/5 16:18
+     * @param sysUserForm 用户表单
+     * @return java.util.List<com.hzq.system.server.domain.vo.SysUserRoleVO>
+     * @apiNote 查询所有用户和其所属角色
+     **/
+    public List<SysUserRoleVO> list(SysUserForm sysUserForm) {
+        // 动态查询的条件
+        Long userId = Strings.isNullOrEmpty(sysUserForm.getUserId()) ? null : Long.parseLong(sysUserForm.getUserId());
+        String username = sysUserForm.getUsername();
+        String email = sysUserForm.getEmail();
+        Character status = sysUserForm.getStatus();
+        Date startTime = sysUserForm.getStartTime();
+        Date endTime = sysUserForm.getEndTime();
+        // 执行动态查询
+        List<Tuple> resultList = sysUserDao.findSysUsersBySysUserFrom(
+                userId, username, email, status, startTime, endTime
+        );
+        return resultList.stream().map(SysUserRoleVO::new).toList();
+    }
+
+    /**
+     * @author hua
+     * @date 2024/12/5 16:21
+     * @param sysUserForm 用户表单
+     * @apiNote 创建用户, 默认是 user 角色
+     **/
+    @Transactional(rollbackFor = Exception.class)
+    public void createSysUserBySysUserForm(SysUserForm sysUserForm) {
+        // 检查用户是否已经存在
+        if (sysUserDao.findSysUserByUsername(sysUserForm.getUsername()) != null) {
+            throw new SystemException(ResultEnum.USERNAME_EXISTED);
+        }
+        // 查询默认角色（user）
+        Long roleId = Optional.ofNullable(sysRoleDao.findRoleIdByRoleKey(RoleEnum.DEFAULT_ROLE_KEY))
+                .orElseThrow(() -> new SystemException(ResultEnum.DEFAULT_ROLE_NOT_EXIST));
+        // 插入用户实体对象到用户表
+        SysUser sysUser = sysUserDao.save(createSysUser(sysUserForm));
+        // 创建用户角色关联（默认是 user）
+        sysUserRoleDao.save(createSysUserRole(sysUser.getUserId(), roleId));
+    }
+
+    private SysUser createSysUser(SysUserForm sysUserForm) {
+        SysUser sysUser = new SysUser();
+        sysUser.setUsername(sysUserForm.getUsername());
+        sysUser.setPassword(passwordEncoder.encode(sysUserForm.getPassword()));
+        sysUser.setEmail(sysUserForm.getEmail());
+        sysUser.setStatus(sysUserForm.getStatus());
+        sysUser.setDelFlag('0');
+        sysUser.create(sysUserForm.getCurrUsername());
+        return sysUser;
+    }
+
+    private SysUserRole createSysUserRole(Long userId, Long roleId) {
+        return new SysUserRole(new SysUserRolePK(userId, roleId));
     }
 }

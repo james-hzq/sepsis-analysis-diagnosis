@@ -1,6 +1,6 @@
 package com.hzq.system.api;
 
-import com.hzq.system.dto.SysUserDTO;
+import com.hzq.system.dto.SysUserRoleDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,5 +15,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface SysUserFeignClient {
 
     @GetMapping("/username/{username}")
-    SysUserDTO selectByUsername(@PathVariable("username") String username);
+    SysUserRoleDTO selectSysUserWithRolesByUsername(@PathVariable("username") String username);
 }

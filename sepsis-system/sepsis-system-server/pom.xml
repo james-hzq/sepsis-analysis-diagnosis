@@ -11,11 +11,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>sepsis-system-api</artifactId>
-        </dependency>
-
         <!-- nacos 服务注册 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -32,6 +27,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+        <!-- SprigBoot 单元测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 暴露给外部调用的API -->
+        <dependency>
+            <groupId>com.hzq</groupId>
+            <artifactId>sepsis-system-api</artifactId>
         </dependency>
     </dependencies>
 </project>

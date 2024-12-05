@@ -28,7 +28,7 @@ public final class CustomServerAuthenticationConverter implements ServerAuthenti
     @Override
     public Mono<Authentication> convert(ServerWebExchange exchange) {
         // 记录日志，进入这里说明非白名单路径，需要走认证流程
-        log.debug("Request {} Enter the custom gateway authentication object converter", exchange.getRequest().getURI());
+        log.info("Request {} Enter the custom gateway authentication object converter", exchange.getRequest().getURI());
 
         return extractTokenFromRequest(exchange)
                 // 从 token 值获取 TokenType 并转换为 Authentication

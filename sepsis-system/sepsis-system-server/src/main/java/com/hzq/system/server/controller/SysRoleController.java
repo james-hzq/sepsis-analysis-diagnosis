@@ -23,18 +23,4 @@ import java.util.Set;
 public class SysRoleController {
 
     private final SysRoleService sysRoleService;
-
-    /**
-     * @param roleIds 角色唯一标识集合
-     * @return com.hzq.core.result.Result<java.util.List<java.lang.String>>
-     * @author gc
-     * @date 2024/10/8 16:36
-     * @apiNote 根据角色唯一标识集合查询角色Key的集合
-     **/
-    @GetMapping("/role-keys/{roleIds}")
-    public Set<String> selectRoleKeys(
-            @PathVariable("roleIds") @NotNull(message = "roleIds不得为null") List<Long> roleIds
-    ) {
-        return sysRoleService.selectRoleKeys(roleIds);
-    }
 }

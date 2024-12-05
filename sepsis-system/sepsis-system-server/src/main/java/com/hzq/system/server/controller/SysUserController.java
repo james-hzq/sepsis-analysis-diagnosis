@@ -2,9 +2,9 @@ package com.hzq.system.server.controller;
 
 import com.hzq.core.result.Result;
 import com.hzq.security.annotation.RequiresPermissions;
-import com.hzq.system.dto.SysUserDTO;
+import com.hzq.system.dto.SysUserRoleDTO;
 import com.hzq.system.server.domain.dto.SysUserForm;
-import com.hzq.system.server.domain.vo.SysUserVO;
+import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import com.hzq.system.server.service.SysUserService;
 import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.NotBlank;
@@ -35,24 +35,38 @@ public class SysUserController {
      * @apiNote 根据用户名查询用户信息
      **/
     @GetMapping("/username/{username}")
-    public SysUserDTO selectSysUserByUsername(
+    public SysUserRoleDTO selectSysUserWithRolesByUsername(
             @PathVariable("username") @NotBlank(message = "查询用户名不得为空") String username
     ) {
-        return sysUserService.selectSysUserByUsername(username);
+        return sysUserService.selectSysUserWithRolesByUsername(username);
     }
 
     /**
      * @param sysUserForm 用户查询表单对象
-     * @return com.hzq.core.result.Result<java.util.List < com.hzq.system.server.domain.vo.SysUserVO>>
+     * @return com.hzq.core.result.Result<java.util.List < com.hzq.system.server.domain.vo.SysUserRoleVO>>
      * @author gc
      * @date 2024/10/8 16:36
-     * @apiNote 根据用户表单查询用户信息
+     * @apiNote 根据用户表单查询用户信息(附带角色)
      **/
-    @GetMapping("/list")
+    @PostMapping("/list")
     @RequiresPermissions("@ps.hasRolesAnd('admin')")
-    public Result<List<SysUserVO>> list(
-            @Validated(value = {ValidationInterface.select.class}) @RequestBody SysUserForm sysUserForm
+    public Result<List<SysUserRoleVO>> list(
+            @Validated(value = {ValidationInterface.read.class}) @RequestBody SysUserForm sysUserForm
     ) {
         return Result.success(sysUserService.list(sysUserForm));
+    }
+
+    /**
+     * @author hua
+     * @date 2024/12/5 16:01
+     * @apiNote 新增用户(包括角色)
+     **/
+    @PostMapping("/create")
+    @RequiresPermissions("@ps.hasRolesAnd('admin')")
+    public Result<Void> create(
+            @Validated(value = {ValidationInterface.create.class}) @RequestBody SysUserForm sysUserForm
+    ) {
+        sysUserService.createSysUserBySysUserForm(sysUserForm);
+        return Result.success();
     }
 }

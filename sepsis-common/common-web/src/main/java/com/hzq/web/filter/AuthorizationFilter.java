@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,10 +26,14 @@ import java.io.IOException;
 public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull FilterChain filterChain
+    ) throws ServletException, IOException {
         // 获取鉴权信息
-        String username = ServletUtils.getParameter(SecurityConstants.REQUEST_HEAD_USERNAME);
-        String roles = ServletUtils.getParameter(SecurityConstants.REQUEST_HEAD_ROLES);
+        String username = ServletUtils.getHeader(request, SecurityConstants.REQUEST_HEAD_USERNAME);
+        String roles = ServletUtils.getHeader(request, SecurityConstants.REQUEST_HEAD_ROLES);
 
         // 保存到上下文
         if (username != null && roles != null) {

@@ -17,6 +17,9 @@ import java.util.Set;
  */
 public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificationExecutor<SysRole> {
 
-    @Query(value = "select distinct r.roleKey from SysRole r where r.roleId in :roleIds")
+    @Query("select distinct r.roleKey from SysRole r where r.roleId in :roleIds")
     Set<String> findRoleKeysByRoleIds(@Param("roleIds") List<Long> roleIds);
+
+    @Query("select r.roleId from SysRole r where r.roleKey = :roleKey")
+    Long findRoleIdByRoleKey(@Param("roleKey") String roleKey);
 }

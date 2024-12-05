@@ -1,12 +1,11 @@
-package com.hzq.web.service;
+package com.hzq.security.permission;
 
 import com.google.common.collect.ImmutableSet;
-import com.hzq.core.result.ResultEnum;
 import com.hzq.security.authorization.AuthorizationContext;
 import com.hzq.security.authorization.AuthorizationInfo;
-import com.hzq.security.service.IPermissionService;
 import com.hzq.security.util.PermissionUtils;
-import com.hzq.web.exception.SystemException;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,36 +17,37 @@ import java.util.*;
  * @description 权限校验
  */
 @Service("ps")
-public class PermissionService implements IPermissionService {
+@Setter
+@Getter
+public class PermissionService {
+    public final String ps = "ps";
 
     /**
-     * @param roles 接口上的角色字符串
+     * @param roles 角色
      * @return boolean
      * @author hzq
-     * @date 2024/11/19 14:43
-     * @apiNote 校验用户是否同时拥有接口要求的所有权限
+     * @date 2024/11/19 14:33
+     * @apiNote 含有 角色1 && 角色2 .......
      **/
-    @Override
     public boolean hasRolesAnd(String roles) {
         return checkRoles(roles, true);
     }
 
     /**
-     * @param roles 接口上的角色字符串
+     * @param roles 角色
      * @return boolean
      * @author hzq
-     * @date 2024/11/19 14:44
-     * @apiNote 校验用户是否同时拥有接口要求的所有权限
+     * @date 2024/11/19 14:33
+     * @apiNote 含有 角色1 || 角色2 .......
      **/
-    @Override
     public boolean hasRolesOr(String roles) {
         // 校验用户是否拥有接口要求的任意权限
         return checkRoles(roles, false);
     }
 
     private boolean checkRoles(String roles, boolean requireAll) {
-        AuthorizationInfo authorizationInfo = Optional.ofNullable(AuthorizationContext.getAuthorizationInfo())
-                .orElseThrow(() -> new SystemException(ResultEnum.ACCESS_FORBIDDEN));
+        AuthorizationInfo authorizationInfo = AuthorizationContext.getAuthorizationInfo();
+        if (authorizationInfo == null) return false;
         // 获取用户当前拥有的权限信息并按层级分组
         Set<String> ownedRoles = ImmutableSet.copyOf(authorizationInfo.getRoles());
         Set<String>[] ownedRoleGroups = PermissionUtils.RoleComparator.getGroupRoles(ownedRoles);

@@ -1,42 +1,31 @@
 package com.hzq.system.server.domain.entity;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * @author hua
  * @className com.hzq.system.server.domain.entity SysUserRole
- * @date 2024/9/26 16:37
- * @description 系统用户角色映射实体类
+ * @date 2024/12/4 9:38
+ * @description 系统用户角色多对多关系中间表
  */
 @Data
 @ToString
+@EqualsAndHashCode
 @Entity
 @Table(name = "sys_user_role")
 public class SysUserRole {
+
     @EmbeddedId
-    private SysUserRoleId id;
-    public SysUserRole() {}
-    public SysUserRole(Long userId, Long roleId) {
-        this.id = new SysUserRoleId(userId, roleId);
+    private SysUserRolePK pk;
+
+    public SysUserRole() {
+
     }
 
-    @Embeddable
-    @Data
-    public static class SysUserRoleId implements Serializable {
-        private Long userId;
-        private Long roleId;
-        public SysUserRoleId() {}
-        public SysUserRoleId(Long userId, Long roleId) {
-            this.userId = userId;
-            this.roleId = roleId;
-        }
+    public SysUserRole(SysUserRolePK pk) {
+        this.pk = pk;
     }
 }

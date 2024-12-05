@@ -1,6 +1,6 @@
 package com.hzq.auth.login.user;
 
-import com.hzq.system.dto.SysUserDTO;
+import com.hzq.system.dto.SysUserRoleDTO;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,15 +29,15 @@ public class SysUserDetail implements UserDetails {
     public SysUserDetail() {
     }
 
-    public SysUserDetail(SysUserDTO sysUserDTO, Set<String> roles) {
-        this.username = sysUserDTO.getUsername();
-        this.password = sysUserDTO.getPassword();
-        this.email = sysUserDTO.getEmail();
-        this.avatar = sysUserDTO.getAvatar();
-        this.status = sysUserDTO.getStatus();
-        this.roles = roles == null
+    public SysUserDetail(SysUserRoleDTO sysUserRoleDTO) {
+        this.username = sysUserRoleDTO.getUsername();
+        this.password = sysUserRoleDTO.getPassword();
+        this.email = sysUserRoleDTO.getEmail();
+        this.avatar = sysUserRoleDTO.getAvatar();
+        this.status = sysUserRoleDTO.getStatus();
+        this.roles = sysUserRoleDTO.getRoles() == null
                 ? Collections.emptySet()
-                : Collections.unmodifiableSet(roles);
+                : Collections.unmodifiableSet(sysUserRoleDTO.getRoles());
     }
 
     @Override

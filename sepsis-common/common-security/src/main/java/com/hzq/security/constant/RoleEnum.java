@@ -31,6 +31,9 @@ public enum RoleEnum {
         this.level = level;
     }
 
+    // 默认角色
+    public static final String DEFAULT_ROLE_KEY = USER.key;
+
     // 角色缓存，避免角色校验时重复转换
     private static final Map<String, RoleEnum> ROLE_CACHE = Arrays.stream(values())
             .collect(Collectors.toMap(RoleEnum::getKey, Function.identity()));
@@ -38,7 +41,7 @@ public enum RoleEnum {
     // 缓存角色层级中最靠后的层级
     private static final Integer LAST_LEVEL = Arrays.stream(values())
             .mapToInt(RoleEnum::getLevel)
-            .min()
+            .max()
             .orElse(0);
 
     public static RoleEnum getRoleEnum(String role) {

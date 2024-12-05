@@ -1,16 +1,16 @@
-package com.hzq.web.config;
+package com.hzq.system.server.security;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.hzq.web.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
 
 /**
  * @author gc
@@ -24,14 +24,27 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain serverSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        // 配置默认安全策略
+        SecurityUtils.applyDefaultSecurity(httpSecurity);
+
         // 添加安全配置规则，防止 feign 间进行远程服务调用受到报错 401 未认证
         httpSecurity.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(WebSecurityProperties.internalPath.toArray(String[]::new)).permitAll()
+                .requestMatchers(SecurityUtils.getWhiteUrlPath("/system/**")).permitAll()
                 .anyRequest().authenticated()
         );
         return httpSecurity.build();
+    }
+
+    /**
+     * @return org.springframework.security.crypto.password.PasswordEncoder
+     * @author gc
+     * @date 2024/11/4 9:22
+     * @apiNote 密码增强器
+     **/
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

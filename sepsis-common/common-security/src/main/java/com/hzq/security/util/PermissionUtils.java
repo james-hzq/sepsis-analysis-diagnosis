@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.hzq.security.constant.RoleEnum;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,7 +32,7 @@ public class PermissionUtils {
         @SuppressWarnings("unchecked")
         public static Set<String>[] getGroupRoles(String[] roles) {
             Set<String>[] roleSet = (Set<String>[]) new Set[RoleEnum.getLastLevel()];
-            Arrays.fill(roleSet, Sets.newHashSet());
+            for (int i = 0;i < roleSet.length;i++) roleSet[i] = new HashSet<>();
             Arrays.stream(roles)
                     .map(RoleEnum::getRoleEnum)
                     .forEach(roleEnum -> roleSet[roleEnum.getLevel()].add(roleEnum.getKey()));
@@ -48,7 +49,7 @@ public class PermissionUtils {
         @SuppressWarnings("unchecked")
         public static Set<String>[] getGroupRoles(Set<String> roles) {
             Set<String>[] roleSet = (Set<String>[]) new Set[RoleEnum.getLastLevel()];
-            Arrays.fill(roleSet, Sets.newHashSet());
+            for (int i = 0;i < roleSet.length;i++) roleSet[i] = new HashSet<>();
             roles.stream()
                     .map(RoleEnum::getRoleEnum)
                     .forEach(roleEnum -> roleSet[roleEnum.getLevel()].add(roleEnum.getKey()));

@@ -15,11 +15,7 @@ import java.util.Set;
  */
 @RequiredArgsConstructor
 @Service
-public class SysRoleService extends SysBaseService {
+public class SysRoleService {
 
     private final SysRoleDao sysRoleDao;
-
-    public Set<String> selectRoleKeys(List<Long> roleIds) {
-        return sysRoleDao.findRoleKeysByRoleIds(roleIds);
-    }
 }

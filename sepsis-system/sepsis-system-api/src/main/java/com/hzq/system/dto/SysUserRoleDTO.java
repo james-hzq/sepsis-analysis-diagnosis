@@ -8,14 +8,14 @@ import java.util.Set;
 
 /**
  * @author gc
- * @class com.hzq.system.domain SysUserDTO
+ * @class com.hzq.system.domain SysUserRoleDTO
  * @date 2024/8/29 15:17
  * @description 系统用户传输对象
  */
 @Data
 @Accessors(chain = true)
 @ToString
-public class SysUserDTO {
+public class SysUserRoleDTO {
     private Long userId;
     private String username;
     private String password;
@@ -23,4 +23,5 @@ public class SysUserDTO {
     private String avatar;
     private Character status;
     private Character delFlag;
+    private Set<String> roles;
 }

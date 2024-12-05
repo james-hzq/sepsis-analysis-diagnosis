@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,9 +60,6 @@ public class SystemAuthenticationSuccessHandler implements AuthenticationSuccess
             log.info("The system login are successfully logged in, and the redis user information is stored below.");
             // 生成 redis key，将用户信息存入至 redis
             String redisKey = TOKEN_TYPE_PREFIX + sysUserDetail.getUsername();
-            String jsonString = JacksonUtils.toJsonString(loginUserInfo);
-            System.out.println(jsonString);
-
             redisCache.setCacheObject(redisKey, JacksonUtils.toJsonString(loginUserInfo), secondsDifference, TimeUnit.SECONDS);
             // 返回 JWT 给前端
             response.setContentType("application/json");
