@@ -2,7 +2,6 @@ package com.hzq.system.server.service;
 
 import com.google.common.base.Strings;
 import com.hzq.core.result.ResultEnum;
-import com.hzq.security.constant.RoleEnum;
 import com.hzq.system.dto.SysUserRoleDTO;
 import com.hzq.system.server.dao.SysRoleDao;
 import com.hzq.system.server.dao.SysUserDao;
@@ -13,13 +12,17 @@ import com.hzq.system.server.domain.entity.SysUserRole;
 import com.hzq.system.server.domain.entity.SysUserRolePK;
 import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import com.hzq.web.exception.SystemException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -28,6 +31,7 @@ import java.util.*;
  * @date 2024/9/26 14:43
  * @description 系统用户业务处理类
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SysUserService {
@@ -38,10 +42,10 @@ public class SysUserService {
     private final SysUserRoleDao sysUserRoleDao;
 
     /**
-     * @author hua
-     * @date 2024/12/5 16:17
      * @param username 用户名
      * @return com.hzq.system.dto.SysUserRoleDTO
+     * @author hua
+     * @date 2024/12/5 16:17
      * @apiNote 根据用户名查询用户角色信息
      **/
     public SysUserRoleDTO selectSysUserWithRolesByUsername(String username) {
@@ -67,10 +71,10 @@ public class SysUserService {
     }
 
     /**
-     * @author hua
-     * @date 2024/12/5 16:18
      * @param sysUserForm 用户表单
      * @return java.util.List<com.hzq.system.server.domain.vo.SysUserRoleVO>
+     * @author hua
+     * @date 2024/12/5 16:18
      * @apiNote 查询所有用户和其所属角色
      **/
     public List<SysUserRoleVO> list(SysUserForm sysUserForm) {
@@ -79,8 +83,8 @@ public class SysUserService {
         String username = sysUserForm.getUsername();
         String email = sysUserForm.getEmail();
         Character status = sysUserForm.getStatus();
-        Date startTime = sysUserForm.getStartTime();
-        Date endTime = sysUserForm.getEndTime();
+        LocalDateTime startTime = sysUserForm.getStartTime();
+        LocalDateTime endTime = sysUserForm.getEndTime();
         // 执行动态查询
         List<Tuple> resultList = sysUserDao.findSysUsersBySysUserFrom(
                 userId, username, email, status, startTime, endTime
@@ -89,9 +93,9 @@ public class SysUserService {
     }
 
     /**
+     * @param sysUserForm 用户表单
      * @author hua
      * @date 2024/12/5 16:21
-     * @param sysUserForm 用户表单
      * @apiNote 创建用户, 默认是 user 角色
      **/
     @Transactional(rollbackFor = Exception.class)
@@ -100,13 +104,13 @@ public class SysUserService {
         if (sysUserDao.findSysUserByUsername(sysUserForm.getUsername()) != null) {
             throw new SystemException(ResultEnum.USERNAME_EXISTED);
         }
-        // 查询默认角色（user）
-        Long roleId = Optional.ofNullable(sysRoleDao.findRoleIdByRoleKey(RoleEnum.DEFAULT_ROLE_KEY))
+        // 查询默认角色
+        Set<Long> roleIds = Optional.ofNullable(sysRoleDao.findRoleIdsByRoleKeys(sysUserForm.getRoles()))
                 .orElseThrow(() -> new SystemException(ResultEnum.DEFAULT_ROLE_NOT_EXIST));
         // 插入用户实体对象到用户表
         SysUser sysUser = sysUserDao.save(createSysUser(sysUserForm));
         // 创建用户角色关联（默认是 user）
-        sysUserRoleDao.save(createSysUserRole(sysUser.getUserId(), roleId));
+        sysUserRoleDao.saveAll(createSysUserRole(sysUser.getUserId(), roleIds));
     }
 
     private SysUser createSysUser(SysUserForm sysUserForm) {
@@ -120,7 +124,9 @@ public class SysUserService {
         return sysUser;
     }
 
-    private SysUserRole createSysUserRole(Long userId, Long roleId) {
-        return new SysUserRole(new SysUserRolePK(userId, roleId));
+    private List<SysUserRole> createSysUserRole(Long userId, Set<Long> roleIds) {
+        return roleIds
+                .stream()
+                .map(roleId -> new SysUserRole(new SysUserRolePK(userId, roleId))).toList();
     }
 }

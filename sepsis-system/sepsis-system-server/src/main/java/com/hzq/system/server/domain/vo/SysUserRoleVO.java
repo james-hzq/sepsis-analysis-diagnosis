@@ -1,13 +1,15 @@
 package com.hzq.system.server.domain.vo;
 
+import com.hzq.core.util.DateTimeUtils;
 import jakarta.persistence.Tuple;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,9 +30,9 @@ public class SysUserRoleVO {
     private String roleKey;
     private Set<String> roles;
     private Character status;
-    private Date createTime;
+    private LocalDateTime createTime;
     private String createBy;
-    private Date updateTime;
+    private LocalDateTime updateTime;
     private String updateBy;
 
     public SysUserRoleVO(Tuple tuple) {
@@ -39,9 +41,9 @@ public class SysUserRoleVO {
         this.email = tuple.get("email", String.class);
         this.roles = Arrays.stream(tuple.get("roleKey", String.class).split(",")).collect(Collectors.toSet());
         this.status = tuple.get("status", Character.class);
-        this.createTime = tuple.get("create_time", Date.class);
+        this.createTime = DateTimeUtils.convertToLocalDateTime(tuple.get("create_time", Timestamp.class));
         this.createBy = tuple.get("create_by", String.class);
-        this.updateTime = tuple.get("update_time", Date.class);
+        this.updateTime = DateTimeUtils.convertToLocalDateTime(tuple.get("update_time", Timestamp.class));
         this.updateBy = tuple.get("update_by", String.class);
     }
 }

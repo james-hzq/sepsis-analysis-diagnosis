@@ -23,7 +23,7 @@ public class SysRole extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="role_id", nullable = false, columnDefinition="comment '自增主键,角色编号'")
+    @Column(name="role_id", nullable = false, columnDefinition="BIGINT UNSIGNED comment '自增主键,角色编号'")
     private Long roleId;
 
     @Column(name="role_key", unique = true, length = 30, nullable = false, columnDefinition="varchar(30) comment '角色key'")

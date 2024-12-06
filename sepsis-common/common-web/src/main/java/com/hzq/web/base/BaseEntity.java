@@ -1,5 +1,6 @@
 package com.hzq.web.base;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
@@ -7,7 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
+
 
 /**
  * @author hua
@@ -31,7 +33,7 @@ public class BaseEntity {
      * 创建时间
      */
     @Column(name="create_time", nullable = false, columnDefinition="DATETIME comment '创建时间'")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 更新者
@@ -43,17 +45,18 @@ public class BaseEntity {
      * 更新时间
      */
     @Column(name="update_time", nullable = false, columnDefinition="DATETIME comment '更新时间'")
-    private Date updateTime;
+    private LocalDateTime  updateTime;
 
     public void create(String currUsername) {
-        Date date = new Date();
-        this.createTime = date;
-        this.updateTime = date;
+        LocalDateTime now = LocalDateTime.now();
+        // 使用 DateTimeFormatter 转换
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.createTime = this.updateTime = LocalDateTime.parse(now.format(formatter), formatter);
         this.createBy = this.updateBy = currUsername;
     }
 
     public void update(String currUsername) {
-        this.updateTime = new Date();
+        this.updateTime = LocalDateTime.now();
         this.updateBy = currUsername;
     }
 }

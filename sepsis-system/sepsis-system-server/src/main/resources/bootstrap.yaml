@@ -34,3 +34,11 @@ logging:
   config: classpath:logback-spring.xml
   file:
     path: ${user.dir}/logs/${spring.application.name}
+  level:
+    org:
+      springframework:
+        transaction: debug
+        jdbc:
+          datasource: debug
+        orm:
+          jpa: debug

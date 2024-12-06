@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificati
             @Param("username") String username,
             @Param("email") String email,
             @Param("status") Character status,
-            @Param("startTime") Date startTime,
-            @Param("endTime") Date endTime
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime
     );
 }

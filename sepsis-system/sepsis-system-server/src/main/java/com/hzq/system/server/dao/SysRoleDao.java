@@ -20,6 +20,6 @@ public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificati
     @Query("select distinct r.roleKey from SysRole r where r.roleId in :roleIds")
     Set<String> findRoleKeysByRoleIds(@Param("roleIds") List<Long> roleIds);
 
-    @Query("select r.roleId from SysRole r where r.roleKey = :roleKey")
-    Long findRoleIdByRoleKey(@Param("roleKey") String roleKey);
+    @Query("select r.roleId from SysRole r where r.roleKey in :roleKey")
+    Set<Long> findRoleIdsByRoleKeys(@Param("roleKey") List<String> roleKey);
 }

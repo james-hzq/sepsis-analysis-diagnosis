@@ -1,6 +1,8 @@
 package com.hzq.core.util;
 
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -88,11 +90,15 @@ public class DateTimeUtils {
 
     /**
      * @author hua
-     * @date 2024/11/30 16:14
-     * @return java.time.Instant
-     * @apiNote 中国本地时间转换为 UTC 时间
+     * @date 2024/12/6 17:34
+     * @param timestamp 时间戳
+     * @return java.time.LocalDateTime
+     * @apiNote 将时间戳转换为时间对象
      **/
-    public static Instant convertChinaTimeToUtc(ZonedDateTime chinaTime) {
-        return chinaTime.toInstant();
+    public static LocalDateTime convertToLocalDateTime(Object timestamp) {
+        if (timestamp == null) return null;
+        if (timestamp instanceof LocalDateTime t) return t;
+        if (timestamp instanceof Timestamp t) return t.toLocalDateTime();
+        return null;
     }
 }

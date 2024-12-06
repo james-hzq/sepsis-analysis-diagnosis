@@ -107,9 +107,4 @@ public class DruidConfig {
         log.info("druid datasource init successfully");
         return datasource;
     }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource());
-    }
 }

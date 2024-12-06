@@ -2,14 +2,23 @@ import { request } from "@/utils/service"
 import type * as User from "./types/user"
 
 /**
- * @author hua
- * @date 2024/12/1 16:06
- * @apiNote 分页查询用户
+ * 分页查询用户
  **/
-export function userTableApi(data: User.UserTableRequestData) {
+export function userTableApi(data: User.UserFormRequestData) {
   return request<User.UserTableResponseData>({
     url: "/system/user/list",
     method: "post",
+    data: data
+  })
+}
+
+/**
+ * 新增用户
+ */
+export function createUserApi(data: User.UserFormRequestData) {
+  return request<User.CreateUserResponseData>({
+    url: "/system/user/create",
+    method: 'post',
     data: data
   })
 }

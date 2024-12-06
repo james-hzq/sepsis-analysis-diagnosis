@@ -23,10 +23,10 @@ import java.io.Serializable;
 @Embeddable
 public class SysUserRolePK implements Serializable {
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "comment '用户ID'")
+    @Column(name = "user_id", nullable = false, columnDefinition = "BIGINT UNSIGNED comment '用户ID'")
     private Long userId;
 
-    @Column(name = "role_id", nullable = false, columnDefinition = "comment '角色ID'")
+    @Column(name = "role_id", nullable = false, columnDefinition = "BIGINT UNSIGNED comment '角色ID'")
     private Long roleId;
 
     public SysUserRolePK() {

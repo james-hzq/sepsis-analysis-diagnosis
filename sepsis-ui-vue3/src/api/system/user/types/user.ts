@@ -19,13 +19,19 @@ export interface UserTableData {
   updateBy: string
 }
 
-export interface UserTableRequestData {
+export interface UserFormRequestData {
+  // 当前登录用户
+  currUsername: string
   // 用户唯一编号
-  userId: string
+  userId: string | null
   // 用户名（模糊查询）
   username: string
+  // 密码
+  password: string
   // 邮箱
   email: string
+  // 用户所属角色
+  roles: string[]
   // 用户状态
   status: string
   // 创建开始时间
@@ -39,3 +45,6 @@ export interface UserTableRequestData {
 }
 
 export type UserTableResponseData = ApiResponseData<UserTableData[]>
+export type CreateUserResponseData = ApiResponseData<any>
+export type EditUserResponseData = ApiResponseData<any>
+export type DeleteUserResponseData = ApiResponseData<any>

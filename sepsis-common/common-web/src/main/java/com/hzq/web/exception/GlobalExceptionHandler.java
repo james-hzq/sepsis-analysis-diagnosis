@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(";"));
         log.error("请求地址'{}', 发生方法参数校验异常, 异常信息'{}'", request.getRequestURI(), msg);
-        return Result.error(msg);
+        return Result.error(ResultEnum.CUSTOM_ERROR.getCode(), msg);
     }
 
     /**
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(";"));
         log.error("请求地址'{}', 发生字段参数校验异常'{}'", request.getRequestURI(), msg);
-        return Result.error(msg);
+        return Result.error(ResultEnum.CUSTOM_ERROR.getCode(), msg);
     }
 
     /**

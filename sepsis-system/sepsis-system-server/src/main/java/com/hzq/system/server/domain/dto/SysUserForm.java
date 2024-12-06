@@ -3,13 +3,16 @@ package com.hzq.system.server.domain.dto;
 import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -70,13 +73,19 @@ public class SysUserForm {
     })
     private String email;
 
-    @NotBlank(message = "用户状态不得为空", groups = {
+    @NotEmpty(message = "当前操作用户不得为空", groups = {
+            ValidationInterface.create.class,
+            ValidationInterface.update.class,
+    })
+    private List<String> roles;
+
+    @NotNull(message = "用户状态不得为空", groups = {
             ValidationInterface.create.class,
             ValidationInterface.update.class
     })
     private Character status;
 
-    private Date startTime;
+    private LocalDateTime startTime;
 
-    private Date endTime;
+    private LocalDateTime endTime;
 }
