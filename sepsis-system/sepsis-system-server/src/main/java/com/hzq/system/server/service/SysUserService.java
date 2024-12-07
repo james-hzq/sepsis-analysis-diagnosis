@@ -12,11 +12,15 @@ import com.hzq.system.server.domain.entity.SysUserRole;
 import com.hzq.system.server.domain.entity.SysUserRolePK;
 import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import com.hzq.web.exception.SystemException;
+import com.hzq.web.util.PageUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +81,7 @@ public class SysUserService {
      * @date 2024/12/5 16:18
      * @apiNote 查询所有用户和其所属角色
      **/
-    public List<SysUserRoleVO> list(SysUserForm sysUserForm) {
+    public Page<SysUserRoleVO> list(SysUserForm sysUserForm, Pageable pageable) {
         // 动态查询的条件
         Long userId = Strings.isNullOrEmpty(sysUserForm.getUserId()) ? null : Long.parseLong(sysUserForm.getUserId());
         String username = sysUserForm.getUsername();
@@ -86,10 +90,12 @@ public class SysUserService {
         LocalDateTime startTime = sysUserForm.getStartTime();
         LocalDateTime endTime = sysUserForm.getEndTime();
         // 执行动态查询
-        List<Tuple> resultList = sysUserDao.findSysUsersBySysUserFrom(
-                userId, username, email, status, startTime, endTime
+        Page<Tuple> resultPage = sysUserDao.findSysUsersBySysUserFrom(
+                userId, username, email, status, startTime, endTime, pageable
         );
-        return resultList.stream().map(SysUserRoleVO::new).toList();
+        List<SysUserRoleVO> list = resultPage.stream().map(SysUserRoleVO::new).toList();
+
+        return new PageImpl<>(list, pageable, resultPage.getTotalElements());
     }
 
     /**

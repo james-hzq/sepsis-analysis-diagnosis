@@ -8,6 +8,10 @@ export function userTableApi(data: User.UserFormRequestData) {
   return request<User.UserTableResponseData>({
     url: "/system/user/list",
     method: "post",
+    params: {
+      pageNum: data.pageNum,
+      pageSize: data.pageSize
+    },
     data: data
   })
 }

@@ -6,9 +6,12 @@ import com.hzq.system.dto.SysUserRoleDTO;
 import com.hzq.system.server.domain.dto.SysUserForm;
 import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import com.hzq.system.server.service.SysUserService;
+import com.hzq.web.util.PageUtils;
 import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,10 +53,11 @@ public class SysUserController {
      **/
     @PostMapping("/list")
     @RequiresPermissions("@ps.hasRolesAnd('admin')")
-    public Result<List<SysUserRoleVO>> list(
+    public Result<Page<SysUserRoleVO>> list(
             @Validated(value = {ValidationInterface.read.class}) @RequestBody SysUserForm sysUserForm
     ) {
-        return Result.success(sysUserService.list(sysUserForm));
+        Pageable pageable = PageUtils.buildPageRequest();
+        return Result.success(sysUserService.list(sysUserForm, pageable));
     }
 
     /**

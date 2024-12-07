@@ -64,7 +64,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
     meta: {
       title: "后台管理",
       svgIcon: "lock",
-      roles: ["root"],
+      roles: ["root", "admin"],
       alwaysShow: true
     },
     children: [
@@ -74,7 +74,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         name: "SystemUser",
         meta: {
           title: "用户管理",
-          roles: ["root"]
+          roles: ["root", "admin"]
         }
       },
       {
@@ -83,7 +83,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         name: "SystemRole",
         meta: {
           title: "角色管理",
-          roles: ["root"]
+          roles: ["root", "admin"]
         }
       }
     ]

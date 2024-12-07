@@ -5,6 +5,7 @@ import {type UserTableData, type UserFormRequestData} from "@/api/system/user/ty
 import {createUserApi, userTableApi} from "@/api/system/user";
 import {FormInstance, type FormRules} from "element-plus";
 import {List, User, Message, Key} from "@element-plus/icons-vue";
+import Pagination from '@/components/Pagination/index.vue'
 
 // 引入用户 Pinia Store
 const userStore = useUserStore();
@@ -21,6 +22,9 @@ const userStatusOptions = [
 
 // 用户表格查询表单
 const userTableFormRef = ref<FormInstance | null>(null)
+const total = ref(0)
+const pageNum = ref(0)
+const pageSize = ref(5)
 const userTableFormData: UserFormRequestData = reactive({
   currUsername: loginUsername,
   userId: "",
@@ -29,8 +33,8 @@ const userTableFormData: UserFormRequestData = reactive({
   status: "",
   startTime: "",
   endTime: "",
-  page: 1,
-  total: 10
+  pageNum: pageNum.value,
+  pageSize: pageSize.value
 })
 
 // 新增用户表单
@@ -67,8 +71,6 @@ const createUserFormRules: FormRules = {
 
 // 用户表格数据
 const userTableData = ref<UserTableData[]>([])
-const userTablePage = ref<number>(1)
-const userTableTotal = ref<number>(10)
 
 /**
  * 新增用户
@@ -123,7 +125,9 @@ const resetCreateUserForm = () => {
  */
 const getUserTable = () => {
   userTableApi(userTableFormData).then(res => {
-    userTableData.value = res.data
+    console.log(res.data)
+    total.value = res.data.totalElements
+    userTableData.value = res.data.content
   })
 }
 
@@ -221,6 +225,10 @@ getUserTable();
           </template>
         </el-table-column>
       </el-table>
+    </div>
+
+    <div>
+      <Pagination :total="total" :page-size="pageSize" :page-num="pageNum"/>
     </div>
 
     <!-- 新增用户的弹窗 -->
