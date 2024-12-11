@@ -35,6 +35,10 @@ public class SysUserRoleVO {
     private LocalDateTime updateTime;
     private String updateBy;
 
+    public SysUserRoleVO() {
+
+    }
+
     public SysUserRoleVO(Tuple tuple) {
         this.userId =  tuple.get("user_id", Long.class);
         this.username = tuple.get("username", String.class);

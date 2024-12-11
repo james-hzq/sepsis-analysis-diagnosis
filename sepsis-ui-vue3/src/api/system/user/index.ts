@@ -1,6 +1,5 @@
 import { request } from "@/utils/service"
 import type * as User from "./types/user"
-import {UpdateUserResponseData} from "./types/user";
 
 /**
  * 分页查询用户

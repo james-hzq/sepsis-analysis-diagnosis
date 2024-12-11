@@ -1,15 +1,19 @@
 package com.hzq.system.server.controller;
 
+import com.hzq.core.result.Result;
+import com.hzq.security.annotation.RequiresPermissions;
+import com.hzq.system.server.domain.dto.SysRoleForm;
+import com.hzq.system.server.domain.vo.SysRoleVO;
 import com.hzq.system.server.service.SysRoleService;
-import jakarta.validation.constraints.NotNull;
+import com.hzq.web.validation.ValidationInterface;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author hua
@@ -23,4 +27,12 @@ import java.util.Set;
 public class SysRoleController {
 
     private final SysRoleService sysRoleService;
+
+    @PostMapping("/list")
+    @RequiresPermissions("@ps.hasRolesAnd('admin')")
+    public Result<List<SysRoleVO>> list(
+            @Validated(value = {ValidationInterface.read.class}) @RequestBody SysRoleForm sysRoleForm
+    ) {
+        return Result.success(sysRoleService.list(sysRoleForm));
+    }
 }

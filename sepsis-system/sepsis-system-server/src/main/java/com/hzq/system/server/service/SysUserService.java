@@ -32,7 +32,6 @@ import java.util.*;
  * @date 2024/9/26 14:43
  * @description 系统用户业务处理类
  */
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SysUserService {
