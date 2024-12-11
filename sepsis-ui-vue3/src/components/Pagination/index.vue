@@ -1,4 +1,25 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
+// 当页面大小或页码发生变化时向父组件发出事件
+const emits = defineEmits(["update:page", "update:size"]);
+
+/**
+ * 计算当前页码
+ */
+const currentPage = computed({
+  get: () => props.pageNum,
+  set: (val) => emits("update:page", val)
+})
+
+/**
+ * 计算当前每页大小
+ */
+const pageSize = computed({
+  get: () => props.pageSize,
+  set: (val) => emits("update:size", val)
+});
+
 // 定义接收的 props
 const props = defineProps({
   // 总条数
@@ -9,7 +30,7 @@ const props = defineProps({
   // 当前页码
   pageNum: {
     type: Number,
-    required: true,
+    default: 1,
   },
   // 当前页页码总数
   pageSize: {
@@ -20,6 +41,11 @@ const props = defineProps({
   pageSizes: {
     type: Array as () => number[],
     default: () => [5, 10, 20, 30, 50],
+  },
+  //设置最大页码按钮数。 页码按钮的数量，当总页数超过该值时会折叠
+  pagerCount: {
+    type: Number,
+    default: 7,
   },
   // 布局
   layout: {
@@ -46,15 +72,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   }
-});
-
-const handleSizeChange = () =>  {
-
-}
-
-const handleCurrentPageChange = () => {
-
-}
+})
 </script>
 
 <template>
@@ -64,11 +82,10 @@ const handleCurrentPageChange = () => {
       :background="background"
       :layout="layout"
       :page-sizes="pageSizes"
+      :pager-count="pagerCount"
       :total="total"
-      :page-size="pageSize"
-      :current-page="pageNum"
-      @size-change="handleSizeChange()"
-      @current-change="handleCurrentPageChange()"
+      v-model:page-size="pageSize"
+      v-model:current-page="currentPage"
     />
   </div>
 </template>

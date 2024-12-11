@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -64,4 +65,8 @@ public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificati
             @Param("endTime") LocalDateTime endTime,
             Pageable pageable
     );
+
+    @Modifying
+    @Query("update SysUser u set u.delFlag = '1' where u.userId =:userId")
+    void deleteSysUserByUserId(@Param("userId") Long userId);
 }

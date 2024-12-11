@@ -1,11 +1,14 @@
 package com.hzq.system.server.controller;
 
+import com.google.common.base.Strings;
 import com.hzq.core.result.Result;
+import com.hzq.core.result.ResultEnum;
 import com.hzq.security.annotation.RequiresPermissions;
 import com.hzq.system.dto.SysUserRoleDTO;
 import com.hzq.system.server.domain.dto.SysUserForm;
 import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import com.hzq.system.server.service.SysUserService;
+import com.hzq.web.exception.SystemException;
 import com.hzq.web.util.PageUtils;
 import com.hzq.web.validation.ValidationInterface;
 import jakarta.validation.constraints.NotBlank;
@@ -71,6 +74,29 @@ public class SysUserController {
             @Validated(value = {ValidationInterface.create.class}) @RequestBody SysUserForm sysUserForm
     ) {
         sysUserService.createSysUserBySysUserForm(sysUserForm);
+        return Result.success();
+    }
+
+    /**
+     * @author hua
+     * @date 2024/12/10 9:22
+     * @return com.hzq.core.result.Result<java.lang.Void>
+     * @apiNote 更新用户（包括角色）
+     **/
+    @PostMapping("/update")
+    @RequiresPermissions("@ps.hasRolesAnd('admin')")
+    public Result<Void> update(
+        @Validated(value = {ValidationInterface.update.class}) @RequestBody SysUserForm sysUserForm
+    ) {
+        sysUserService.updateSysUserBySysUserForm(sysUserForm);
+        return Result.success();
+    }
+
+    @PostMapping("/delete")
+    @RequiresPermissions("@ps.hasRolesAnd('admin')")
+    public Result<Void> delete(@RequestBody String userId) {
+        if (Strings.isNullOrEmpty(userId)) throw new SystemException(ResultEnum.USER_ID_NOT_EMPTY);
+        sysUserService.deleteSysUserBySysUserForm(userId);
         return Result.success();
     }
 }

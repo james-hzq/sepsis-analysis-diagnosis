@@ -46,5 +46,5 @@ export interface UserFormRequestData {
 
 export type UserTableResponseData = ApiResponseData<UserTableData[]>
 export type CreateUserResponseData = ApiResponseData<any>
-export type EditUserResponseData = ApiResponseData<any>
+export type UpdateUserResponseData = ApiResponseData<any>
 export type DeleteUserResponseData = ApiResponseData<any>

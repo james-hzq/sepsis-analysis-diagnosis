@@ -35,7 +35,8 @@ public class SysUserForm {
     private String currUsername;
 
     @NotBlank(message = "用户编号不得为空", groups = {
-            ValidationInterface.update.class
+            ValidationInterface.update.class,
+            ValidationInterface.delete.class
     })
     private String userId;
 

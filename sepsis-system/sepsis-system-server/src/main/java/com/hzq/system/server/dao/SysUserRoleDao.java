@@ -19,6 +19,6 @@ public interface SysUserRoleDao extends JpaRepository<SysUserRole, SysUserRolePK
     @Query("select ur.pk.roleId from SysUserRole ur where ur.pk.userId = :userId")
     List<Long> findRoleIdsRolesByUserId(@Param("userId") Long userId);
 
-    @Query("select ur from SysUserRole ur where ur.pk.userId in :userIds")
-    List<SysUserRole> findSysUserRolesByUserIds(@Param("userIds") List<Long> userIds);
+    @Query("select ur from SysUserRole ur where ur.pk.userId =:userId")
+    List<SysUserRole> findByUserId(@Param("userId") Long userId);
 }

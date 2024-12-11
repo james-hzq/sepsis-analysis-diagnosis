@@ -12,9 +12,6 @@ import com.hzq.system.server.domain.entity.SysUserRole;
 import com.hzq.system.server.domain.entity.SysUserRolePK;
 import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import com.hzq.web.exception.SystemException;
-import com.hzq.web.util.PageUtils;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,7 +99,7 @@ public class SysUserService {
      * @param sysUserForm 用户表单
      * @author hua
      * @date 2024/12/5 16:21
-     * @apiNote 创建用户, 默认是 user 角色
+     * @apiNote 创建用户
      **/
     @Transactional(rollbackFor = Exception.class)
     public void createSysUserBySysUserForm(SysUserForm sysUserForm) {
@@ -110,13 +107,31 @@ public class SysUserService {
         if (sysUserDao.findSysUserByUsername(sysUserForm.getUsername()) != null) {
             throw new SystemException(ResultEnum.USERNAME_EXISTED);
         }
-        // 查询默认角色
-        Set<Long> roleIds = Optional.ofNullable(sysRoleDao.findRoleIdsByRoleKeys(sysUserForm.getRoles()))
-                .orElseThrow(() -> new SystemException(ResultEnum.DEFAULT_ROLE_NOT_EXIST));
+        // 查询角色ID
+        Set<Long> roleIds = sysRoleDao.findRoleIdsByRoleKeys(sysUserForm.getRoles()).orElseThrow(() -> new SystemException(ResultEnum.USER_ROLE_NOT_EXIST));
         // 插入用户实体对象到用户表
-        SysUser sysUser = sysUserDao.save(createSysUser(sysUserForm));
-        // 创建用户角色关联（默认是 user）
-        sysUserRoleDao.saveAll(createSysUserRole(sysUser.getUserId(), roleIds));
+        SysUser createSysUser = sysUserDao.save(createSysUser(sysUserForm));
+        // 添加用户角色关联
+        sysUserRoleDao.saveAll(createSysUserRole(createSysUser.getUserId(), roleIds));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateSysUserBySysUserForm(SysUserForm sysUserForm) {
+        long userId = Long.parseLong(sysUserForm.getUserId());
+        // 更新用户实体对象到用户表
+        SysUser sysUser = sysUserDao.findById(userId).orElseThrow(() -> new SystemException(ResultEnum.SERVER_ERROR));
+        sysUserDao.save(updateSysUser(sysUser, sysUserForm));
+        // 删除原有用户角色关联
+        List<SysUserRole> sysUserRoleList = sysUserRoleDao.findByUserId(userId);
+        sysUserRoleDao.deleteAll(sysUserRoleList);
+        // 添加新用户角色关联
+        Set<Long> roleIds = sysRoleDao.findRoleIdsByRoleKeys(sysUserForm.getRoles()).orElseThrow(() -> new SystemException(ResultEnum.USER_ROLE_NOT_EXIST));
+        sysUserRoleDao.saveAll(createSysUserRole(userId, roleIds));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteSysUserBySysUserForm(String userId) {
+        sysUserDao.deleteSysUserByUserId(Long.parseLong(userId));
     }
 
     private SysUser createSysUser(SysUserForm sysUserForm) {
@@ -130,9 +145,19 @@ public class SysUserService {
         return sysUser;
     }
 
+    private SysUser updateSysUser(SysUser sysUser, SysUserForm sysUserForm) {
+        sysUser.setUsername(sysUserForm.getUsername());
+        sysUser.setPassword(passwordEncoder.encode(sysUserForm.getPassword()));
+        sysUser.setEmail(sysUserForm.getEmail());
+        sysUser.setStatus(sysUserForm.getStatus());
+        sysUser.update(sysUserForm.getCurrUsername());
+        return sysUser;
+    }
+
     private List<SysUserRole> createSysUserRole(Long userId, Set<Long> roleIds) {
         return roleIds
                 .stream()
-                .map(roleId -> new SysUserRole(new SysUserRolePK(userId, roleId))).toList();
+                .map(roleId -> new SysUserRole(new SysUserRolePK(userId, roleId)))
+                .toList();
     }
 }

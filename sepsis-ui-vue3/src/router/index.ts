@@ -74,6 +74,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         name: "SystemUser",
         meta: {
           title: "用户管理",
+          svgIcon: "user",
           roles: ["root", "admin"]
         }
       },
@@ -83,6 +84,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         name: "SystemRole",
         meta: {
           title: "角色管理",
+          svgIcon: "role",
           roles: ["root", "admin"]
         }
       }

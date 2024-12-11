@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref, watch} from "vue";
 import { useUserStore } from "@/store/modules/user"
 import {type UserTableData, type UserFormRequestData} from "@/api/system/user/types/user";
-import {createUserApi, userTableApi} from "@/api/system/user";
+import {createUserApi, deleteUserApi, updateUserApi, userTableApi} from "@/api/system/user";
 import {FormInstance, type FormRules} from "element-plus";
 import {List, User, Message, Key} from "@element-plus/icons-vue";
 import Pagination from '@/components/Pagination/index.vue'
+import messageUtils from '@/utils/modal'
 
 // 引入用户 Pinia Store
 const userStore = useUserStore();
@@ -20,11 +21,16 @@ const userStatusOptions = [
   {value: '1', label: '停用'}
 ]
 
+// 用户表格数据
+const userTableData = ref<UserTableData[]>([])
+
 // 用户表格查询表单
 const userTableFormRef = ref<FormInstance | null>(null)
-const total = ref(0)
-const pageNum = ref(0)
-const pageSize = ref(5)
+const total = ref(0);
+const query = ref({
+  pageNum: 1,
+  pageSize: 10
+});
 const userTableFormData: UserFormRequestData = reactive({
   currUsername: loginUsername,
   userId: "",
@@ -33,8 +39,8 @@ const userTableFormData: UserFormRequestData = reactive({
   status: "",
   startTime: "",
   endTime: "",
-  pageNum: pageNum.value,
-  pageSize: pageSize.value
+  pageNum: query.value.pageNum,
+  pageSize: query.value.pageSize
 })
 
 // 新增用户表单
@@ -69,14 +75,50 @@ const createUserFormRules: FormRules = {
   ]
 }
 
-// 用户表格数据
-const userTableData = ref<UserTableData[]>([])
+// 修改用户表单
+const updateDialogVisible = ref(false)
+const updateUserFormRef = ref<FormInstance | null>(null)
+const updateUserFormData: UserFormRequestData = reactive({
+  currUsername: loginUsername,
+  userId: "",
+  username: "",
+  password: "",
+  roles: [],
+  email: "",
+  status: ""
+})
+const updateUserFormRules: FormRules = {
+  username: [
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
+  ],
+  password: [
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 5, max: 20, message: "长度在 5 到 20 个字符", trigger: "blur" }
+  ],
+  email: [
+    { required: true, message: "请输入绑定邮箱", trigger: "blur" },
+  ],
+  roles: [
+    { required: true, message: "请选择所属角色", trigger: "blur" },
+  ],
+  status: [
+    { required: true, message: "请选择用户状态", trigger: "blur" },
+  ]
+}
 
 /**
  * 新增用户
  */
 const createUser = () => {
   createDialogVisible.value = true
+}
+
+/**
+ * 批量删除用户
+ */
+const deleteUser = () => {
+  messageUtils.msgWarning("暂未开启批量删除用户功能")
 }
 
 /**
@@ -121,31 +163,113 @@ const resetCreateUserForm = () => {
 }
 
 /**
+ * 修改用户dialog取消
+ */
+const cancelUpdateUser = () => {
+  updateDialogVisible.value = false
+  resetUpdateUserForm()
+}
+
+/**
+ * 修改用户dialog确认
+ */
+const submitUpdateUser = () => {
+  updateUserFormRef.value?.validate((valid: boolean) => {
+    if (valid) {
+      updateUserApi(updateUserFormData)
+        .then(() => {
+          getUserTable();
+        })
+        .finally(() => {
+          updateDialogVisible.value = false;
+          resetUpdateUserForm()
+        })
+    }
+  })
+}
+
+/**
+ * 修改用户表单重置
+ */
+const resetUpdateUserForm = () => {
+  Object.assign(updateUserFormData, {
+    currUsername: loginUsername,
+    userId: "",
+    username: "",
+    password: "",
+    roles: [],
+    email: "",
+    status: ""
+  });
+}
+
+/**
  * 展示用户信息
  */
 const getUserTable = () => {
+  // 更新查询参数
+  userTableFormData.pageNum = query.value.pageNum - 1
+  userTableFormData.pageSize = query.value.pageSize
   userTableApi(userTableFormData).then(res => {
-    console.log(res.data)
     total.value = res.data.totalElements
     userTableData.value = res.data.content
   })
 }
 
 /**
+ * 更新页码
+ */
+const handlePageChange = (val) => {
+  query.value.pageNum = val;
+  getUserTable();
+}
+
+/**
+ * 更新每页大小
+ */
+const handleSizeChange = (val) => {
+  query.value.pageSize = val;
+  query.value.pageNum = 1
+  getUserTable();
+}
+
+/**
+ * 搜索按钮
+ */
+const handleSearch = () => {
+  query.value.pageNum = 1;
+  getUserTable();
+}
+
+/**
  * 修改单个用户
  */
-const handleEdit = () => {
-
+const handleEdit = (row) => {
+  updateUserFormData.userId = row.userId
+  updateUserFormData.username = row.username
+  updateUserFormData.password = row.password || ''
+  updateUserFormData.roles = row.roles
+  updateUserFormData.email = row.email
+  updateUserFormData.status = row.status
+  updateDialogVisible.value = true
 }
 
 /**
  * 删除单个用户
  */
-const handleDelete = () => {
-
+const handleDelete = (row) => {
+  const userId = row.userId
+  messageUtils.confirm('是否确认删除编号为 ' + userId + ' 的用户?').then(() => {
+    deleteUserApi(userId).then(() => {
+      query.value.pageNum = 1;
+      getUserTable()
+      messageUtils.msgSuccess("删除成功");
+    })
+  })
 }
 
 getUserTable();
+
 </script>
 
 <template>
@@ -179,14 +303,14 @@ getUserTable();
                           start-placeholder="起始日期" end-placeholder="终止日期" size="large"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleSearch()" size="large">搜索</el-button>
+          <el-button type="primary" icon="Search" @click="handleSearch" size="large">搜索</el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <div class="user-edit-button">
-      <el-button type="primary" icon="Plus" size="default" @click="createUser()">新增</el-button>
-      <el-button type="danger" icon="Delete" size="default" @click="">批量删除</el-button>
+      <el-button type="primary" icon="Plus" size="default" @click="createUser">新增</el-button>
+      <el-button type="danger" icon="Delete" size="default" @click="deleteUser">批量删除</el-button>
     </div>
 
     <div class="user-table">
@@ -206,7 +330,7 @@ getUserTable();
         </el-table-column>
         <el-table-column label="用户状态" key="status" prop="status" width="120" align="center">
           <template #default="{row}">
-            <el-button type="primary" plain disabled size="default">{{
+            <el-button type="warning" plain disabled size="default">{{
                 row.status === '0' ? '正常' : '停用'
               }}
             </el-button>
@@ -219,16 +343,19 @@ getUserTable();
         <el-table-column label="操作" width="150" align="center">
           <template #default="{row}">
             <div v-if="row.userId != 1" class="table-operation">
-              <el-button size="default" type="text" icon="Edit" @click="handleEdit()">修改</el-button>
-              <el-button size="default" type="text" icon="Delete" @click="handleDelete()">删除</el-button>
+              <el-button size="default" type="text" icon="Edit" @click="handleEdit(row)">修改</el-button>
+              <el-button size="default" type="text" icon="Delete" @click="handleDelete(row)">删除</el-button>
             </div>
           </template>
         </el-table-column>
       </el-table>
-    </div>
-
-    <div>
-      <Pagination :total="total" :page-size="pageSize" :page-num="pageNum"/>
+      <Pagination
+        :total="total"
+        :page-num="query.pageNum"
+        :page-size="query.pageSize"
+        @update:page="handlePageChange"
+        @update:size="handleSizeChange"
+       />
     </div>
 
     <!-- 新增用户的弹窗 -->
@@ -260,6 +387,43 @@ getUserTable();
           <div class="dialog-footer">
             <el-button type="warning" plain size="default" @click="cancelCreateUser">取消</el-button>
             <el-button type="primary" plain size="default" @click="submitCreateUser">确定</el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </div>
+
+    <!-- 修改用户的弹窗 -->
+    <div class="user-dialog">
+      <el-dialog title="修改用户" v-model="updateDialogVisible" width="25%" center >
+        <el-form ref="updateUserFormRef" :model="updateUserFormData" :rules="updateUserFormRules" label-width="80px">
+          <el-form-item label="用户编号" prop="userId">
+            <el-input disabled placeholder="请输入用户编号" v-model="updateUserFormData.userId" type="text" clearable/>
+          </el-form-item>
+          <el-form-item label="用户名称" prop="username">
+            <el-input placeholder="请输入用户名称" v-model="updateUserFormData.username" type="text" clearable/>
+          </el-form-item>
+          <el-form-item label="用户密码" prop="password">
+            <el-input placeholder="请输入用户密码" v-model="updateUserFormData.password" type="password" clearable/>
+          </el-form-item>
+          <el-form-item label="绑定邮箱" prop="email">
+            <el-input placeholder="请输入绑定邮箱" v-model="updateUserFormData.email" type="text" clearable/>
+          </el-form-item>
+          <el-form-item label="所属角色" prop="roles">
+            <el-checkbox-group class="table-checkbox" v-model="updateUserFormData.roles" size="default">
+              <el-checkbox v-for="role in userRolesOptions" :key="role" :label="role" :value="role" :disabled="role === 'root'">
+                {{ role }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="用户状态" prop="status">
+            <el-radio v-model="updateUserFormData.status" label="0">正常</el-radio>
+            <el-radio v-model="updateUserFormData.status" label="1">禁用</el-radio>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button type="warning" plain size="default" @click="cancelUpdateUser">取消</el-button>
+            <el-button type="primary" plain size="default" @click="submitUpdateUser">确定</el-button>
           </div>
         </template>
       </el-dialog>

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -21,5 +22,5 @@ public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificati
     Set<String> findRoleKeysByRoleIds(@Param("roleIds") List<Long> roleIds);
 
     @Query("select r.roleId from SysRole r where r.roleKey in :roleKey")
-    Set<Long> findRoleIdsByRoleKeys(@Param("roleKey") List<String> roleKey);
+    Optional<Set<Long>> findRoleIdsByRoleKeys(@Param("roleKey") List<String> roleKey);
 }
