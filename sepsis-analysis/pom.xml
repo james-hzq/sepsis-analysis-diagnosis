@@ -9,12 +9,12 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>sepsis-system</artifactId>
+    <artifactId>sepsis-analysis</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>sepsis-system-api</module>
-        <module>sepsis-system-server</module>
+        <module>sepsis-analysis-api</module>
+        <module>sepsis-analysis-server</module>
     </modules>
 
     <dependencies>

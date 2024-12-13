@@ -1,4 +1,4 @@
-package com.hzq.system.server;
+package com.hzq.analysis.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -7,17 +7,17 @@ import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author hua
- * @className com.hzq.system.server HzqSystemApplication
- * @date 2024/9/26 11:12
+ * @className com.hzq.analysis.server HzqAnalysisApplication
+ * @date 2024/12/13 18:24
  * @description TODO
  */
 @Slf4j
 @ComponentScan(basePackages = "com.hzq")
 @SpringBootApplication
-public class HzqSystemApplication {
+public class HzqAnalysisApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(HzqSystemApplication.class, args);
-        log.info("(●′ω`●) sepsis-system application running successfully (●′ω`●)");
+        SpringApplication.run(HzqAnalysisApplication.class, args);
+        log.info("(●′ω`●) sepsis-analysis application running successfully (●′ω`●)");
     }
 }

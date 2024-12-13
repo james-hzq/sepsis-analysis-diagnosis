@@ -5,29 +5,24 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.hzq</groupId>
-        <artifactId>sepsis</artifactId>
+        <artifactId>sepsis-analysis</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>sepsis-system</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>sepsis-system-api</module>
-        <module>sepsis-system-server</module>
-    </modules>
+    <artifactId>sepsis-analysis-api</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
-        <!-- SpringCloud bootstrap 加载器 -->
+        <!-- SpringCloud Openfeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!-- 全局 web -->
+        <!-- SpringCloud 负载均衡 -->
         <dependency>
-            <groupId>com.hzq</groupId>
-            <artifactId>common-web</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
     </dependencies>
 </project>

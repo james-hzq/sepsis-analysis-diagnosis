@@ -12,10 +12,11 @@
     <version>1.0.0</version>
 
     <modules>
-        <module>sepsis-auth</module>
         <module>sepsis-common</module>
-        <module>sepsis-system</module>
         <module>sepsis-gateway</module>
+        <module>sepsis-auth</module>
+        <module>sepsis-system</module>
+        <module>sepsis-analysis</module>
     </modules>
 
     <!--聚合工程分为顶级工程和子工程，父子继承关系，子工程在maven中就是模块-->
@@ -231,6 +232,12 @@
             <dependency>
                 <groupId>com.hzq</groupId>
                 <artifactId>sepsis-system-api</artifactId>
+                <version>${hzq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hzq</groupId>
+                <artifactId>sepsis-analysis-api</artifactId>
                 <version>${hzq.version}</version>
             </dependency>
         </dependencies>
