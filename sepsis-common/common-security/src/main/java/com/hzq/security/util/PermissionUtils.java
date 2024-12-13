@@ -31,7 +31,7 @@ public class PermissionUtils {
          **/
         @SuppressWarnings("unchecked")
         public static Set<String>[] getGroupRoles(String[] roles) {
-            Set<String>[] roleSet = (Set<String>[]) new Set[RoleEnum.getLastLevel()];
+            Set<String>[] roleSet = (Set<String>[]) new Set[RoleEnum.getLastLevel() + 1];
             for (int i = 0;i < roleSet.length;i++) roleSet[i] = new HashSet<>();
             Arrays.stream(roles)
                     .map(RoleEnum::getRoleEnum)
@@ -48,7 +48,7 @@ public class PermissionUtils {
          **/
         @SuppressWarnings("unchecked")
         public static Set<String>[] getGroupRoles(Set<String> roles) {
-            Set<String>[] roleSet = (Set<String>[]) new Set[RoleEnum.getLastLevel()];
+            Set<String>[] roleSet = (Set<String>[]) new Set[RoleEnum.getLastLevel() + 1];
             for (int i = 0;i < roleSet.length;i++) roleSet[i] = new HashSet<>();
             roles.stream()
                     .map(RoleEnum::getRoleEnum)
