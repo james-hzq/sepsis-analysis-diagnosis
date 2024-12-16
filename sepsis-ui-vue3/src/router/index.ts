@@ -90,6 +90,30 @@ export const dynamicRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  {
+    path: "/analysis",
+    component: Layouts,
+    redirect: "/analysis/report",
+    name: "Analysis",
+    meta: {
+      title: "统计分析",
+      svgIcon: "analysis",
+      roles: ["root", "admin", "user"],
+      alwaysShow: true
+    },
+    children: [
+      {
+        path: "report",
+        component: () => import("@/views/analysis/report/index.vue"),
+        name: "AnalysisReport",
+        meta: {
+          title: "填报概括",
+          svgIcon: "report",
+          roles: ["root", "admin", "user"]
+        }
+      },
+    ]
+  }
 ]
 
 /**

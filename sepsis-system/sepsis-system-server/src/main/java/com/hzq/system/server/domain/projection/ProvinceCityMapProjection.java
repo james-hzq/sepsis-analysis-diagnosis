@@ -1,8 +1,8 @@
-package com.hzq.system.server.domain.projecction;
+package com.hzq.system.server.domain.projection;
 
 /**
  * @author hua
- * @interfaceName com.hzq.system.server.domain.vo ProvinceCityMapProjection
+ * @interfaceName com.hzq.system.server.domain.projection ProvinceCityMapProjection
  * @date 2024/12/12 9:59
  * @description 省份地图投影
  */

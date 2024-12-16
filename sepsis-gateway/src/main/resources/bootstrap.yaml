@@ -43,6 +43,10 @@ spring:
           uri: http://localhost:9201
           predicates:
             - Path=/system/**
+        - id: sepsis-analysis
+          uri: http://localhost:9202
+          predicates:
+            - Path=/analysis/**
 
 logging:
   config: classpath:logback-spring.xml

@@ -2,7 +2,7 @@ package com.hzq.system.server.service;
 
 import com.hzq.system.server.dao.TbHospInfoDao;
 import com.hzq.system.server.domain.entity.TbHospInfo;
-import com.hzq.system.server.domain.projecction.ProvinceCityMapProjection;
+import com.hzq.system.server.domain.projection.ProvinceCityMapProjection;
 import com.hzq.system.server.domain.vo.ProvinceCityMapVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

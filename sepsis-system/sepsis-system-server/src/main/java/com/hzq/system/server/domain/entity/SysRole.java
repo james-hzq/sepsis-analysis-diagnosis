@@ -1,12 +1,9 @@
 package com.hzq.system.server.domain.entity;
 
-import com.hzq.web.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.util.Set;
 
 /**
  * @author hua

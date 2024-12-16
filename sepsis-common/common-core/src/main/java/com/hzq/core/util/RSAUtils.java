@@ -1,7 +1,6 @@
 package com.hzq.core.util;
 
 import javax.crypto.Cipher;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -187,8 +186,7 @@ public class RSAUtils {
         }
     }
 
-
-    public static void main(String[] args) throws Exception{
+    public static void test() throws Exception {
         // 用于生成公钥和私钥
         Map<String, Object> keyPair = getKeyPair(KEY_SIZE);
         String publicKeyStr = getPublicKeyStr(keyPair);

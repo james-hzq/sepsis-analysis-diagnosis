@@ -1,7 +1,6 @@
 package com.hzq.system.server.dao;
 
 import com.hzq.system.server.domain.entity.SysUser;
-import com.hzq.system.server.domain.vo.SysUserRoleVO;
 import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

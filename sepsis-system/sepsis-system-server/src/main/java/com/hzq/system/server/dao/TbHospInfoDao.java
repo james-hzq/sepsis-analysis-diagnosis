@@ -1,7 +1,7 @@
 package com.hzq.system.server.dao;
 
 import com.hzq.system.server.domain.entity.TbHospInfo;
-import com.hzq.system.server.domain.projecction.ProvinceCityMapProjection;
+import com.hzq.system.server.domain.projection.ProvinceCityMapProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +27,7 @@ public interface TbHospInfoDao extends JpaRepository<TbHospInfo, Integer> {
 
     @Query("select t from TbHospInfo t where t.icuCity =:icuCity")
     Optional<List<TbHospInfo>> findTbHospInfoByIcuCity(@Param("icuCity") String icuCity);
+
+    @Query("select t from TbHospInfo t where t.icuCity =:icuCity")
+    Optional<List<TbHospInfo>> findTbHospInfoByIcuCity(@Param("icuCity") Integer icuCity);
 }
