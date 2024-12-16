@@ -44,13 +44,14 @@ public class PageUtils {
      **/
     public static Pageable buildPageRequest() {
         int pageNum = Optional.ofNullable(pageParameterConverter.convert(ServletUtils.getParameter(PAGE_NUM)))
-                .orElse(DEFAULT_PAGE_NUM);
+                .orElse(DEFAULT_PAGE_NUM) - 1;
         int pageSize = Optional.ofNullable(pageParameterConverter.convert(ServletUtils.getParameter(PAGE_SIZE)))
                 .orElse(DEFAULT_PAGE_SIZE);
         String orderBy = ServletUtils.getParameter(ORDER_BY);
         String direction = ServletUtils.getParameter(DIRECTION);
-        return !Strings.isNullOrEmpty(orderBy) && (ASC.equals(direction) || DESC.equals(direction))
-                ? PageRequest.of(pageNum, pageSize, ASC.equals(direction) ? Sort.Direction.ASC : Sort.Direction.DESC, orderBy)
-                : PageRequest.of(pageNum, pageSize, Sort.unsorted());
+        if (Strings.isNullOrEmpty(orderBy) || (!ASC.equals(direction) && !DESC.equals(direction))) {
+            return PageRequest.of(pageNum, pageSize, Sort.unsorted());
+        }
+        return PageRequest.of(pageNum, pageSize, ASC.equals(direction) ? Sort.Direction.ASC : Sort.Direction.DESC, orderBy);
     }
 }

@@ -16,6 +16,7 @@ const loginFormRef = ref<FormInstance | null>(null)
 
 // 系统登录按钮 Loading
 const systemLoginLoading = ref(false)
+const systemRegisterLoading = ref(false)
 
 // 登录表单数据
 const loginFormData: SystemLoginRequestData = reactive({

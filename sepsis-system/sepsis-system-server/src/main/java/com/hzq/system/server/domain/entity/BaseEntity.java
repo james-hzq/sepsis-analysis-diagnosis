@@ -1,6 +1,5 @@
-package com.hzq.web.base;
+package com.hzq.system.server.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
@@ -15,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  * @author hua
  * @className com.hzq.common.dao BaseEntity
  * @date 2024/8/28 21:59
- * @description 实体类的公共字段
+ * @description 系统管理模块公共实体类字段
  */
 @MappedSuperclass
 @Data

@@ -26,11 +26,13 @@ const userTableData = ref<UserTableData[]>([])
 
 // 用户表格查询表单
 const userTableFormRef = ref<FormInstance | null>(null)
-const total = ref(0);
-const query = ref({
+const total = ref(0)
+const query: PageRequestData = reactive({
   pageNum: 1,
-  pageSize: 10
-});
+  pageSize: 10,
+  orderBy: null,
+  direction: null
+})
 const userTableFormData: UserFormRequestData = reactive({
   currUsername: loginUsername,
   userId: "",
@@ -39,8 +41,6 @@ const userTableFormData: UserFormRequestData = reactive({
   status: "",
   startTime: "",
   endTime: "",
-  pageNum: query.value.pageNum,
-  pageSize: query.value.pageSize
 })
 
 // 新增用户表单
@@ -208,9 +208,7 @@ const resetUpdateUserForm = () => {
  */
 const getUserTable = () => {
   // 更新查询参数
-  userTableFormData.pageNum = query.value.pageNum - 1
-  userTableFormData.pageSize = query.value.pageSize
-  userTableApi(userTableFormData).then(res => {
+  userTableApi(query, userTableFormData).then(res => {
     total.value = res.data.totalElements
     userTableData.value = res.data.content
   })
@@ -220,7 +218,7 @@ const getUserTable = () => {
  * 更新页码
  */
 const handlePageChange = (val) => {
-  query.value.pageNum = val;
+  query.pageNum = val;
   getUserTable();
 }
 
@@ -228,8 +226,8 @@ const handlePageChange = (val) => {
  * 更新每页大小
  */
 const handleSizeChange = (val) => {
-  query.value.pageSize = val;
-  query.value.pageNum = 1
+  query.pageSize = val;
+  query.pageNum = 1
   getUserTable();
 }
 
@@ -237,7 +235,7 @@ const handleSizeChange = (val) => {
  * 搜索按钮
  */
 const handleSearch = () => {
-  query.value.pageNum = 1;
+  query.pageNum = 1;
   getUserTable();
 }
 
@@ -261,7 +259,7 @@ const handleDelete = (row) => {
   const userId = row.userId
   messageUtils.confirm('是否确认删除编号为 ' + userId + ' 的用户?').then(() => {
     deleteUserApi(userId).then(() => {
-      query.value.pageNum = 1;
+      query.pageNum = 1;
       getUserTable()
       messageUtils.msgSuccess("删除成功");
     })
@@ -379,8 +377,8 @@ getUserTable();
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="用户状态" prop="status">
-            <el-radio v-model="createUserFormData.status" label="0">正常</el-radio>
-            <el-radio v-model="createUserFormData.status" label="1">禁用</el-radio>
+            <el-radio v-model="createUserFormData.status" value="0">正常</el-radio>
+            <el-radio v-model="createUserFormData.status" value="1">禁用</el-radio>
           </el-form-item>
         </el-form>
         <template #footer>

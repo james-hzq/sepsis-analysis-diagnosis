@@ -38,10 +38,6 @@ export interface UserFormRequestData {
   startTime: string
   // 创建结束时间
   endTime: string
-  // 当前页面
-  pageNum: number
-  // 每页条数
-  pageSize: number
 }
 
 export type UserTableResponseData = ApiResponseData<UserTableData[]>
