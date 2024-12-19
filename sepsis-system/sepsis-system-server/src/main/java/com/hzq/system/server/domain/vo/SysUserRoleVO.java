@@ -45,9 +45,9 @@ public class SysUserRoleVO {
         this.email = tuple.get("email", String.class);
         this.roles = Arrays.stream(tuple.get("roleKey", String.class).split(",")).collect(Collectors.toSet());
         this.status = tuple.get("status", Character.class);
-        this.createTime = DateTimeUtils.convertToLocalDateTime(tuple.get("create_time", Timestamp.class));
+        this.createTime = DateTimeUtils.convertTimestampToLocalDateTime(tuple.get("create_time", Timestamp.class));
         this.createBy = tuple.get("create_by", String.class);
-        this.updateTime = DateTimeUtils.convertToLocalDateTime(tuple.get("update_time", Timestamp.class));
+        this.updateTime = DateTimeUtils.convertTimestampToLocalDateTime(tuple.get("update_time", Timestamp.class));
         this.updateBy = tuple.get("update_by", String.class);
     }
 }

@@ -2,7 +2,6 @@ package com.hzq.analysis.server.service;
 
 import com.hzq.analysis.server.dao.TbPatientInfoDao;
 import com.hzq.analysis.server.domain.entity.TbPatientInfo;
-import com.hzq.analysis.server.domain.projection.PatientLocationProjection;
 import com.hzq.analysis.server.domain.vo.PatientLocationVO;
 import com.hzq.analysis.server.domain.vo.PatientReportVO;
 import com.hzq.core.result.ResultEnum;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author hua

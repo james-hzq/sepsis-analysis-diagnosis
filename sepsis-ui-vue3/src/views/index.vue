@@ -57,22 +57,22 @@ onMounted(async () => {
     <div class="city-distribution">
       <span class="one">城市站点信息：</span>
       <el-radio-group v-model="radio" size="large">
-        <el-radio-button value="合肥市" @click.native="showCityDistribution('合肥市')"/>
-        <el-radio-button value="安庆市" @click.native="showCityDistribution('安庆市')"/>
-        <el-radio-button value="蚌埠市" @click.native="showCityDistribution('蚌埠市')"/>
-        <el-radio-button value="亳州市" @click.native="showCityDistribution('亳州市')"/>
-        <el-radio-button value="池州市" @click.native="showCityDistribution('池州市')"/>
-        <el-radio-button value="滁州市" @click.native="showCityDistribution('滁州市')"/>
-        <el-radio-button value="阜阳市" @click.native="showCityDistribution('阜阳市')"/>
-        <el-radio-button value="黄山市" @click.native="showCityDistribution('黄山市')"/>
-        <el-radio-button value="淮北市" @click.native="showCityDistribution('淮北市')"/>
-        <el-radio-button value="淮南市" @click.native="showCityDistribution('淮南市')"/>
-        <el-radio-button value="六安市" @click.native="showCityDistribution('六安市')"/>
-        <el-radio-button value="马鞍山市" @click.native="showCityDistribution('马鞍山市')"/>
-        <el-radio-button value="宿州市" @click.native="showCityDistribution('宿州市')"/>
-        <el-radio-button value="铜陵市" @click.native="showCityDistribution('铜陵市')"/>
-        <el-radio-button value="芜湖市" @click.native="showCityDistribution('芜湖市')"/>
-        <el-radio-button value="宣城市" @click.native="showCityDistribution('宣城市')"/>
+        <el-radio-button value="合肥市" @click.native="showCityDistribution('合肥市')">合肥市</el-radio-button>
+        <el-radio-button value="安庆市" @click.native="showCityDistribution('安庆市')">安庆市</el-radio-button>
+        <el-radio-button value="蚌埠市" @click.native="showCityDistribution('蚌埠市')">蚌埠市</el-radio-button>
+        <el-radio-button value="亳州市" @click.native="showCityDistribution('亳州市')">亳州市</el-radio-button>
+        <el-radio-button value="池州市" @click.native="showCityDistribution('池州市')">池州市</el-radio-button>
+        <el-radio-button value="滁州市" @click.native="showCityDistribution('滁州市')">滁州市</el-radio-button>
+        <el-radio-button value="阜阳市" @click.native="showCityDistribution('阜阳市')">阜阳市</el-radio-button>
+        <el-radio-button value="黄山市" @click.native="showCityDistribution('黄山市')">黄山市</el-radio-button>
+        <el-radio-button value="淮北市" @click.native="showCityDistribution('淮北市')">淮北市</el-radio-button>
+        <el-radio-button value="淮南市" @click.native="showCityDistribution('淮南市')">淮南市</el-radio-button>
+        <el-radio-button value="六安市" @click.native="showCityDistribution('六安市')">六安市</el-radio-button>
+        <el-radio-button value="马鞍山市" @click.native="showCityDistribution('马鞍山市')">马鞍山市</el-radio-button>
+        <el-radio-button value="宿州市" @click.native="showCityDistribution('宿州市')">宿州市</el-radio-button>
+        <el-radio-button value="铜陵市" @click.native="showCityDistribution('铜陵市')">铜陵市</el-radio-button>
+        <el-radio-button value="芜湖市" @click.native="showCityDistribution('芜湖市')">芜湖市</el-radio-button>
+        <el-radio-button value="宣城市" @click.native="showCityDistribution('宣城市')">宣城市</el-radio-button>
       </el-radio-group>
     </div>
 

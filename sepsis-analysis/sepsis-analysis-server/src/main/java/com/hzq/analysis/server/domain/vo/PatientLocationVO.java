@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
  * @description 患者入院地点展示
  */
 @Data
-@Accessors(chain = true)
 @ToString
 @EqualsAndHashCode
 public class PatientLocationVO {

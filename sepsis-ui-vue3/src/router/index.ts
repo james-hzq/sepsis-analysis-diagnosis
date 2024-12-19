@@ -112,6 +112,26 @@ export const dynamicRoutes: RouteRecordRaw[] = [
           roles: ["root", "admin", "user"]
         }
       },
+      {
+        path: "icu",
+        component: () => import("@/views/analysis/icu/index.vue"),
+        name: "AnalysisIcu",
+        meta: {
+          title: "ICU患者",
+          svgIcon: "analysis-icu",
+          roles: ["root", "admin", "user"]
+        }
+      },
+      {
+        path: "sepsis",
+        component: () => import("@/views/analysis/sepsis/index.vue"),
+        name: "AnalysisSepsis",
+        meta: {
+          title: "SEPSIS患者",
+          svgIcon: "analysis-sepsis",
+          roles: ["root", "admin", "user"]
+        }
+      }
     ]
   }
 ]
