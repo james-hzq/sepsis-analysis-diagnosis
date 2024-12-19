@@ -104,4 +104,13 @@ public interface TbPatientInfoDao extends JpaRepository<TbPatientInfo, Integer> 
     Optional<EndChartProjection> findEndChartInIcu(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
+
+    @Query("select " +
+            "sum(case when t.isDied = '0' then 1 else 0 end) as survivalNum, " +
+            "sum(case when t.isDied = '1' then 1 else 0 end) as diedNum " +
+            "from TbPatientInfo t " +
+            "where t.isSepsis = '1' and t.inTime between :startTime and :endTime")
+    Optional<EndChartProjection> findEndChartInSepsis(
+            @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
+    );
 }

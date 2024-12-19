@@ -208,17 +208,17 @@ onMounted(() =>{
   <div>
     <el-row>
       <el-col :span="12">
-        <div class="heart-and-breath-chart-class" :id="sofaId" v-loading="loading" element-loading-text="加载中"/>
+        <div class="score-chart-class" :id="sofaId" v-loading="loading" element-loading-text="加载中"/>
       </el-col>
       <el-col :span="12">
-        <div class="heart-and-breath-chart-class" :id="gcsId" v-loading="loading" element-loading-text="加载中"/>
+        <div class="score-chart-class" :id="gcsId" v-loading="loading" element-loading-text="加载中"/>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <style scoped lang="scss">
-.heart-and-breath-chart-class {
+.score-chart-class {
   width: auto;
   height: 400px
 }

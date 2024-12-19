@@ -25,10 +25,24 @@ public interface FirstDayScoreDao extends JpaRepository<FirstDayScore, Integer> 
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
 
+    @Query("select t.sofa as score, count(*) as total from FirstDayScore t " +
+            "where t.isSepsis = '1' and t.inTime between :startTime and :endTime " +
+            "group by t.sofa order by t.sofa")
+    Optional<List<ScoreChartProjection>> findSofaChartInSepsis(
+            @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
+    );
+
     @Query("select t.gcsMotor as score, count(*) as total from FirstDayScore t " +
             "where t.inTime between :startTime and :endTime " +
             "group by t.gcsMotor order by t.gcsMotor")
     Optional<List<ScoreChartProjection>> findGcsMotorChartInIcu(
+            @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
+    );
+
+    @Query("select t.gcsMotor as score, count(*) as total from FirstDayScore t " +
+            "where t.isSepsis = '1' and t.inTime between :startTime and :endTime " +
+            "group by t.gcsMotor order by t.gcsMotor")
+    Optional<List<ScoreChartProjection>> findGcsMotorChartInSepsis(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
 
@@ -39,10 +53,24 @@ public interface FirstDayScoreDao extends JpaRepository<FirstDayScore, Integer> 
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
 
+    @Query("select t.gcsVerbal as score, count(*) as total from FirstDayScore t " +
+            "where t.isSepsis = '1' and t.inTime between :startTime and :endTime " +
+            "group by t.gcsVerbal order by t.gcsVerbal")
+    Optional<List<ScoreChartProjection>> findGcsVerbalChartInSepsis(
+            @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
+    );
+
     @Query("select t.gcsEyes as score, count(*) as total from FirstDayScore t " +
             "where t.inTime between :startTime and :endTime " +
             "group by t.gcsEyes order by t.gcsEyes")
     Optional<List<ScoreChartProjection>> findGcsEyesChartInIcu(
+            @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
+    );
+
+    @Query("select t.gcsEyes as score, count(*) as total from FirstDayScore t " +
+            "where t.isSepsis = '1' and t.inTime between :startTime and :endTime " +
+            "group by t.gcsEyes order by t.gcsEyes")
+    Optional<List<ScoreChartProjection>> findGcsEyesChartInSepsis(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
 }

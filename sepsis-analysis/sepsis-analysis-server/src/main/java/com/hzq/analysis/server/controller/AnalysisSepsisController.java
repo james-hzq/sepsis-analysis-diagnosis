@@ -1,9 +1,7 @@
 package com.hzq.analysis.server.controller;
 
-import com.hzq.analysis.server.domain.vo.AgeChartVO;
 import com.hzq.analysis.server.domain.vo.DrawItemVO;
-import com.hzq.analysis.server.domain.vo.HeartAndBreathChartVO;
-import com.hzq.analysis.server.service.AnalysisIcuService;
+import com.hzq.analysis.server.service.AnalysisSepsisService;
 import com.hzq.core.result.Result;
 import com.hzq.core.util.DateTimeUtils;
 import com.hzq.security.annotation.RequiresPermissions;
@@ -18,45 +16,35 @@ import java.util.List;
 
 /**
  * @author hua
- * @className com.hzq.analysis.server.controller AnalysisIcuController
- * @date 2024/12/17 11:16
- * @description 统计分析——ICU患者请求处理器
+ * @className com.hzq.analysis.server.controller AnalysisSepsisController
+ * @date 2024/12/19 16:15
+ * @description 统计分析——SEPSIS患者请求处理器
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/analysis/icu")
-public class AnalysisIcuController {
+@RequestMapping("/analysis/sepsis")
+public class AnalysisSepsisController {
 
-    private final AnalysisIcuService analysisIcuService;
+    private final AnalysisSepsisService analysisSepsisService;
 
-    @GetMapping("/age-chart")
+    @GetMapping("/urine-chart")
     @RequiresPermissions("@ps.hasRolesAnd('user')")
-    public Result<AgeChartVO> getAgeChart(
+    public Result<List<List<DrawItemVO<Integer>>>> getUrineChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
         LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
         LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
-        return Result.success(analysisIcuService.getAgeChart(start, end));
+        return Result.success(analysisSepsisService.getUrineChart(start, end));
     }
 
-    @GetMapping("/height-weight-chart")
+    @GetMapping("/white-blood-cell-chart")
     @RequiresPermissions("@ps.hasRolesAnd('user')")
-    public Result<List<DrawItemVO<Double>>> getHeightAndWeightChart(
+    public Result<List<DrawItemVO<Double>>> getWhiteBloodCellChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
         LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
         LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
-        return Result.success(analysisIcuService.getHeightAndWeightChart(start, end));
-    }
-
-    @GetMapping("/heart-breath-chart")
-    @RequiresPermissions("@ps.hasRolesAnd('user')")
-    public Result<HeartAndBreathChartVO> getHeartAndBreathChart(
-            @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
-    ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
-        return Result.success(analysisIcuService.getHeartAndBreathChart(start, end));
+        return Result.success(analysisSepsisService.getWhiteBloodCellChart(start, end));
     }
 
     @GetMapping("/end-chart")
@@ -66,7 +54,7 @@ public class AnalysisIcuController {
     ) {
         LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
         LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
-        return Result.success(analysisIcuService.getEndChart(start, end));
+        return Result.success(analysisSepsisService.getEndChart(start, end));
     }
 
     @GetMapping("/score-chart")
@@ -76,6 +64,6 @@ public class AnalysisIcuController {
     ) {
         LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
         LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
-        return Result.success(analysisIcuService.getScoreChart(start, end));
+        return Result.success(analysisSepsisService.getScoreChart(start, end));
     }
 }

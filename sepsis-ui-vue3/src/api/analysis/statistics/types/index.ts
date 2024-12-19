@@ -39,5 +39,7 @@ export interface HeartAndBreathChartData {
 export type AgeChartResponseData = ApiResponseData<AgeChartData>
 export type HeightAndWeightChartResponseData = ApiResponseData<DrawItemData<number>[]>
 export type HeartAndBreathChartResponseData = ApiResponseData<HeartAndBreathChartData>
+export type UrineChartResponseData = ApiResponseData<DrawItemData<number>[][]>
+export type WhiteBloodCellChartResponseData = ApiResponseData<DrawItemData<number>[]>
 export type EndChartResponseData = ApiResponseData<DrawItemData<number>[]>
 export type ScoreChartResponseData = ApiResponseData<DrawItemData<number>[][]>

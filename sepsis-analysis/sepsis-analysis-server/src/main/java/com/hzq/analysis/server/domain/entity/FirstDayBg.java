@@ -192,7 +192,7 @@ public class FirstDayBg extends BaseEntity {
     private double monocytesMin;
 
     @Column(name = "monocytes_max", columnDefinition = " comment '单核细胞计数(10^9/L)'")
-    private double monoyerMax;
+    private double monocytesMax;
 
     @Column(name = "monocytes", columnDefinition = " comment '单核细胞计数(10^9/L)'")
     private double monocytes;

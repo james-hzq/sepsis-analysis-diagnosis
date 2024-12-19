@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {type AnalysisRequestData} from "/src/api/analysis/statistics/types";
-import {reactive, ref} from "vue";
+import {reactive} from "vue";
 import AgeChart from '@/components/Chart/AgeChart.vue'
 import HeightAndWeightChart from '@/components/Chart/HeightAndWeightChart.vue'
 import HeartAndBreathChart from '@/components/Chart/HeartAndBreathChart.vue'
@@ -22,7 +22,6 @@ const dataScope = {
   threeInterval: 7000,
   fourInterval: 7000,
 }
-
 </script>
 
 <template>
@@ -49,7 +48,7 @@ const dataScope = {
         <HeartAndBreathChart url="/icu/heart-breath-chart" :analysis-request-data="icuAnalysisQuery" text="ICU患者第一天心率和呼吸(右图为心率分布)" :rotate="18"/>
       </el-card>
       <el-card class="icu-analysis-content">
-        <EndChart url="/icu/end-chart" :analysis-request-data="icuAnalysisQuery" text="ICU患者第一天结局" :rotate="18"/>
+        <EndChart url="/icu/end-chart" :analysis-request-data="icuAnalysisQuery" text="ICU患者结局" :rotate="18"/>
       </el-card>
       <el-card class="icu-analysis-content">
         <ScoreChart url="/icu/score-chart" :analysis-request-data="icuAnalysisQuery" :dataScope=dataScope text="ICU患者第一天 SOFA 和 GCS 评分" :rotate="18"/>

@@ -1,22 +1,31 @@
 package com.hzq.analysis.server.service;
 
+import com.google.common.collect.Lists;
 import com.hzq.analysis.server.dao.FirstDayScoreDao;
 import com.hzq.analysis.server.dao.FirstDayVitalSignDao;
 import com.hzq.analysis.server.dao.TbPatientInfoDao;
 import com.hzq.analysis.server.domain.dto.*;
 import com.hzq.analysis.server.domain.entity.FirstDayScore;
+import com.hzq.analysis.server.domain.projection.ScoreChartProjection;
 import com.hzq.analysis.server.domain.vo.AgeChartVO;
 import com.hzq.analysis.server.domain.vo.DrawItemVO;
 import com.hzq.analysis.server.domain.vo.HeartAndBreathChartVO;
 import com.hzq.analysis.server.domain.vo.HeightAndWeightChartVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author hua
@@ -31,6 +40,9 @@ public class AnalysisIcuService extends BaseStatisticsService {
     private final TbPatientInfoDao tbPatientInfoDao;
     private final FirstDayVitalSignDao firstDayVitalSignDao;
     private final FirstDayScoreDao firstDayScoreDao;
+
+    // 自定义线程池，避免使用默认的 ForkJoinPool
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public AgeChartVO getAgeChart(LocalDateTime startTime, LocalDateTime endTime) {
         // 查询年龄分组数据
@@ -77,23 +89,15 @@ public class AnalysisIcuService extends BaseStatisticsService {
     }
 
     public List<List<DrawItemVO<Integer>>> getScoreChart(LocalDateTime startTime, LocalDateTime endTime) {
-        // sofa得分情况
-        List<ScoreChart> sofaList = firstDayScoreDao.findSofaChartInIcu(startTime, endTime)
-                .map(list -> list.stream().map(ScoreChart::new).toList())
-                .orElse(new ArrayList<>());
-        // gcs_motor得分情况
-        List<ScoreChart> gcsMotorList = firstDayScoreDao.findGcsMotorChartInIcu(startTime, endTime)
-                .map(list -> list.stream().map(ScoreChart::new).toList())
-                .orElse(new ArrayList<>());
-        // gcs_verbal得分情况
-        List<ScoreChart> gcsVerbalList = firstDayScoreDao.findGcsVerbalChartInIcu(startTime, endTime)
-                .map(list -> list.stream().map(ScoreChart::new).toList())
-                .orElse(new ArrayList<>());
-        // gcs_eyes得分情况
-        List<ScoreChart> gcsEyesList = firstDayScoreDao.findGcsEyesChartInIcu(startTime, endTime)
-                .map(list -> list.stream().map(ScoreChart::new).toList())
-                .orElse(new ArrayList<>());
-        // 根据得分情况 构建前端展示对象
-        return createScoreChart(sofaList, gcsMotorList, gcsVerbalList, gcsEyesList);
+        List<CompletableFuture<List<ScoreChart>>> futures = List.of(
+                fetchScoreChartAsync(startTime, endTime, firstDayScoreDao::findSofaChartInIcu, executorService),
+                fetchScoreChartAsync(startTime, endTime, firstDayScoreDao::findGcsMotorChartInIcu, executorService),
+                fetchScoreChartAsync(startTime, endTime, firstDayScoreDao::findGcsVerbalChartInIcu, executorService),
+                fetchScoreChartAsync(startTime, endTime, firstDayScoreDao::findGcsEyesChartInIcu, executorService)
+        );
+        List<List<ScoreChart>> results = futures.stream()
+                .map(CompletableFuture::join)
+                .toList();
+        return createScoreChart(results);
     }
 }

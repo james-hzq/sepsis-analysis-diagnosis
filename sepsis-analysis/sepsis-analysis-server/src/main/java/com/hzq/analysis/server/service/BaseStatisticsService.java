@@ -1,15 +1,23 @@
 package com.hzq.analysis.server.service;
 
+import com.google.common.collect.Lists;
 import com.hzq.analysis.server.domain.dto.*;
+import com.hzq.analysis.server.domain.projection.ScoreChartProjection;
 import com.hzq.analysis.server.domain.vo.AgeChartVO;
 import com.hzq.analysis.server.domain.vo.DrawItemVO;
 import com.hzq.analysis.server.domain.vo.HeartAndBreathChartVO;
 import com.hzq.analysis.server.domain.vo.HeightAndWeightChartVO;
 import com.hzq.core.util.ReflectionUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,6 +58,17 @@ public class BaseStatisticsService {
     // 患者结局分组
     public static final String[] END_LABELS = {
             "存活人数", "死亡人数"
+    };
+    // 尿量分组
+    public static final String[] URINE_LABELS = {
+            "< 0.5L", "0.5-1L", "1-1.5L", "1.5-2L", "2-2.5L", "2.5-3L", "> 3L"
+    };
+    public static final Integer[] URINE_STANDARD = {
+            500, 1000, 1500, 2000, 2500, 3000, 100000
+    };
+    // 淋巴细胞计数分组
+    public static final String[] WHITE_BLOOD_CELL_CHART_LABELS = {
+            "淋巴细胞计数", "单核细胞计数", "嗜碱粒细胞计数", "嗜酸粒细胞计数", "中性粒细胞计数"
     };
 
     /***
@@ -141,6 +160,49 @@ public class BaseStatisticsService {
 
     /**
      * @author hua
+     * @date 2024/12/19 18:54
+     * @param urineChartList 患者尿量分组集合
+     * @return java.util.List<java.util.List<com.hzq.analysis.server.domain.vo.DrawItemVO<java.lang.Integer>>>
+     * @apiNote 根据患者尿量分组 构建前端展示对象
+     **/
+    protected List<List<DrawItemVO<Integer>>> createUrineChart(List<UrineChart> urineChartList) {
+        // 获取当前尿量以及对应人数
+        List<DrawItemVO<Integer>> urineList = urineChartList
+                .stream()
+                .map(urineChart -> new DrawItemVO<>(
+                        String.valueOf(urineChart.getUrineOutput()), urineChart.getTotal()
+                ))
+                .toList();
+        // 获取尿量分组人数
+        int[] labelCnt = {0, 0, 0, 0, 0, 0, 0};
+        int idx = 0;
+        for (UrineChart item : urineChartList) {
+            if (item.getUrineOutput().compareTo(URINE_STANDARD[idx]) >= 0) idx++;
+            labelCnt[idx] += item.getTotal();
+        }
+        List<DrawItemVO<Integer>> urineGroupList = IntStream.range(0, URINE_LABELS.length)
+                .mapToObj(i -> new DrawItemVO<>(URINE_LABELS[i], labelCnt[i]))
+                .toList();
+        // 返回结果集合
+        return Lists.newArrayList(urineList, urineGroupList);
+    }
+
+    /**
+     * @author hua
+     * @date 2024/12/19 19:49
+     * @param whiteBloodCellChart 白细胞分类计数最小值和最大值
+     * @return java.util.List<com.hzq.analysis.server.domain.vo.DrawItemVO<java.lang.Double>>
+     * @apiNote 根据白细胞分类计数最小值和最大值 构建前端展示对象
+     **/
+    protected List<DrawItemVO<Double>> createWhiteBloodCellChart(WhiteBloodCellChart whiteBloodCellChart) {
+        int length = WHITE_BLOOD_CELL_CHART_LABELS.length;
+        return IntStream.range(0, length << 1)
+                .mapToObj(i -> new DrawItemVO<>(WHITE_BLOOD_CELL_CHART_LABELS[i % length], whiteBloodCellChart.getValue(i)))
+                .toList();
+    }
+
+    /**
+     * @author hua
      * @date 2024/12/19 13:16
      * @param endChart 患者结局查询对象
      * @return java.util.List<com.hzq.analysis.server.domain.vo.DrawItemVO<java.lang.Integer>>
@@ -157,14 +219,37 @@ public class BaseStatisticsService {
 
     /**
      * @author hua
+     * @date 2024/12/19 17:44
+     * @param startTime 查询的开始时间
+     * @param endTime 查询的结束时间
+     * @param queryFunction DAO 查询方法的函数引用
+     * @param threadPool 自定义的线程池
+     * @return java.util.concurrent.CompletableFuture<java.util.List<com.hzq.analysis.server.domain.dto.ScoreChart>>
+     * @apiNote 用于得分图表查询的并发方法
+     **/
+    protected CompletableFuture<List<ScoreChart>> fetchScoreChartAsync(
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            BiFunction<LocalDateTime, LocalDateTime, Optional<List<ScoreChartProjection>>> queryFunction,
+            ExecutorService threadPool
+    ) {
+        return CompletableFuture.supplyAsync(() ->
+                        queryFunction.apply(startTime, endTime)
+                                .map(list -> list.stream().map(ScoreChart::new).toList())
+                                .orElse(new ArrayList<>()),
+                threadPool
+        );
+    }
+
+    /**
+     * @author hua
      * @date 2024/12/19 13:55
      * @param lists 得分情况
      * @return java.util.List<java.util.List<com.hzq.analysis.server.domain.vo.DrawItemVO<java.lang.Integer>>>
      * @apiNote 根据得分情况 构建前端展示对象
      **/
-    @SafeVarargs
-    protected final List<List<DrawItemVO<Integer>>> createScoreChart(List<ScoreChart>... lists) {
-        return Arrays.stream(lists)
+    protected final List<List<DrawItemVO<Integer>>> createScoreChart(List<List<ScoreChart>> lists) {
+        return lists.stream()
                 .map(this::scoreChartListToDrawItemVOList)
                 .collect(Collectors.toList());
     }

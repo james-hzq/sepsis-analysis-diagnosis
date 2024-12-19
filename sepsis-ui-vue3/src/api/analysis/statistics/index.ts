@@ -35,6 +35,28 @@ export function heartAndBreathChartApi(url: String, icuAnalysisRequestData: Inde
 }
 
 /**
+ * 请求入ICU第一天尿量图表数据
+ */
+export function urineChartApi(url: String, icuAnalysisRequestData: Index.AnalysisRequestData) {
+  return request<Index.UrineChartResponseData>({
+    url: "/analysis" + url,
+    method: "get",
+    params: icuAnalysisRequestData
+  })
+}
+
+/**
+ * 请求入ICU第一天白细胞计数图表数据
+ */
+export function whiteBloodCellChartApi(url: String, icuAnalysisRequestData: Index.AnalysisRequestData) {
+  return request<Index.WhiteBloodCellChartResponseData>({
+    url: "/analysis" + url,
+    method: "get",
+    params: icuAnalysisRequestData
+  })
+}
+
+/**
  * 请求患者结局
  */
 export function endChartApi(url: String, icuAnalysisRequestData: Index.AnalysisRequestData) {
@@ -55,4 +77,3 @@ export function scoreChartApi(url: String, icuAnalysisRequestData: Index.Analysi
     params: icuAnalysisRequestData
   })
 }
-
