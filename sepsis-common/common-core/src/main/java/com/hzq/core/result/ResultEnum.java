@@ -34,6 +34,7 @@ public enum ResultEnum {
     USERNAME_EXISTED(3000, "用户名已存在"),
     USER_ROLE_NOT_EXIST(3000, "用户所属角色不存在, 请反馈给管理员"),
     USER_ID_NOT_EMPTY(3000, "删除时，用户ID不得为空"),
+    SEND_MESSAGE_NOT_EMPTY(3000, "发送消息内容不得为空"),
     UNKNOWN_ERROR(3000, "未知错误, 请反馈给系统管理员"),
     CUSTOM_ERROR(3000, "自定义异常");
 

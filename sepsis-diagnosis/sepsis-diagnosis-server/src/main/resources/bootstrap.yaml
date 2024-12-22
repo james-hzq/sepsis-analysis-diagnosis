@@ -1,11 +1,9 @@
 server:
-  port: 9100
+  port: 9203
 
 spring:
-  main:
-    web-application-type: reactive
   application:
-    name: sepsis-gateway
+    name: sepsis-diagnosis
   profiles:
     active: dev
   cloud:
@@ -13,8 +11,6 @@ spring:
       default-hostname: localhost
       timeout-seconds: 6
       ignored-interfaces: 'VMware Virtual Ethernet Adapter for VMnet1,VMware Virtual Ethernet Adapter for VMnet8'
-    loadbalancer:
-      enabled: true
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -28,31 +24,36 @@ spring:
         refresh-enabled: true
         shared-configs:
           - group: common-group
+            data-id: druid-config.yaml
+            refresh: true
+          - group: common-group
             data-id: redis-config.yaml
             refresh: true
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-        - id: sepsis-auth
-          uri: http://localhost:9200
-          predicates:
-            - Path=/oauth2/**, /auth/**
-        - id: sepsis-system
-          uri: http://localhost:9201
-          predicates:
-            - Path=/system/**
-        - id: sepsis-analysis
-          uri: http://localhost:9202
-          predicates:
-            - Path=/analysis/**
-        - id: sepsis-diagnosis
-          uri: http://localhost:9203
-          predicates:
-            - Path=/diagnosis/**
+
+lang-chain4j:
+  open-ai:
+    chat-model:
+      api-key: sk-73wHViZtm3wrQ8JgzcqEUcK7PXRJFyWGDFCJOPWUnsgrtEY0
+      model-name: gpt-3.5-turbo
+      api-base-url: https://api.feidaapi.com/v1
+      proxy-http-host: 127.0.0.1
+      proxy-http-port: 21882
+      log-requests: true
+      log-responses: true
 
 logging:
   config: classpath:logback-spring.xml
   file:
     path: ${user.dir}/logs/${spring.application.name}
+  level:
+    dev:
+      langchain4j: DEBUG
+      ai4j:
+        openai4j: DEBUG
+    org:
+      springframework:
+        transaction: DEBUG
+        jdbc:
+          datasource: DEBUG
+        orm:
+          jpa: DEBUG

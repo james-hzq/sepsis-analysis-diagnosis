@@ -57,6 +57,23 @@ export const constantRoutes: RouteRecordRaw[] = [
  **/
 export const dynamicRoutes: RouteRecordRaw[] = [
   {
+    path: "/diagnosis",
+    component: Layouts,
+    redirect: "/diagnosis",
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/diagnosis/index.vue"),
+        name: "Diagnosis",
+        meta: {
+          title: "智能问询",
+          svgIcon: "diagnosis",
+          roles: ["root", "admin", "user"]
+        }
+      }
+    ]
+  },
+  {
     path: "/system",
     component: Layouts,
     redirect: "/system/user",
@@ -133,7 +150,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  }
+  },
 ]
 
 /**

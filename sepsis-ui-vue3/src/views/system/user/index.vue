@@ -274,10 +274,6 @@ getUserTable();
   <div class="app-container">
     <div class="user-search-form">
       <el-form ref="userTableFormRef" :model="userTableFormData">
-        <el-form-item prop="userId">
-          <el-input v-model.trim="userTableFormData.userId" placeholder="查询用户编号" clearable tabindex="1"
-                    :prefix-icon="List" size="large"/>
-        </el-form-item>
         <el-form-item prop="username">
           <el-input v-model.trim="userTableFormData.username" placeholder="查询用户名称" clearable tabindex="2"
                     :prefix-icon="User" size="large"/>
