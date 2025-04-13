@@ -8,15 +8,14 @@ import com.hzq.diagnosis.server.domain.dto.SessionDeleteDTO;
 import com.hzq.diagnosis.server.domain.entity.TbChatMessage;
 import com.hzq.diagnosis.server.domain.entity.TbChatSession;
 import com.hzq.diagnosis.server.domain.vo.TreeDataVO;
+import com.hzq.diagnosis.server.service.AssistantService;
 import com.hzq.diagnosis.server.service.DiagnosisChatService;
 import com.hzq.security.annotation.RequiresPermissions;
 import com.hzq.web.exception.SystemException;
-import dev.langchain4j.model.chat.ChatLanguageModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ import java.util.List;
 public class DiagnosisChatController {
 
     private final DiagnosisChatService diagnosisChatService;
-    private final ChatLanguageModel chatLanguageModel;
+    private final AssistantService assistantService;
 
     @GetMapping("/session/tree")
     @RequiresPermissions("@ps.hasRolesAnd('user')")
@@ -81,7 +80,7 @@ public class DiagnosisChatController {
     @RequiresPermissions("@ps.hasRolesAnd('user')")
     public Result<String> messageSend(@RequestParam("content") String content) {
         if (Strings.isNullOrEmpty(content)) throw new SystemException(ResultEnum.SEND_MESSAGE_NOT_EMPTY);
-        return Result.success(chatLanguageModel.generate(content.trim()));
+        return Result.success(assistantService.chat(content.trim()));
     }
 
     @PostMapping("/message/save")

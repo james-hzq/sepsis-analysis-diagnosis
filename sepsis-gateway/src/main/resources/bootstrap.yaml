@@ -19,15 +19,15 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
         namespace: dev
-        group: sepsis-service
+        group: sepsis-mimic-service
       config:
         server-addr: 127.0.0.1:8848
         namespace: dev
-        group: sepsis-service
+        group: sepsis-mimic-service
         file-extension: yaml
         refresh-enabled: true
         shared-configs:
-          - group: common-group
+          - group: sepsis-mimic-common
             data-id: redis-config.yaml
             refresh: true
     gateway:

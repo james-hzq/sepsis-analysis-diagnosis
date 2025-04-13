@@ -15,18 +15,18 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
         namespace: dev
-        group: sepsis-service
+        group: sepsis-mimic-service
       config:
         server-addr: 127.0.0.1:8848
         namespace: dev
-        group: sepsis-service
+        group: sepsis-mimic-service
         file-extension: yaml
         refresh-enabled: true
         shared-configs:
-          - group: common-group
+          - group: sepsis-mimic-common
             data-id: druid-config.yaml
             refresh: true
-          - group: common-group
+          - group: sepsis-mimic-common
             data-id: redis-config.yaml
             refresh: true
 
@@ -34,7 +34,8 @@ lang-chain4j:
   open-ai:
     chat-model:
       api-key: sk-73wHViZtm3wrQ8JgzcqEUcK7PXRJFyWGDFCJOPWUnsgrtEY0
-      model-name: gpt-3.5-turbo
+      chat-model-name: gpt-3.5-turbo
+      embedding-model-name: text-embedding-ada-002
       api-base-url: https://api.feidaapi.com/v1
       proxy-http-host: 127.0.0.1
       proxy-http-port: 21882

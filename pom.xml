@@ -140,6 +140,12 @@
                 <version>${langchain4j.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-easy-rag</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+
             <!-- caffeine 库-->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
@@ -299,11 +305,9 @@
             <name>aliyun maven</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
             <layout>default</layout>
-            <!-- 是否开启发布版构件下载 -->
             <releases>
                 <enabled>true</enabled>
             </releases>
-            <!-- 是否开启快照版构件下载 -->
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
