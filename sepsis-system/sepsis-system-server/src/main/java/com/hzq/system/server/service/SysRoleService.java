@@ -29,7 +29,6 @@ public class SysRoleService {
     private final SysRoleDao sysRoleDao;
 
     public List<SysRoleVO> list(SysRoleForm sysRoleForm) {
-        System.out.println(sysRoleForm);
         // 动态添加查询条件
         Specification<SysRole> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();

@@ -47,6 +47,7 @@ public class SysRoleForm {
     })
     private String roleName;
 
+
     @NotEmpty(message = "角色状态不得为空", groups = {
             ValidationInterface.create.class,
             ValidationInterface.update.class

@@ -233,10 +233,10 @@ public class BaseStatisticsService {
             BiFunction<LocalDateTime, LocalDateTime, Optional<List<ScoreChartProjection>>> queryFunction,
             ExecutorService threadPool
     ) {
-        return CompletableFuture.supplyAsync(() ->
-                        queryFunction.apply(startTime, endTime)
-                                .map(list -> list.stream().map(ScoreChart::new).toList())
-                                .orElse(new ArrayList<>()),
+        return CompletableFuture.supplyAsync(
+                () -> queryFunction.apply(startTime, endTime)
+                        .map(list -> list.stream().map(ScoreChart::new).toList())
+                        .orElse(new ArrayList<>()),
                 threadPool
         );
     }
@@ -248,7 +248,9 @@ public class BaseStatisticsService {
      * @return java.util.List<java.util.List<com.hzq.analysis.server.domain.vo.DrawItemVO<java.lang.Integer>>>
      * @apiNote 根据得分情况 构建前端展示对象
      **/
-    protected final List<List<DrawItemVO<Integer>>> createScoreChart(List<List<ScoreChart>> lists) {
+    protected final List<List<DrawItemVO<Integer>>> createScoreChart(
+            List<List<ScoreChart>> lists
+    ) {
         return lists.stream()
                 .map(this::scoreChartListToDrawItemVOList)
                 .collect(Collectors.toList());
@@ -261,9 +263,13 @@ public class BaseStatisticsService {
      * @return java.util.List<com.hzq.analysis.server.domain.vo.DrawItemVO<java.lang.Integer>>
      * @apiNote 将得分情况集合转换为前端展示对象集合
      **/
-    private List<DrawItemVO<Integer>> scoreChartListToDrawItemVOList(List<ScoreChart> list) {
+    private List<DrawItemVO<Integer>> scoreChartListToDrawItemVOList(
+            List<ScoreChart> list
+    ) {
         return list.stream()
-                .map(scoreChart -> new DrawItemVO<>(String.valueOf(scoreChart.getScore()), scoreChart.getTotal()))
+                .map(scoreChart -> new DrawItemVO<>(
+                        String.valueOf(scoreChart.getScore()), scoreChart.getTotal()
+                ))
                 .collect(Collectors.toList());
     }
 }

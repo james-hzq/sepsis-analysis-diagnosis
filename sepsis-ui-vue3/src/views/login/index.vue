@@ -21,7 +21,7 @@ const systemRegisterLoading = ref(false)
 // 登录表单数据
 const loginFormData: SystemLoginRequestData = reactive({
   username: "hzq",
-  password: "318777541",
+  password: "root123",
 })
 
 // 登录表单校验规则

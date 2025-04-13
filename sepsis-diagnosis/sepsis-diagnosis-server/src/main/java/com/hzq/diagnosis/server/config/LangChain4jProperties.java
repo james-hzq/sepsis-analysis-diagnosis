@@ -17,8 +17,11 @@ public class LangChain4jProperties {
     @Value(value = "${lang-chain4j.open-ai.chat-model.api-key}")
     private String apiKey;
 
-    @Value(value = "${lang-chain4j.open-ai.chat-model.model-name}")
-    private String modelName;
+    @Value(value = "${lang-chain4j.open-ai.chat-model.chat-model-name}")
+    private String chatModelName;
+
+    @Value(value = "${lang-chain4j.open-ai.chat-model.embedding-model-name}")
+    private String embeddingModelName;
 
     @Value(value = "${lang-chain4j.open-ai.chat-model.api-base-url}")
     private String apiBaseUrl;

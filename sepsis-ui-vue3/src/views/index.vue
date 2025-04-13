@@ -77,7 +77,7 @@ onMounted(async () => {
     </div>
 
     <div>
-      <el-table :data="hospInfoTable" height="250" stripe border fit highlight-current-row style="width: 100%">
+      <el-table :data="hospInfoTable" height="350" stripe border fit highlight-current-row style="width: 100%">
         <el-table-column align="center" prop="id" label="编号" width="180"></el-table-column>
         <el-table-column align="center" prop="icuCity" label="城市" width="180"></el-table-column>
         <el-table-column align="center" prop="icuDist" label="地区" width="180"></el-table-column>
