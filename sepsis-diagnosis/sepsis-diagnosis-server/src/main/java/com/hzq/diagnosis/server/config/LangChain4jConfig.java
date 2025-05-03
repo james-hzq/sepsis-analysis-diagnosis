@@ -34,7 +34,7 @@ import java.util.List;
 @Configuration
 public class LangChain4jConfig {
 
-    private static final String KNOWLEDGE_PATH = "F:\\DevPro\\sepsis\\sepsis-analysis-diagnosis-dev-home\\knowledge";
+    private static final String KNOWLEDGE_PATH = "F:\\project\\sepsis\\sepsis-analysis-diagnosis\\local_knowledge_database";
 
     private final LangChain4jProperties properties;
 

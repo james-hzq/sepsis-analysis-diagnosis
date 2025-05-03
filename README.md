@@ -24,4 +24,6 @@ sepsis-analysis-diagnosis 是本人的毕业设计，属于可以本地运行的
 
 5. 运行naocs server、并且通过浏览器打开nacos client，修改全局配置，包括mysql、redis、各个独立微服务的配置
 
-6. 启动各个微服务即可
+6. 修改 sepsis-diagnosis-server 中 LangChain4jConfig 中的本地知识库路径：KNOWLEDGE_PATH 为自己的路径
+
+7. 启动各个微服务即可

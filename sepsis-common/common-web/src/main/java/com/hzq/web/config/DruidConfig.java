@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author hua
@@ -104,6 +102,9 @@ public class DruidConfig {
         // 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能.
         datasource.setTestOnReturn(testOnReturn);
 
+        log.info("url：{}", datasource.getUrl());
+        log.info("username：{}", datasource.getUsername());
+        log.info("password：{}", datasource.getPassword());
         log.info("druid datasource init successfully");
         return datasource;
     }
