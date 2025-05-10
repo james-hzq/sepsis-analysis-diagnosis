@@ -20,7 +20,7 @@ public interface FirstDayUrineDao extends JpaRepository<FirstDayUrine, Integer> 
 
     @Query("select t.urineOutput as urineOutput, count(*) as total " +
             "from FirstDayUrine t " +
-            "where t.urineOutput is not null and t.urineOutput >= 0 and t.inTime between :startTime and :endTime " +
+            "where t.urineOutput is not null and t.urineOutput >= 0 and (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime) " +
             "group by t.urineOutput order by t.urineOutput")
     Optional<List<UrineChartProjection>> findUrineChart(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime

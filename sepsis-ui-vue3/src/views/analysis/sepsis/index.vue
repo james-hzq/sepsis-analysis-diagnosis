@@ -7,8 +7,8 @@ import EndChart from "@/components/Chart/EndChart.vue";
 import ScoreChart from "@/components/Chart/ScoreChart.vue";
 
 const icuAnalysisQuery: AnalysisRequestData = reactive({
-  startTime: '2110-01-01',
-  endTime: '2212-01-01',
+  startTime: '2000-01-01',
+  endTime: '',
 })
 
 const dataScope = {

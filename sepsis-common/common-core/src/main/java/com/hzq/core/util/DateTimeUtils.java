@@ -166,7 +166,8 @@ public class DateTimeUtils {
      * @apiNote 使用 formatter 解析文本，返回本地日期时间
      **/
     public static LocalDateTime convertStringToLocalDateTime(String timeStr, ZoneId zoneId, DateTimeFormatter formatter) {
-        if (timeStr == null || zoneId == null || formatter == null) throw new IllegalArgumentException("parameter must not be null");
+        if (timeStr == null || timeStr.isEmpty() || zoneId == null || formatter == null)
+            throw new IllegalArgumentException("parameter must not be null or empty");
         return LocalDateTime.parse(timeStr, formatter.withZone(zoneId));
     }
 
@@ -196,7 +197,8 @@ public class DateTimeUtils {
      * @apiNote 使用 formatter 解析文本，返回本地日期时间
      **/
     public static LocalDate convertStringToLocalDate(String timeStr, ZoneId zoneId, DateTimeFormatter formatter) {
-        if (timeStr == null || zoneId == null || formatter == null) throw new IllegalArgumentException("parameter must not be null");
+        if (timeStr == null || timeStr.isEmpty() || zoneId == null || formatter == null)
+            throw new IllegalArgumentException("parameter must not be null or empty");
         return LocalDate.parse(timeStr, formatter);
     }
 }

@@ -30,7 +30,7 @@ public interface FirstDayBgDao extends JpaRepository<FirstDayBg, Integer> {
                     "round(avg(t.basophilsMax), 2) as basophilsMax, " +
                     "round(avg(t.neutrophilsMax), 2) as neutrophilsMax " +
             "from FirstDayBg t " +
-            "where t.inTime between :startTime and :endTime"
+            "where (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime)"
     )
     Optional<WhiteBloodCellChartProjection> findWhiteBloodCellChart(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime

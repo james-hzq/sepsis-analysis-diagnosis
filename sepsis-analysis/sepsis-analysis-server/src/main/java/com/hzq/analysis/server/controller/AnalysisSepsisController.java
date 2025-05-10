@@ -1,5 +1,6 @@
 package com.hzq.analysis.server.controller;
 
+import com.google.common.base.Strings;
 import com.hzq.analysis.server.domain.vo.DrawItemVO;
 import com.hzq.analysis.server.service.AnalysisSepsisService;
 import com.hzq.core.result.Result;
@@ -32,8 +33,8 @@ public class AnalysisSepsisController {
     public Result<List<List<DrawItemVO<Integer>>>> getUrineChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisSepsisService.getUrineChart(start, end));
     }
 
@@ -42,8 +43,8 @@ public class AnalysisSepsisController {
     public Result<List<DrawItemVO<Double>>> getWhiteBloodCellChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisSepsisService.getWhiteBloodCellChart(start, end));
     }
 
@@ -52,8 +53,8 @@ public class AnalysisSepsisController {
     public Result<List<DrawItemVO<Integer>>> getEndChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisSepsisService.getEndChart(start, end));
     }
 
@@ -62,8 +63,8 @@ public class AnalysisSepsisController {
     public Result<List<List<DrawItemVO<Integer>>>> getScoreChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisSepsisService.getScoreChart(start, end));
     }
 }

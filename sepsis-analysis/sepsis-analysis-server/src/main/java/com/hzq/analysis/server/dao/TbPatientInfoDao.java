@@ -44,7 +44,7 @@ public interface TbPatientInfoDao extends JpaRepository<TbPatientInfo, Integer> 
 
     @Query(
             "select t.age as age, count(t.id) as cnt from TbPatientInfo t " +
-            "where t.inTime between :startTime and :endTime " +
+            "where (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime) " +
             "group by t.age " +
             "order by t.age asc"
     )
@@ -66,31 +66,31 @@ public interface TbPatientInfoDao extends JpaRepository<TbPatientInfo, Integer> 
                         "where " +
                         "t1.gender = 'M' and " +
                         "t1.weight is not null and " +
-                        "t1.inTime between :startTime and :endTime" +
+                        "(:startTime is null or t1.inTime >= :startTime) and (:endTime is null or t1.inTime <= :endTime)" +
                     ") as maleAvgWeight, " +
                     "(select cast(round(avg(t1.weight), 2) as double) from TbPatientInfo t1 " +
                         "where " +
                         "t1.gender = 'F' and " +
                         "t1.weight is not null and " +
-                        "t1.inTime between :startTime and :endTime" +
+                        "(:startTime is null or t1.inTime >= :startTime) and (:endTime is null or t1.inTime <= :endTime)" +
                     ") as femaleAvgWeight, " +
                     "(select cast(round(avg(t1.height), 2) as double) from TbPatientInfo t1 " +
                         "where " +
                         "t1.gender = 'M' and " +
                         "t1.height is not null and " +
-                        "t1.inTime between :startTime and :endTime" +
+                        "(:startTime is null or t1.inTime >= :startTime) and (:endTime is null or t1.inTime <= :endTime)" +
                     ") as maleAvgHeight, " +
                     "(select cast(round(avg(t1.height), 2) as double) from TbPatientInfo t1 " +
                         "where " +
                         "t1.gender = 'F' and " +
                         "t1.height is not null and " +
-                        "t1.inTime between :startTime and :endTime" +
+                        "(:startTime is null or t1.inTime >= :startTime) and (:endTime is null or t1.inTime <= :endTime)" +
                     ") as femaleAvgHeight " +
                     "from TbPatientInfo t " +
                     "where " +
                     "t.weight is not null and " +
                     "t.height is not null and " +
-                    "t.inTime between :startTime and :endTime"
+                    "(:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime)"
     )
     Optional<HeightAndWeightChartProjection> findHeightAndWeightChartInIcu(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
@@ -100,7 +100,8 @@ public interface TbPatientInfoDao extends JpaRepository<TbPatientInfo, Integer> 
             "sum(case when t.isDied = '0' then 1 else 0 end) as survivalNum, " +
             "sum(case when t.isDied = '1' then 1 else 0 end) as diedNum " +
             "from TbPatientInfo t " +
-            "where t.inTime between :startTime and :endTime")
+            "where (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime)"
+    )
     Optional<EndChartProjection> findEndChartInIcu(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
@@ -109,7 +110,8 @@ public interface TbPatientInfoDao extends JpaRepository<TbPatientInfo, Integer> 
             "sum(case when t.isDied = '0' then 1 else 0 end) as survivalNum, " +
             "sum(case when t.isDied = '1' then 1 else 0 end) as diedNum " +
             "from TbPatientInfo t " +
-            "where t.isSepsis = '1' and t.inTime between :startTime and :endTime")
+            "where t.isSepsis = '1' and (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime)"
+    )
     Optional<EndChartProjection> findEndChartInSepsis(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );

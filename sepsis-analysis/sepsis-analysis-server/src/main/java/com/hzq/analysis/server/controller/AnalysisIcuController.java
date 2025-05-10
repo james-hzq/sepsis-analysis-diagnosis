@@ -1,5 +1,6 @@
 package com.hzq.analysis.server.controller;
 
+import com.google.common.base.Strings;
 import com.hzq.analysis.server.domain.vo.AgeChartVO;
 import com.hzq.analysis.server.domain.vo.DrawItemVO;
 import com.hzq.analysis.server.domain.vo.HeartAndBreathChartVO;
@@ -34,8 +35,8 @@ public class AnalysisIcuController {
     public Result<AgeChartVO> getAgeChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisIcuService.getAgeChart(start, end));
     }
 
@@ -44,8 +45,8 @@ public class AnalysisIcuController {
     public Result<List<DrawItemVO<Double>>> getHeightAndWeightChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisIcuService.getHeightAndWeightChart(start, end));
     }
 
@@ -54,8 +55,8 @@ public class AnalysisIcuController {
     public Result<HeartAndBreathChartVO> getHeartAndBreathChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisIcuService.getHeartAndBreathChart(start, end));
     }
 
@@ -64,8 +65,8 @@ public class AnalysisIcuController {
     public Result<List<DrawItemVO<Integer>>> getEndChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisIcuService.getEndChart(start, end));
     }
 
@@ -74,8 +75,8 @@ public class AnalysisIcuController {
     public Result<List<List<DrawItemVO<Integer>>>> getScoreChart(
             @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime
     ) {
-        LocalDateTime start = DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
-        LocalDateTime end = DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
+        LocalDateTime start = Strings.isNullOrEmpty(startTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(startTime).atStartOfDay();
+        LocalDateTime end = Strings.isNullOrEmpty(endTime) ? null : DateTimeUtils.convertStringToChinaLocalDate(endTime).atStartOfDay();
         return Result.success(analysisIcuService.getScoreChart(start, end));
     }
 }

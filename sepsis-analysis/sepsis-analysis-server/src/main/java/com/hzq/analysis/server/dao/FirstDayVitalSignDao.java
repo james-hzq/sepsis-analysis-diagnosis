@@ -27,13 +27,13 @@ public interface FirstDayVitalSignDao extends JpaRepository<FirstDayVitalSign, I
             "ceiling(avg(t.breath)) as breath, " +
             "ceiling(avg(t.breathMax)) as breathMax " +
             "from FirstDayVitalSign t " +
-            "where t.inTime between :startTime and :endTime ")
+            "where (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime)")
     Optional<HeartAndBreathChartProjection> findHeartAndBreathChartInIcu(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
     );
 
     @Query("select ceiling(t.heart) as name, count(*) as value from FirstDayVitalSign t " +
-            "where t.heart is not null and t.inTime between :startTime and :endTime " +
+            "where t.heart is not null and (:startTime is null or t.inTime >= :startTime) and (:endTime is null or t.inTime <= :endTime) " +
             "group by ceiling(t.heart)")
     Optional<List<HeartAvgChartProjection>> findHeartAvgChartInIcu(
             @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime
