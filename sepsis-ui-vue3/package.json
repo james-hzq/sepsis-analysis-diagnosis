@@ -1,14 +1,14 @@
 {
-  "name": "脓毒症智能分析与诊询平台",
+  "name": "sepsis-analysis-diagnosis",
   "version": "1.0.0",
-  "description": "",
+  "description": "脓毒症智能分析与诊询平台V1.0.0",
   "author": {
-    "name": "hzq",
-    "url": "https://github.com/IT-HZQ"
+    "name": "james_hzq",
+    "url": "https://github.com/james-hzq"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/IT-HZQ/sepsis-analysis-diagnosis"
+    "url": "https://github.com/james-hzq/sepsis-analysis-diagnosis"
   },
   "type": "module",
   "scripts": {
